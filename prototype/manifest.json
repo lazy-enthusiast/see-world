@@ -1,5 +1,3 @@
-// 檔名：manifest.json（若原檔已存在，請用此內容覆蓋或合併）
-
 {
   "name": "Kyoto Solo Trip",
   "short_name": "Trip",
