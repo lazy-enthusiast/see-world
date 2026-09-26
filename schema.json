@@ -1,0 +1,290 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TripConfig",
+  "type": "object",
+  "required": ["THEME_CONFIG", "CONFIG", "DESTINATION", "ITINERARY"],
+  "properties": {
+    "THEME_CONFIG": {
+      "type": "object",
+      "required": ["accentColor", "backgroundColor", "textColor"],
+      "properties": {
+        "accentColor": { "type": "string" },
+        "accentText": { "type": "string" },
+        "backgroundColor": { "type": "string" },
+        "cardColor": { "type": "string" },
+        "textColor": { "type": "string" },
+        "textSubColor": { "type": "string" },
+        "borderColor": { "type": "string" },
+        "googleFontsUrl": { "type": ["string", "null"] },
+        "fontHeading": { "type": ["string", "null"] },
+        "fontBody": { "type": ["string", "null"] }
+      }
+    },
+
+    "CONFIG": {
+      "type": "object",
+      "required": ["ui", "startDate", "duration", "travelers"],
+      "properties": {
+        "ui": {
+          "type": "object",
+          "required": ["browserTitle", "headerTitle"],
+          "properties": {
+            "browserTitle": { "type": "string" },
+            "headerTitle": { "type": "string" },
+            "homeTimezone": { "type": ["string", "null"] },
+            "homeTimeLabel": { "type": ["string", "null"] }
+          }
+        },
+        "startDate": { "type": "string", "format": "date" },
+        "duration": { "type": "integer", "minimum": 1 },
+        "travelers": {
+          "type": "object",
+          "required": ["type", "count"],
+          "properties": {
+            "type": { "enum": ["solo", "couple", "family", "group"] },
+            "count": { "type": "integer", "minimum": 1 },
+            "note": { "type": ["string", "null"] }
+          }
+        },
+        "baseCurrency": { "type": "string" },
+        "tripCurrency": { "type": "string" }
+      }
+    },
+
+    "DESTINATION": {
+      "type": "object",
+      "required": ["name", "lat", "lon", "timezone"],
+      "properties": {
+        "name": { "type": "string" },
+        "lat": { "type": "number" },
+        "lon": { "type": "number" },
+        "timezone": { "type": "string" },
+        "currency": { "type": "string" },
+        "currencyLabel": { "type": "string" },
+        "baseCurrency": { "type": "string" }
+      }
+    },
+
+    "CITIES": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "days"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "name": { "type": "string" },
+          "lat": { "type": ["number", "null"] },
+          "lon": { "type": ["number", "null"] },
+          "timezone": { "type": ["string", "null"] },
+          "days": { "type": "array", "items": { "type": "integer" } },
+          "color": { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "TRIP_INFO": {
+      "type": "object",
+      "properties": {
+        "visa": {
+          "type": ["object", "null"],
+          "properties": {
+            "type": { "type": ["string", "null"] },
+            "number": { "type": ["string", "null"] },
+            "note": { "type": ["string", "null"] },
+            "expiry": { "type": ["string", "null"] }
+          }
+        },
+        "flights": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "flight", "date", "dep", "arr"],
+            "properties": {
+              "type": { "type": "string" },
+              "flight": { "type": "string" },
+              "date": { "type": "string" },
+              "dep": { "type": "string" },
+              "arr": { "type": "string" },
+              "note": { "type": ["string", "null"] },
+              "bookingRef": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "hotels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "cityId": { "type": ["string", "null"] },
+              "name": { "type": "string" },
+              "address": { "type": ["string", "null"] },
+              "phone": { "type": ["string", "null"] },
+              "checkIn": { "type": ["string", "null"] },
+              "checkOut": { "type": ["string", "null"] },
+              "bookingRef": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "emergency": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "phone"],
+            "properties": {
+              "name": { "type": "string" },
+              "phone": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "ITINERARY": {
+      "type": "object",
+      "required": ["items"],
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "day", "type", "title", "status", "source"],
+            "properties": {
+              "id": { "type": "string" },
+              "day": { "type": "integer", "minimum": 1 },
+              "time": { "type": ["string", "null"], "pattern": "^([0-1][0-9]|2[0-3]):[0-5][0-9]$" },
+              "timeHint": { "enum": ["morning", "afternoon", "evening", "night", null] },
+              "type": {
+                "enum": ["arrival", "departure", "transport", "food", "sight", "hotel", "shop", "rest", "note"]
+              },
+              "title": { "type": "string" },
+              "cityId": { "type": ["string", "null"] },
+              "address": { "type": ["string", "null"] },
+              "addressLocal": { "type": ["string", "null"] },
+              "coords": {
+                "oneOf": [
+                  { "type": "null" },
+                  { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }
+                ]
+              },
+              "tags": { "type": "array", "items": { "type": "string" } },
+              "moodColor": { "type": ["string", "null"] },
+              "note": { "type": ["string", "null"] },
+              "phone": { "type": ["string", "null"] },
+              "openHours": { "type": ["string", "null"] },
+              "price": { "type": ["string", "null"] },
+              "cost": {
+                "type": ["object", "null"],
+                "properties": {
+                  "amount": { "type": "number" },
+                  "currency": { "type": "string" },
+                  "category": { "enum": ["transport", "food", "hotel", "shop", "ticket", "other"] }
+                }
+              },
+              "status": { "enum": ["confirmed", "pending", "wishlist"] },
+              "source": { "enum": ["user", "ai", "ai-edited"] },
+              "transport": {
+                "type": ["object", "null"],
+                "properties": {
+                  "mode": { "enum": ["train", "bus", "subway", "taxi", "walk", "ferry", "flight"] },
+                  "from": { "type": "string" },
+                  "to": { "type": "string" },
+                  "fromEventId": { "type": ["string", "null"] },
+                  "toEventId": { "type": ["string", "null"] },
+                  "operator": { "type": ["string", "null"] },
+                  "line": { "type": ["string", "null"] },
+                  "durationMin": { "type": ["integer", "null"] },
+                  "liveApi": {
+                    "type": ["object", "null"],
+                    "properties": {
+                      "provider": { "type": "string" },
+                      "endpoint": { "type": "string" },
+                      "refreshSec": { "type": "integer" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "DAILY_EXTRAS": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "inspiration": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "tag": { "type": "string" },
+                "note": { "type": "string" },
+                "type": { "type": "string" }
+              }
+            }
+          },
+          "shopping": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+
+    "BUDGET": {
+      "type": "object",
+      "properties": {
+        "categories": { "type": "array", "items": { "type": "string" } },
+        "estimates": {
+          "type": ["object", "null"],
+          "properties": {
+            "total": { "type": "number" },
+            "currency": { "type": "string" },
+            "byCategory": { "type": "object" }
+          }
+        },
+        "expenses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "amount", "currency", "category"],
+            "properties": {
+              "id": { "type": "string" },
+              "day": { "type": ["integer", "null"] },
+              "title": { "type": ["string", "null"] },
+              "amount": { "type": "number" },
+              "currency": { "type": "string" },
+              "category": { "type": "string" },
+              "note": { "type": ["string", "null"] },
+              "timestamp": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    },
+
+    "PHRASE_DATA": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "items"],
+        "properties": {
+          "category": { "type": "string" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["term_primary", "term_secondary"],
+              "properties": {
+                "term_primary": { "type": "string" },
+                "term_secondary": { "type": "string" },
+                "term_pronounce": { "type": ["string", "null"] }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
