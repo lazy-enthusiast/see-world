@@ -22,7 +22,7 @@ const THEME_CONFIG = {
 const CONFIG = {
   ui: {
     browserTitle: "Kyoto Test Trip",
-    headerTitle: "KYOTO <span>SOLO</span>",
+    headerTitle: "京都五月",
     homeTimezone: "Asia/Hong_Kong",
     homeTimeLabel: "HKG"
   },
