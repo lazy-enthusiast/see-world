@@ -682,12 +682,21 @@ function toggleShopItem(checkbox, id) { shopState[id] = checkbox.checked; localS
 function showPhrase(jp, zh) { document.getElementById('overlay-jp').innerText = jp; document.getElementById('overlay-zh').innerText = zh; document.getElementById('phrase-overlay').classList.add('active'); }
 function closePhrase() { document.getElementById('phrase-overlay').classList.remove('active'); }
 
-// 註冊 Service Worker（PWA 離線快取）
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log('SW 註冊成功'))
-      .catch((err) => console.error('SW 註冊失敗:', err));
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
+      console.log('SW 註冊成功');
+
+      // 偵測到有新版本 SW 時提示
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showToast('有新版本，請重開 App');
+          }
+        });
+      });
+    }).catch((err) => console.error('SW 註冊失敗:', err));
   });
 }
 
