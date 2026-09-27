@@ -39,6 +39,7 @@ const CONFIG = {
 // 3. 📍 目的地
 const DESTINATION = {
   name: "京都 Kyoto",
+  slug: "kyoto",
   lat: 35.0116,
   lon: 135.7681,
   timezone: "Asia/Tokyo",
