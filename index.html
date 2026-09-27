@@ -40,8 +40,35 @@ header h1 { margin: 0; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5p
 
 /* Date Selector */
 .date-selector-container { background: var(--bg-card); opacity: 0.98; padding: 5px 0; border-bottom: 1px solid var(--border); width: 100%; flex-shrink: 0; position: relative; z-index: 90; }
-.date-selector { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; padding: 0 10px; }
-.date-chip { flex: 1 0 auto; min-width: 55px; max-width: 100px; padding: 8px 0; border-radius: 0; cursor: pointer; color: var(--text-sub); display: flex; flex-direction: column; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; transition: all 0.2s; }
+.date-selector {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 10px;
+  /* 新增：讓內容不夠寬時，仍讓 chip 平均撐開 */
+  min-width: 100%;
+  box-sizing: border-box;
+}
+
+.date-chip {
+  /* 改動核心：可長可縮，basis 0 讓平均分配 */
+  flex: 1 1 0;
+  /* 最小寬度：低於這個就開始橫向滑動 */
+  min-width: 60px;
+  /* 拿掉 max-width，讓它該長就長 */
+  padding: 8px 0;
+  border-radius: 0;
+  cursor: pointer;
+  color: var(--text-sub);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
 .date-chip.active { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
 .day-num { font-weight: 700; font-size: 1rem; line-height: 1; margin-bottom: 2px; font-family: var(--font-heading); }
 .day-week { font-size: 0.6rem; font-weight: 500; opacity: 0.8; letter-spacing: 0.5px; text-transform: uppercase;}
