@@ -401,7 +401,8 @@ html += `<div class="info-card"><div class="info-header">簽證資料 (Visa)</di
 html += `<div class="info-row"><div><span class="info-label">類型</span><div>${TRIP_INFO.visa.type}</div></div></div>`;
 html += `<div class="info-row" style="align-items:center; justify-content:space-between;"><div><span class="info-label">號碼</span><div style="font-weight:600;">${TRIP_INFO.visa.number}</div></div><button class="btn-copy-text" onclick="copyToClipboard('${TRIP_INFO.visa.number}')">複製</button></div>`;
 html += `<div class="info-row" style="margin-top:15px;"><div><span class="info-label">有效期</span><div>${TRIP_INFO.visa.expiry || '-'}</div></div></div>`;
-if(TRIP_INFO.visa.note) html += `<div class="info-row" style="color:var(--text-sub); font-size:0.85rem;"><i class="fa-solid fa-circle-info" style="margin-right:5px;"></i> ${TRIP_INFO.visa.note}</div>`;
+if(TRIP_INFO.visa.note) 
+html += `<div class="info-row" style="color:var(--text-sub); font-size:0.85rem;"><i class="fa-solid fa-circle-info" style="margin-right:5px;"></i> ${TRIP_INFO.visa.note}</div>`;
 html += `</div>`;
 }
 
