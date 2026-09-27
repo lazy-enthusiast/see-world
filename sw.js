@@ -8,10 +8,10 @@
 const CACHE_VERSION = 'v2'; // 只有「改 sw.js 本身逻辑」时才需要动这里
 const CACHE_NAME = `trip-app-${CACHE_VERSION}`;
 
-// 只列「核心骨架」，config.js 不在这里（它走 network-first）
 const CORE_ASSETS = [
   './',
   './index.html',
+  './config.js',
   './manifest.json',
   './icon.png'
 ];
