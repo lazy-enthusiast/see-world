@@ -73,7 +73,8 @@ const CONFIG = {
 
 ```js
 const DESTINATION = {
-  name: "京都 Kyoto",
+  name: "京都 Kyoto",      // 顯示用（人類看）
+  slug: "kyoto",           // 🆕 識別用（全小寫、連字號分隔、無空白）
   lat: 35.0116,
   lon: 135.7681,
   timezone: "Asia/Tokyo",
