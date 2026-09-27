@@ -442,6 +442,7 @@ function init() {
   initSwipeClose();
   setInterval(updateHomeClock, 1000);
   updateHomeClock();
+  checkForUpdate();
 }
 
 function updateHomeClock() {
@@ -987,6 +988,24 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+async function checkForUpdate() {
+  try {
+    const res = await fetch(`config.js?t=${Date.now()}`, { cache: 'reload' });
+    if (!res.ok) return;
+    const text = await res.text();
+    const match = text.match(/^\/\/ buildTime:\s*(.+)$/m);
+    if (!match) return;
+    const serverBuildTime = match[1].trim();
+    const lastSeen = localStorage.getItem('lastSeenBuildTime');
+    if (lastSeen && lastSeen !== serverBuildTime) {
+      showToast('有新版本，請下拉重整');
+    }
+    localStorage.setItem('lastSeenBuildTime', serverBuildTime);
+  } catch (e) {
+    console.warn('檢查更新失敗：', e);
+  }
+}
+  
 init();
 </script>
 </body>
