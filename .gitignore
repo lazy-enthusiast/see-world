@@ -1,0 +1,3 @@
+# Planning notes stay on this machine.
+# GitHub Pages only needs the app files (index.html, config.js, and friends).
+*.md
