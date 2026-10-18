@@ -188,7 +188,7 @@
               "price": { "type": ["string", "null"] },
               "website": {
                 "type": ["string", "null"],
-                "description": "Review-app or official page URL (Tabelog JP, OpenRice HK, etc.). Food modal label is App + host-based jump hint. Do not put this URL in note."
+                "description": "Review-app or official page URL (Tabelog JP, OpenRice HK, etc.). Food modal label is App + app name or host. Do not put this URL in note."
               },
               "cost": {
                 "type": ["object", "null"],

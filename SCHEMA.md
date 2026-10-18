@@ -402,8 +402,8 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 |------|--------|----------|
 | **交通** | `transport` | `前往{to}`；上車站（地圖 icon）→ 目的地；車程／站數；**上車點下一班**（live 候車，不硬定班次）；票價／營運商。時間只在時間線，modal 不顯示建議出發。備註一律展開 |
 | **航班／閘口** | `arrival`、`departure` | **地址**（優先 `addressLocal`）＋地圖；**聯絡**（撥號＋WhatsApp／LINE／Messenger icon）；備註展開。時間在時間線。無預算欄 |
-| **用餐** | `food` | **地址**（優先 `addressLocal`）；**預算**欄；**開放時間**欄；**App**（`website`：依 host 顯示跳轉 Tabelog／OpenRice／網頁等）；**聯絡**（撥號＋訊息 icon）；備註展開並列推薦菜；底部可「搜尋預約信」 |
-| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**（優先 `addressLocal`）；可選開放時間；**聯絡**；`hotel` 可有的士卡＋Gmail |
+| **用餐** | `food` | **地址**（優先 `addressLocal`）；**預算**欄；**開放時間**欄；**聯絡**＋**App**同列兩欄（`website`：依 host 顯示 Tabelog／OpenRice／host 等）；備註展開並列推薦菜；底部可「搜尋預約信」 |
+| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**（優先 `addressLocal`）；可選開放時間；**聯絡**（有 `website` 時與 **App** 同列兩欄）；`hotel` 可有的士卡＋Gmail |
 
 時間線上的交通列**不**再顯示右側地圖 icon（地圖改在 modal 上車點）。
 
@@ -433,7 +433,7 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 
 - `price`／`cost` → UI「預算」
 - `openHours` → UI「開放時間」
-- `website` → UI 標題固定「**App**」；下方短文依 **URL host** 說明開哪個 App（例：`tabelog.com`→「跳轉 Tabelog」；`openrice.com`→「跳轉 OpenRice」；其他已知評論／訂位站類似；一般官網→「開啟 {host}」或「開啟網頁」）。點擊：Tabelog 優先 deep link／Intent，OpenRice 盡量走 App／https，其餘開網頁。**URL 只放 `website`，勿寫進 `note`**
+- `website` → UI 標題固定「**App**」；下方短文依 **URL host** 顯示 App 名或 host（例：`tabelog.com`→「Tabelog」；`openrice.com`→「OpenRice」；其他已知評論／訂位站類似；一般官網→ host；無法解析→「開啟網頁」）。與「聯絡」同列兩欄。點擊：Tabelog 優先 deep link／Intent，OpenRice 盡量走 App／https，其餘開網頁。**URL 只放 `website`，勿寫進 `note`**
 - `note`：**精簡**——列**推薦菜目**與必要實用提示即可；**不要**把評論站 URL、電話、WhatsApp／LINE／Messenger、長評分檔塞進 `note`
 
 給 LLM：`line`（交通線路）可寫「谷町線」或含月台；方向放 note。店家 `line`（LINE 帳號）與交通 `transport.line` 是不同欄位。
@@ -465,7 +465,7 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 21. **`food`**：務必填 `price`（或 `cost`）與 `openHours`（查不到填 `null`）；`note` 只列推薦菜／精簡實用提示
 22. **`addressLocal`**：景點／店家／酒店／上車站盡量填**當地語詳細地址**（給 Google Maps）；`address` 可放 Latin／英文。App 導航優先 `addressLocal`
 23. **`title`**：時間軸會剝掉括號當地語（如 `（マヅラ喫茶店）`）；日文店名可放括號內供 modal 顯示，或乾脆只寫中文／英文主標題、日文詳址放 `addressLocal`
-24. **`website`**：餐廳優先填當地評論／訂位 App URL（日本 → Tabelog；香港 → OpenRice；其餘依目的地常見站）或官網；查不到填 `null`。**禁止**把評論站／官網連結寫進 `note`——URL 只放 `website`（UI 顯示「App」＋跳轉提示）
+24. **`website`**：餐廳優先填當地評論／訂位 App URL（日本 → Tabelog；香港 → OpenRice；其餘依目的地常見站）或官網；查不到填 `null`。**禁止**把評論站／官網連結寫進 `note`——URL 只放 `website`（UI 顯示「App」＋ App 名或 host）
 
 ---
 
