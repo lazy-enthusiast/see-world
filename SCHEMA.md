@@ -187,8 +187,9 @@ const ITINERARY = {
 
 ### `transport.stopCount`
 
+- **必填鍵**：每個 `transport` 物件都要有，值為整數或 `null`（不可整段省略）
 - 整數：從**上車站**搭到**目的站**要經過幾站（下一站 = `1`）
-- 不知道就填 `null`；App 有值才顯示「約 N 站」
+- 不知道就填 `null`；App 有正整數才顯示「搭 N 站」
 - LLM 應查乘換案內／官方，勿瞎猜
 
 ### `transport.liveApi`（實時到站；可為 `null`）
@@ -416,7 +417,7 @@ const PHRASE_DATA = [
 14. **`liveApi` 預設 `null`**；僅在查到真實 `stopId` 時填寫；`provider` 必須在白名單
 15. **禁止**輸出 `apiKey`、`token`、`secret`、或把 key 拼進 URL／`endpoint`
 16. **不要**再填自由字串 `endpoint`（已廢止）；改用 `provider` + `stopId`
-17. **`stopCount`**：查得到就填整數（下一站 = 1）；查不到填 `null`，禁止亂填
+17. **每個 `transport` 必須含 `stopCount` 鍵**（不可省略）：查得到填整數（下一站 = `1`）；查不到填 `null`，禁止亂填或省略欄位
 
 ---
 

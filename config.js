@@ -1,7 +1,7 @@
 // buildTime: 2026-10-18T16:37:20.335Z
 // ============================================================
 // 🧳 客製化設定檔 config.js —— 大阪 2027 年 2 月（v4：v3＋去陳套化（獨立皮革工房、古道具、酒藏試飲））
-// 結構契約見 schema.json；未部署，待 Dav 批准
+// 結構契約見 schema.json／SCHEMA.md
 // 座標：國土地理院地址檢索（番地級）／OSM Nominatim（地標、車站），4 位小數；交通項目用出發點
 // ============================================================
 
@@ -227,6 +227,7 @@ const ITINERARY = {
         "operator": "阪急觀光巴士／關西空港交通",
         "line": "大阪站前（梅田）線",
         "durationMin": 70,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -390,6 +391,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往八尾南）",
         "durationMin": 11,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -459,6 +461,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "千日前線（往野田阪神）→ 御堂筋線（往新大阪）",
         "durationMin": 10,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -534,6 +537,7 @@ const ITINERARY = {
         "operator": "大阪地鐵",
         "line": "長堀鶴見綠地線（往門真南）",
         "durationMin": 6,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -672,6 +676,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往大日）",
         "durationMin": 8,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -774,6 +779,7 @@ const ITINERARY = {
         "operator": "大阪地鐵／近鐵",
         "line": "谷町線（往八尾南）→ 中央線（往生駒，直通近鐵京阪奈線）",
         "durationMin": 29,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -843,6 +849,7 @@ const ITINERARY = {
         "operator": "近畿日本鐵道",
         "line": "近鐵京阪奈線（往學研奈良登美丘）→ 近鐵奈良線（往近鐵奈良）",
         "durationMin": 32,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -1076,6 +1083,7 @@ const ITINERARY = {
         "operator": "近畿日本鐵道／大阪地鐵",
         "line": "近鐵奈良線快速急行（往大阪難波）→ 御堂筋線（往新大阪）",
         "durationMin": 51,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -1177,6 +1185,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "四橋線（往北加賀屋）",
         "durationMin": 2,
+        "stopCount": 1,
         "liveApi": null
       }
     },
@@ -1250,6 +1259,7 @@ const ITINERARY = {
         "operator": "京阪電氣鐵道",
         "line": "京阪中之島線（往出町柳）",
         "durationMin": 5,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -1325,6 +1335,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "堺筋線（往天神橋筋六丁目）",
         "durationMin": 1,
+        "stopCount": 1,
         "liveApi": null
       }
     },
@@ -1394,6 +1405,7 @@ const ITINERARY = {
         "operator": "JR 西日本",
         "line": "JR 東西線區間快速（往塚口）",
         "durationMin": 2,
+        "stopCount": 1,
         "liveApi": null
       }
     },
@@ -1563,6 +1575,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往大日）",
         "durationMin": 1,
+        "stopCount": 1,
         "liveApi": null
       }
     },
@@ -1637,6 +1650,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往八尾南）",
         "durationMin": 2,
+        "stopCount": 1,
         "liveApi": null
       }
     },
@@ -1712,6 +1726,7 @@ const ITINERARY = {
         "operator": "大阪地鐵",
         "line": "谷町線（往大日）",
         "durationMin": 1,
+        "stopCount": 1,
         "liveApi": null
       }
     },
@@ -1842,6 +1857,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往大日）",
         "durationMin": 3,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -1918,6 +1934,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往八尾南）",
         "durationMin": 4,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -1992,6 +2009,7 @@ const ITINERARY = {
         "operator": "阪急觀光巴士",
         "line": "大阪梅田－有馬溫泉線（特急）",
         "durationMin": 55,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -2128,6 +2146,7 @@ const ITINERARY = {
         "operator": "神戶電鐵／神戶市營地下鐵／JR 西日本",
         "line": "神鐵有馬線（往有馬口）→ 神鐵有馬線（往新開地）→ 北神線（往西神中央）→ JR 神戶線（往須磨）",
         "durationMin": 38,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -2255,6 +2274,7 @@ const ITINERARY = {
         "operator": "JR 西日本",
         "line": "JR 神戶線快速（往米原）→ JR 東西線快速（往木津）",
         "durationMin": 36,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -2389,6 +2409,7 @@ const ITINERARY = {
         "operator": "阪神電氣鐵道",
         "line": "阪神本線特急（往須磨浦公園）",
         "durationMin": 22,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -2488,6 +2509,7 @@ const ITINERARY = {
         "operator": "阪神電鐵",
         "line": "阪神本線特急（往須磨浦公園）→ 阪神本線普通（往高速神戶）",
         "durationMin": 4,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -2591,6 +2613,7 @@ const ITINERARY = {
         "operator": "阪神電氣鐵道",
         "line": "阪神本線普通（往大阪梅田）→ 阪神本線直通特急（往大阪梅田）",
         "durationMin": 8,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -2695,6 +2718,7 @@ const ITINERARY = {
         "operator": "阪神電氣鐵道",
         "line": "阪神本線直通特急（往大阪梅田）",
         "durationMin": 20,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -2795,6 +2819,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往八尾南）",
         "durationMin": 13,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -2927,6 +2952,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往大日）",
         "durationMin": 16,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -3000,6 +3026,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往八尾南）",
         "durationMin": 13,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -3076,6 +3103,7 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線（往大日）",
         "durationMin": 8,
+        "stopCount": null,
         "liveApi": null
       }
     },
@@ -3257,6 +3285,7 @@ const ITINERARY = {
         "operator": "阪急觀光巴士／關西空港交通",
         "line": "大阪站前（梅田）線",
         "durationMin": 60,
+        "stopCount": null,
         "liveApi": null
       }
     },
