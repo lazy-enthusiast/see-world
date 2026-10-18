@@ -172,6 +172,18 @@
               "moodColor": { "type": ["string", "null"] },
               "note": { "type": ["string", "null"] },
               "phone": { "type": ["string", "null"] },
+              "whatsapp": {
+                "type": ["string", "null"],
+                "description": "WhatsApp number with country code (digits or +…); App opens wa.me"
+              },
+              "line": {
+                "type": ["string", "null"],
+                "description": "LINE official account id (@xxx) or https://line.me/… URL"
+              },
+              "messenger": {
+                "type": ["string", "null"],
+                "description": "Facebook Messenger page username or https://m.me/… URL"
+              },
               "openHours": { "type": ["string", "null"] },
               "price": { "type": ["string", "null"] },
               "cost": {
@@ -243,6 +255,12 @@
             ]
           },
           "nearEventId": { "type": ["string", "null"] },
+          "phone": { "type": ["string", "null"] },
+          "whatsapp": { "type": ["string", "null"] },
+          "line": { "type": ["string", "null"] },
+          "messenger": { "type": ["string", "null"] },
+          "openHours": { "type": ["string", "null"] },
+          "price": { "type": ["string", "null"] },
           "status": { "enum": ["wishlist", "done", "skipped"] },
           "source": { "enum": ["user", "ai", "ai-edited"] }
         }

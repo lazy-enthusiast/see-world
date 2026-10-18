@@ -154,6 +154,9 @@ const ITINERARY = {
       moodColor: "#333333",
       note: "...",
       phone: null,
+      whatsapp: null,           // 國碼電話；App → wa.me（查不到填 null）
+      line: null,               // @id 或 https://line.me/…（查不到填 null）
+      messenger: null,          // m.me 帳號或 URL（查不到填 null）
       openHours: null,
       price: null,
       cost: { amount: 0, currency: "JPY", category: "other" },
@@ -386,22 +389,41 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 
 | 版面 | `type` | 顯示重點 |
 |------|--------|----------|
-| **交通** | `transport` | `前往{to}`；上車站（尾端地圖 icon → Google Maps）→ 目的地；車程／站數；live 候車；建議出發 · 票價；長備註預設摺疊。無底部按鈕 |
-| **航班／閘口** | `arrival`、`departure` | 大字時間；地址＋地圖 icon；電話＋撥打 icon；備註摺疊。不顯示預算／開放時間／底部導航鈕 |
-| **用餐** | `food` | 大字時間；地址＋地圖；電話；價錢·開放一行；備註摺疊；底部可留「搜尋預約信」 |
-| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | 同上精簡列；`hotel` 可有的士卡＋Gmail |
+| **交通** | `transport` | `前往{to}`；上車站（地圖 icon）→ 目的地；車程／站數；**上車點下一班**（live 候車，不硬定班次）；票價／營運商。時間只在時間線，modal 不顯示建議出發。備註一律展開 |
+| **航班／閘口** | `arrival`、`departure` | **地址**標籤＋地圖；電話／WhatsApp／LINE／Messenger icon；備註展開。時間在時間線。無預算欄 |
+| **用餐** | `food` | **地址**；**預算**欄；**開放時間**欄；電話／訊息 icon；備註展開並列推薦菜；底部可「搜尋預約信」 |
+| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**；可選開放時間；電話／訊息；`hotel` 可有的士卡＋Gmail |
+
+時間線上的交通列**不**再顯示右側地圖 icon（地圖改在 modal 上車點）。
 
 #### 交通版面細節
 
 1. 類型標籤 = `mode`；標題 = **`前往{to}`**
-2. 上車站下方小字：**優先月台**（從 `note`／`address` 擷取「N 號月台」）＋清理後的 `line`（**去掉**「往××」「（往八尾南）」等方向字）；無月台才只顯示線路名／上車點
+2. 上車站下方小字：**優先月台**（從 `note`／`address` 擷取「N 號月台」）＋清理後的 `line`（**去掉**「往××」等方向字）；無月台才只顯示線路名／上車點
 3. 車程只寫 `durationMin`／`stopCount`，不重複起訖站
-4. 有 `liveApi` → Worker `/transit` 到站列表；無 live → 只顯示「建議出發 `time`」
-5. 備註：**略過【路線】／【交通】**（與 UI 重複）；並剝除「Yahoo! 乘換案內」「官方時刻表」等資料來源字樣。保留【上車】【下車】【車資】【備案】等實用提示
+4. **永遠**顯示「上車點下一班」區塊：有 `liveApi` → Worker `/transit` 列表（強調還有多久）；無 live → 提示到站後搭下一班、不必硬卡班次。**不要**在 modal 寫死建議出發時間（`time` 只給時間線）
+5. 備註：**略過【路線】／【交通】**；剝除 Yahoo!／官方時刻表字樣；保留【上車】【下車】【車資】【備案】。**一律展開**（不摺疊）
 
-實時到站：僅 `liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`；modal 開啟時依 `refreshSec` 輪詢。
+實時到站：`liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`；modal 開啟時依 `refreshSec` 輪詢。
 
-給 LLM：`line` 可寫「谷町線」或「谷町線 1 號月台」；方向可寫在 note，但 App 小字**不會**顯示「往××」。note 裡寫清月台／出口；不必重複 from→to，也不必標 Yahoo! 來源。
+#### 訊息欄位（景點／店家／餐廳）
+
+Research 時查找店家是否公開 **WhatsApp／LINE／Messenger**（或類似一鍵傳訊管道）：
+
+| 欄位 | 填法 | App 行為 |
+|------|------|----------|
+| `whatsapp` | 含國碼電話（`+81…` 或純數字） | `wa.me` 開啟聊天 |
+| `line` | `@帳號` 或 `https://line.me/…` | LINE 傳訊 |
+| `messenger` | 粉專 username 或 `https://m.me/…` | Messenger |
+| 查不到 | 各欄填 `null`（勿瞎猜） | 不顯示按鈕 |
+
+#### 用餐欄位
+
+- `price`／`cost` → UI「預算」
+- `openHours` → UI「開放時間」
+- `note` 內列**推薦菜目**（簡潔條列即可）
+
+給 LLM：`line`（交通線路）可寫「谷町線」或含月台；方向放 note。店家 `line`（LINE 帳號）與交通 `transport.line` 是不同欄位。
 
 ---
 
@@ -425,7 +447,9 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 16. **不要**再填自由字串 `endpoint`（已廢止）；改用 `provider` + `stopId`
 17. **每個 `transport` 必須含 `stopCount` 鍵**（不可省略）：查得到填整數（下一站 = `1`）；查不到填 `null`，禁止亂填或省略欄位
 18. **`transport.line`**：以線路名為主（可含月台）；**避免**把「（往××）」「往××方向」當主要字串——方向放 note 即可
-19. **交通 `note`**：**不要**用【路線】重述 from／to／line／班次（App UI 已顯示）；**不要**寫「Yahoo! 乘換案內」「官方時刻表」等來源標註；優先【上車】（含**月台**）／【下車】／【車資】／【備案】
+19. **交通 `note`**：**不要**用【路線】重述 from／to／line／班次（App UI 已顯示）；**不要**寫「Yahoo! 乘換案內」「官方時刻表」等來源標註；優先【上車】（含**月台**）／【下車】／【車資】／【備案】；**不要**硬性規定必須搭某一班——`time` 僅作時間線參考
+20. **`whatsapp`／`line`／`messenger`**：research 景點／店家／餐廳時查找公開傳訊管道；查到就填、查不到填 `null`；禁止捏造
+21. **`food`**：務必填 `price`（或 `cost`）與 `openHours`（查不到填 `null`）；`note` 列推薦菜目
 
 ---
 
@@ -440,3 +464,4 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 - v1.6 — 2026-10-19 — 修正：`nearEventId` 應填真實行程 id（啟用附近備案），非一律 null
 - v1.7 — 2026-10-19 — Modal 四版面：交通／閘口／用餐／到訪
 - v1.8 — 2026-10-19 — 上車小字優先月台；note 去【路線】／Yahoo 來源；Grok 規則 18–19
+- v1.9 — 2026-10-19 — Modal 去時間；下一班候車；備註展開；WhatsApp／LINE／Messenger；用餐預算／開放時間
