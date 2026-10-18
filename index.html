@@ -103,58 +103,55 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .budget-expense { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .budget-expense:last-child { border-bottom: none; }
 
-/* Transport cards: compact by default so sights/food stay primary */
-.timeline-item.is-transport { padding-bottom: 6px; }
+/* Transport: one quiet line, no left accent, no duplicate title/route */
+.timeline-item.is-transport { padding-bottom: 4px; }
 .timeline-item.is-transport::before {
-  top: 14px;
+  top: 12px;
   width: 4px;
   height: 4px;
-  opacity: 0.35;
+  opacity: 0.3;
   background: var(--text-sub);
 }
 .card.card-transport {
-  padding: 8px 12px;
-  padding-right: 36px;
+  padding: 6px 8px;
+  padding-right: 34px;
   flex-direction: row;
   align-items: center;
   gap: 8px;
   background: transparent;
   box-shadow: none;
-  border-color: transparent;
-  border-left-width: 3px;
+  border: none;
+  border-left: none;
   min-height: 0;
 }
 .card.card-transport:active { transform: none; opacity: 0.75; }
 .card-transport .transport-icon {
   flex-shrink: 0;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: var(--text-sub);
   background: var(--bg-card);
   border: 1px solid var(--border);
 }
-.card-transport .transport-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.card-transport .card-time { margin: 0; font-size: 0.65rem; }
-.card-transport .transport-title {
+.card-transport .card-time {
   margin: 0;
-  font-size: 0.8rem;
-  font-weight: 600;
-  line-height: 1.25;
-  color: var(--text-sub);
-  font-family: var(--font-heading);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.card-transport .transport-route {
+  flex-shrink: 0;
   font-size: 0.65rem;
+  width: 2.6em;
+}
+.card-transport .transport-summary {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
   color: var(--text-sub);
-  opacity: 0.85;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -163,13 +160,14 @@ main { flex: 1; overflow-y: hidden; position: relative; }
   flex-shrink: 0;
   font-size: 0.65rem;
   color: var(--text-sub);
+  opacity: 0.85;
   font-variant-numeric: tabular-nums;
 }
 .card-transport .card-nav-btn {
   width: 26px;
   height: 26px;
   font-size: 0.75rem;
-  right: 8px;
+  right: 6px;
 }
 
 /* Weather - Modified for Auto Layout */
@@ -997,6 +995,36 @@ function escapeAttr(str) {
   return String(str || '').replace(/'/g, "&#39;");
 }
 
+/** Short place label for compact transport row */
+function shortenPlace(name) {
+  if (!name) return '';
+  let s = String(name)
+    .replace(/（[^）]*）/g, '')
+    .replace(/\([^)]*\)/g, '')
+    .replace(/國際機場|国際空港/g, '機場')
+    .replace(/機場第\s*\d+\s*航廈/g, '機場')
+    .replace(/(駅|站)$/g, '')
+    .trim();
+  if (s.length > 10) {
+    const parts = s.split(/[・／/\s]+/).filter(Boolean);
+    s = parts[parts.length - 1] || s;
+  }
+  if (s.length > 12) s = s.slice(0, 11) + '…';
+  return s;
+}
+
+/** One-line summary: prefer from→to; avoid repeating long titles */
+function transportSummaryText(item) {
+  const t = item.transport || {};
+  if (t.from && t.to) {
+    return `${shortenPlace(t.from)} → ${shortenPlace(t.to)}`;
+  }
+  const title = item.title || '';
+  if (title.includes('：')) return title.split('：').slice(1).join('：').trim() || title;
+  if (title.includes(':')) return title.split(':').slice(1).join(':').trim() || title;
+  return title;
+}
+
 // 13. 渲染時間軸
 function renderTimeline(dayKey) {
   const container = document.getElementById('timeline-container');
@@ -1017,23 +1045,18 @@ function renderTimeline(dayKey) {
     if (isTransport) {
       const t = item.transport || {};
       const icon = transportIconClass(t.mode);
-      const route = (t.from && t.to)
-        ? `${escapeAttr(t.from)} → ${escapeAttr(t.to)}`
-        : '';
+      const summary = escapeAttr(transportSummaryText(item));
       const dur = t.durationMin != null ? `${t.durationMin}分` : '';
       const navBtn = item.address
         ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${escapeAttr(item.address)}')"><i class="fa-solid fa-location-arrow"></i></div>`
         : '';
 
       el.innerHTML = `
-        <div class="card card-transport" style="${colorStyle}" onclick='openModal(${safeData})' title="點擊查看交通詳情">
+        <div class="card card-transport" onclick='openModal(${safeData})' title="${escapeAttr(item.title)}">
           ${navBtn}
           <div class="transport-icon"><i class="fa-solid ${icon}"></i></div>
-          <div class="transport-body">
-            <span class="card-time">${item.time || '彈性'}</span>
-            <div class="transport-title">${escapeAttr(item.title)}</div>
-            ${route ? `<div class="transport-route">${route}</div>` : ''}
-          </div>
+          <span class="card-time">${item.time || '彈性'}</span>
+          <span class="transport-summary">${summary}</span>
           ${dur ? `<span class="transport-dur">${dur}</span>` : ''}
         </div>`;
       container.appendChild(el);
