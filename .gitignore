@@ -1,5 +1,2 @@
-# Planning notes stay on this machine.
-# GitHub Pages only needs the app files (index.html, config.js, and friends).
-# NOTES.md is the exception: the planning bot reads it from this repo.
-*.md
-!NOTES.md
+# Intentionally empty: planning markdown (preferences, schema, notes)
+# stays in the repo so the planning bot can read and update it.
