@@ -103,6 +103,73 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .budget-expense { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .budget-expense:last-child { border-bottom: none; }
 
+/* Transport: one quiet line, no left accent, no duplicate title/route */
+.timeline-item.is-transport { padding-bottom: 4px; }
+.timeline-item.is-transport::before {
+  top: 12px;
+  width: 4px;
+  height: 4px;
+  opacity: 0.3;
+  background: var(--text-sub);
+}
+.card.card-transport {
+  padding: 6px 8px;
+  padding-right: 34px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  border-left: none;
+  min-height: 0;
+}
+.card.card-transport:active { transform: none; opacity: 0.75; }
+.card-transport .transport-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: var(--text-sub);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+.card-transport .card-time {
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  width: 2.6em;
+}
+.card-transport .transport-summary {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-transport .transport-dur {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  color: var(--text-sub);
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+.card-transport .card-nav-btn {
+  width: 26px;
+  height: 26px;
+  font-size: 0.75rem;
+  right: 6px;
+}
+
 /* Weather - Modified for Auto Layout */
 .weather-main-card { background: var(--text-main); color: var(--bg-body); border-radius: 0; padding: 20px; margin: 0 15px 20px 15px; text-align: center; position: relative; overflow: hidden;}
 .weather-tag-badge { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); padding: 2px 8px; font-size: 0.6rem; border-radius: 10px; font-weight: 600; }
@@ -910,7 +977,55 @@ function selectDay(dayKey, chipEl) {
   if (document.getElementById('page-weather').classList.contains('active')) fetchWeather();
 }
 
-// 13. 渲染時間軸（核心改動）
+const TRANSPORT_ICONS = {
+  train: 'fa-train',
+  subway: 'fa-train-subway',
+  bus: 'fa-bus',
+  taxi: 'fa-taxi',
+  walk: 'fa-person-walking',
+  ferry: 'fa-ship',
+  flight: 'fa-plane'
+};
+
+function transportIconClass(mode) {
+  return TRANSPORT_ICONS[mode] || 'fa-route';
+}
+
+function escapeAttr(str) {
+  return String(str || '').replace(/'/g, "&#39;");
+}
+
+/** Short place label for compact transport row */
+function shortenPlace(name) {
+  if (!name) return '';
+  let s = String(name)
+    .replace(/（[^）]*）/g, '')
+    .replace(/\([^)]*\)/g, '')
+    .replace(/國際機場|国際空港/g, '機場')
+    .replace(/機場第\s*\d+\s*航廈/g, '機場')
+    .replace(/(駅|站)$/g, '')
+    .trim();
+  if (s.length > 10) {
+    const parts = s.split(/[・／/\s]+/).filter(Boolean);
+    s = parts[parts.length - 1] || s;
+  }
+  if (s.length > 12) s = s.slice(0, 11) + '…';
+  return s;
+}
+
+/** One-line summary: prefer from→to; avoid repeating long titles */
+function transportSummaryText(item) {
+  const t = item.transport || {};
+  if (t.from && t.to) {
+    return `${shortenPlace(t.from)} → ${shortenPlace(t.to)}`;
+  }
+  const title = item.title || '';
+  if (title.includes('：')) return title.split('：').slice(1).join('：').trim() || title;
+  if (title.includes(':')) return title.split(':').slice(1).join(':').trim() || title;
+  return title;
+}
+
+// 13. 渲染時間軸
 function renderTimeline(dayKey) {
   const container = document.getElementById('timeline-container');
   container.innerHTML = '';
@@ -919,17 +1034,39 @@ function renderTimeline(dayKey) {
 
   items.forEach(item => {
     const el = document.createElement('div');
-    el.className = 'timeline-item';
+    const isTransport = item.type === 'transport';
+    el.className = isTransport ? 'timeline-item is-transport' : 'timeline-item';
 
-    let tags = (item.tags || []).map(t => `<span class="card-tag">${t}</span>`).join('');
     const safeData = JSON.stringify(item).replace(/'/g, "&#39;");
-    const navBtn = item.address
-      ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${item.address}')"><i class="fa-solid fa-location-arrow"></i></div>`
-      : '';
-
     const city = getCityById(item.cityId);
     const borderColor = item.moodColor || (city && city.color) || null;
     const colorStyle = borderColor ? `border-left-color: ${borderColor};` : 'border-left-color: var(--accent);';
+
+    if (isTransport) {
+      const t = item.transport || {};
+      const icon = transportIconClass(t.mode);
+      const summary = escapeAttr(transportSummaryText(item));
+      const dur = t.durationMin != null ? `${t.durationMin}分` : '';
+      const navBtn = item.address
+        ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${escapeAttr(item.address)}')"><i class="fa-solid fa-location-arrow"></i></div>`
+        : '';
+
+      el.innerHTML = `
+        <div class="card card-transport" onclick='openModal(${safeData})' title="${escapeAttr(item.title)}">
+          ${navBtn}
+          <div class="transport-icon"><i class="fa-solid ${icon}"></i></div>
+          <span class="card-time">${item.time || '彈性'}</span>
+          <span class="transport-summary">${summary}</span>
+          ${dur ? `<span class="transport-dur">${dur}</span>` : ''}
+        </div>`;
+      container.appendChild(el);
+      return;
+    }
+
+    let tags = (item.tags || []).map(t => `<span class="card-tag">${t}</span>`).join('');
+    const navBtn = item.address
+      ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${escapeAttr(item.address)}')"><i class="fa-solid fa-location-arrow"></i></div>`
+      : '';
 
     const statusKey = item.status || 'pending';
     const statusLabel = STATUS_LABELS[statusKey] || statusKey;
@@ -939,13 +1076,6 @@ function renderTimeline(dayKey) {
       metaBits += `<span class="city-badge" style="background:${cityColor};">${city.name}</span>`;
     }
 
-    // 交通卡：多顯示 from → to
-    let transportLine = '';
-    if (item.type === 'transport' && item.transport) {
-      transportLine = `<div style="font-size:0.8rem; color:var(--text-sub); margin-bottom:4px;"><i class="fa-solid fa-arrow-right" style="font-size:0.7rem;"></i> ${item.transport.from} → ${item.transport.to}</div>`;
-    }
-
-    // 附近備案按鈕
     const relatedInspirations = INSPIRATIONS.filter(ins => ins.nearEventId === item.id);
     const inspBtn = relatedInspirations.length > 0
       ? `<div style="margin-top:8px;"><button class="btn-inspiration" onclick="event.stopPropagation(); jumpToInspiration('${item.id}')"><i class="fa-solid fa-lightbulb"></i> 附近備案 (${relatedInspirations.length})</button></div>`
@@ -957,7 +1087,6 @@ function renderTimeline(dayKey) {
         <span class="card-time">${item.time || '彈性'}</span>
         <div class="card-meta-row">${metaBits}</div>
         <h3 class="card-title">${item.title}</h3>
-        ${transportLine}
         <div class="tags">${tags}</div>
         ${inspBtn}
       </div>`;
