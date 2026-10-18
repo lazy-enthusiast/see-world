@@ -103,6 +103,17 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .budget-expense { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .budget-expense:last-child { border-bottom: none; }
 
+/* Live transit arrivals (modal) */
+.live-transit-box { margin: 15px 0; padding: 12px; border: 1px solid var(--border); background: var(--bg-body); display: none; }
+.live-transit-box.visible { display: block; }
+.live-transit-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.live-transit-status { font-size: 0.7rem; color: var(--text-sub); }
+.live-arrival-row { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.live-arrival-row:last-child { border-bottom: none; }
+.live-arrival-time { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 3em; }
+.live-arrival-dest { flex: 1; color: var(--text-main); }
+.live-arrival-meta { font-size: 0.75rem; color: var(--text-sub); white-space: nowrap; }
+
 /* Weather - Modified for Auto Layout */
 .weather-main-card { background: var(--text-main); color: var(--bg-body); border-radius: 0; padding: 20px; margin: 0 15px 20px 15px; text-align: center; position: relative; overflow: hidden;}
 .weather-tag-badge { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); padding: 2px 8px; font-size: 0.6rem; border-radius: 10px; font-weight: 600; }
@@ -382,6 +393,13 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
 <div><span class="modal-label">地址</span><span class="modal-value" id="modal-address-short" style="font-size:0.9rem;"></span></div>
 </div>
 <div class="modal-label">備註</div><div class="modal-note-box"><div id="modal-note" class="modal-note-content"></div></div>
+<div id="live-transit-box" class="live-transit-box">
+  <div class="live-transit-head">
+    <span class="modal-label" style="margin:0;">到站資訊</span>
+    <span id="live-transit-status" class="live-transit-status"></span>
+  </div>
+  <div id="live-transit-list"></div>
+</div>
 <div class="modal-actions" id="modal-actions"></div>
 </div>
 </div>
@@ -389,6 +407,10 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+// Transit Worker（殼固定；key 在 Cloudflare，不進 config.js）
+const TRANSIT_WORKER_URL = 'https://see-world-worker.davchan-clp.workers.dev/transit';
+let liveTransitTimer = null;
+
 // 1. 🎨 應用主題
 function applyTheme() {
   const root = document.documentElement;
@@ -846,6 +868,8 @@ function openModal(data) {
     actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="searchGmail('${data.title}')">🔍 搜尋預約信 (Gmail)</button>`;
   }
 
+  startLiveTransit(data);
+
   document.getElementById('detail-modal').classList.add('open');
 
   const miniMapContainer = document.getElementById('modal-mini-map');
@@ -871,8 +895,87 @@ function openModal(data) {
 }
 
 function closeModal() {
+  stopLiveTransit();
   document.getElementById('detail-modal').classList.remove('open');
   document.querySelector('.modal-content').style.transform = '';
+}
+
+function stopLiveTransit() {
+  if (liveTransitTimer) {
+    clearInterval(liveTransitTimer);
+    liveTransitTimer = null;
+  }
+  const box = document.getElementById('live-transit-box');
+  if (box) box.classList.remove('visible');
+}
+
+function startLiveTransit(data) {
+  stopLiveTransit();
+  const box = document.getElementById('live-transit-box');
+  const list = document.getElementById('live-transit-list');
+  const status = document.getElementById('live-transit-status');
+  if (!box || !list || !status) return;
+
+  const live = data && data.type === 'transport' && data.transport && data.transport.liveApi;
+  if (!live || !live.provider || !live.stopId) {
+    box.classList.remove('visible');
+    return;
+  }
+
+  box.classList.add('visible');
+  const refreshSec = Math.max(15, Number(live.refreshSec) || 60);
+
+  const load = () => fetchLiveTransit(live, list, status);
+  load();
+  liveTransitTimer = setInterval(load, refreshSec * 1000);
+}
+
+async function fetchLiveTransit(live, listEl, statusEl) {
+  statusEl.innerText = '更新中…';
+  listEl.innerHTML = '';
+  try {
+    const q = new URLSearchParams({
+      provider: live.provider,
+      stopId: live.stopId
+    });
+    if (live.lineId) q.set('lineId', live.lineId);
+    if (live.direction) q.set('direction', live.direction);
+
+    const res = await fetch(`${TRANSIT_WORKER_URL}?${q.toString()}`, { cache: 'no-store' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      const detail = data.detail || data.error || `HTTP ${res.status}`;
+      statusEl.innerText = '無法取得';
+      listEl.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">${detail}</div>`;
+      return;
+    }
+
+    const arrivals = Array.isArray(data.arrivals) ? data.arrivals : [];
+    const updated = data.updatedAt
+      ? new Date(data.updatedAt).toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit', hour12: false })
+      : '';
+    statusEl.innerText = updated ? `${data.provider} · ${updated}` : (data.provider || '');
+
+    if (arrivals.length === 0) {
+      listEl.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">目前無即將到站資料</div>`;
+      return;
+    }
+
+    listEl.innerHTML = arrivals.map(a => {
+      const meta = [
+        a.platform ? `月台 ${a.platform}` : null,
+        a.delayMin != null && a.delayMin > 0 ? `延誤 ${a.delayMin} 分` : null
+      ].filter(Boolean).join(' · ');
+      return `<div class="live-arrival-row">
+        <span class="live-arrival-time">${a.time || '--:--'}</span>
+        <span class="live-arrival-dest">${a.dest || '—'}</span>
+        <span class="live-arrival-meta">${meta}</span>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    statusEl.innerText = '離線';
+    listEl.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">網路錯誤，稍後再試</div>`;
+  }
 }
 document.getElementById('detail-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 

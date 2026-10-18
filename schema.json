@@ -197,10 +197,14 @@
                   "durationMin": { "type": ["integer", "null"] },
                   "liveApi": {
                     "type": ["object", "null"],
+                    "required": ["provider", "stopId"],
+                    "additionalProperties": false,
                     "properties": {
-                      "provider": { "type": "string" },
-                      "endpoint": { "type": "string" },
-                      "refreshSec": { "type": "integer" }
+                      "provider": { "enum": ["odpt", "mock"] },
+                      "stopId": { "type": "string", "minLength": 1 },
+                      "lineId": { "type": ["string", "null"] },
+                      "direction": { "type": ["string", "null"] },
+                      "refreshSec": { "type": ["integer", "null"], "minimum": 15 }
                     }
                   }
                 }
@@ -301,6 +305,16 @@
               }
             }
           }
+        }
+      }
+    },
+
+    "TRANSIT_CONFIG": {
+      "type": "object",
+      "properties": {
+        "providers": {
+          "type": "array",
+          "items": { "enum": ["odpt", "mock"] }
         }
       }
     }

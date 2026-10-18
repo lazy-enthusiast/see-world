@@ -108,6 +108,11 @@ const CITIES = [
   }
 ];
 
+// 本趟到站 provider 宣告（不含 API key；key 在 Cloudflare Worker）
+const TRANSIT_CONFIG = {
+  providers: ["odpt", "mock"]
+};
+
 // 5. ✈️ 航班與住宿
 const TRIP_INFO = {
   "visa": {
@@ -518,7 +523,13 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線",
         "durationMin": 11,
-        "liveApi": null
+        "liveApi": {
+          "provider": "mock",
+          "stopId": "demo-higashi-umeda",
+          "lineId": null,
+          "direction": null,
+          "refreshSec": 60
+        }
       }
     },
     {
@@ -1582,7 +1593,13 @@ const ITINERARY = {
         "operator": "大阪地鐵 Osaka Metro",
         "line": "谷町線",
         "durationMin": 1,
-        "liveApi": null
+        "liveApi": {
+          "provider": "odpt",
+          "stopId": "odpt.Station:OsakaMetro.Tanimachi.HigashiUmeda",
+          "lineId": null,
+          "direction": null,
+          "refreshSec": 60
+        }
       }
     },
     {

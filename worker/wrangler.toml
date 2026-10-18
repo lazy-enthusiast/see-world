@@ -1,0 +1,8 @@
+name = "see-world-worker"
+main = "index.js"
+compatibility_date = "2026-10-18"
+
+# Secrets (set via dashboard or `wrangler secret put`):
+# - TRANSIT_ODPT_KEY
+# - DEPLOY_SECRET (existing deploy)
+# - GITHUB_TOKEN (existing deploy)

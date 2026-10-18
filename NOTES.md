@@ -10,9 +10,10 @@
 
 一個**純前端的旅行 App**，加上一條**自動化部署 pipeline**。
 
-- **App**：顯示行程（單一 HTML 檔 + config.js）
+- **App 殼**：顯示行程（`index.html` + PWA）；跨旅行重用
+- **每趟只換**：`config.js`（主題、行程、公開的 `liveApi` 站碼）
 - **Grok Bot**：規劃行程、查機票、產出 config.js
-- **Worker**：接收 Grok Bot 的部署請求，寫入 GitHub
+- **Worker**：部署寫入 GitHub；另代理 `/transit` 實時到站（key 存在 Secrets）
 - **GitHub**：儲存 config.js，自動部署到 GitHub Pages
 
 ---
@@ -57,6 +58,35 @@ GitHub repo（lazy-enthusiast/see-world）
 **Grok Bot 需要知道的：**
 - Worker 網址
 - `X-Deploy-Secret` 的值（存在 Grok Bot 對話裡）
+- **不需要、也不應知道**任何交通 API key
+
+**Worker 的 transit secret：`TRANSIT_ODPT_KEY`**
+- 存在 Cloudflare 同上位置
+- 向 [developer.odpt.org](https://developer.odpt.org/) 申請
+- **絕不上 GitHub／config.js**
+- 原始碼與合併說明：repo 內 `worker/`（務必把 `/transit` **合併**進現有 Worker，勿裸取代而弄丟 `/deploy`）
+
+---
+
+## 實時到站（殼重用／只換 config）
+
+```
+App modal（有 liveApi）
+  → GET Worker /transit?provider=&stopId=
+  → Worker 用 Secrets 附 key 打上游（ODPT 等）
+  → 統一 JSON 回 App
+```
+
+| 跟旅行走（config.js） | 留在殼（不換旅行） |
+|----------------------|-------------------|
+| `transport.liveApi.provider` + `stopId` | `index.html` 到站 UI |
+| 可選 `TRANSIT_CONFIG.providers` | Worker `/transit` + Secrets |
+
+- `provider` 白名單見 `SCHEMA.md`（目前 `odpt`、`mock`）
+- 無可靠站碼 → `liveApi: null`（正常）
+- 新城市新資料商：加 Secret + SCHEMA 白名單 + Worker 分支（一次），之後只改 config
+
+App 內常數：`TRANSIT_WORKER_URL` → `https://see-world-worker.davchan-clp.workers.dev/transit`
 
 ---
 
@@ -107,11 +137,13 @@ Body:
 - `DAILY_EXTRAS`：每日購物清單
 - `BUDGET`：預算
 - `PHRASE_DATA`：常用短語
+- `TRANSIT_CONFIG`：本趟用到的到站 provider（可選、無 key）
 
 **關鍵規則**：
 - `DESTINATION.slug` 必填（全小寫、連字號分隔）
 - 交通要獨立成 `type: "transport"`
 - 每個 item 的 `id` 由程式生成，LLM 不編
+- `liveApi` 可 `null`；有填時禁止任何 key／token
 
 ---
 
@@ -149,6 +181,8 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 ### 想做的
 
 - [x] **Grok Bot 可自行產出 config.js 並經 Worker 部署／歸檔**（2026-10-18 已接上）
+- [ ] **把 `worker/` 的 `/transit` 合併進 Cloudflare 現有 Worker，並設定 `TRANSIT_ODPT_KEY`**
+- [ ] **請 Grok 為有把握的大阪地鐵點填真實 ODPT `stopId`（其餘維持 null）**
 - [ ] **實戰驗證：大阪二月行程產出品質**（含當地特殊活動、節奏是否夠緊）
 - [ ] **決定是否課金 Grok Bot / Cursor Pro**
   - 課金時機：真的要去旅行時
@@ -174,6 +208,7 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 | 2026-10-18 | 公開文件不再寫真實 Deploy Secret | 此 repo 公開，secret 只留密碼管理器／Bot 對話 |
 | 2026-10-18 | `schema.json` 為 Worker 機器契約；`SCHEMA.md` 為人／Bot 說明 | 避免雙份契約漂移 |
 | 2026-10-18 | App 補齊 BUDGET／CITIES／status 顯示；更新檢測加 hash fallback | 契約與畫面一致 |
+| 2026-10-18 | 實時到站：key 只在 Worker；config 只帶 provider+stopId；殼跨旅行重用 | 公開 repo + 只換 config.js |
 
 ---
 

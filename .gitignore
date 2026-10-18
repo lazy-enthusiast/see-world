@@ -1,2 +1,3 @@
-# Intentionally empty: planning markdown (preferences, schema, notes)
-# stays in the repo so the planning bot can read and update it.
+# Worker local secrets — never commit
+worker/.dev.vars
+worker/.wrangler/

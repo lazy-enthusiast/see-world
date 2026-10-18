@@ -26,6 +26,7 @@
 | `DAILY_EXTRAS` | 每日購物清單 | ✅ | ✅ |
 | `BUDGET` | 預算預估與實際花費 | ✅ | ✅（資訊頁） |
 | `PHRASE_DATA` | 常用短語 | ✅ | ✅ |
+| `TRANSIT_CONFIG` | 本趟用到的到站 provider 宣告（無 key） | ✅ | ❌（除錯用；殼不依賴） |
 
 ---
 
@@ -176,10 +177,41 @@ const ITINERARY = {
         operator: "JR West",
         line: "Haruka",
         durationMin: 75,
-        liveApi: null
+        liveApi: null   // 或見下方 liveApi 形狀；無可靠 ID 時保持 null
       }
     }
   ]
+};
+```
+
+### `transport.liveApi`（實時到站；可為 `null`）
+
+**禁止**在 config 寫任何 `apiKey`／`token`／帶 key 的 URL。Key 只存在 Cloudflare Worker Secrets；App 殼跨旅行重用，每趟只換公開識別碼。
+
+```js
+liveApi: {
+  provider: "odpt",              // 必須在下方白名單
+  stopId: "odpt.Station:OsakaMetro.Midosuji.Umeda",
+  lineId: null,                  // 可選，依 provider
+  direction: null,               // 可選
+  refreshSec: 60                 // modal 開啟時輪詢間隔；預設 60
+}
+```
+
+#### provider 白名單（殼已實作／預留）
+
+| provider | 用途 | stopId 怎麼來 | Worker Secret |
+|----------|------|---------------|---------------|
+| `odpt` | 日本公共交通開放資料中心（含大阪 Metro 等有上架者） | [ODPT 開發者／目錄](https://developer.odpt.org/) 查 `odpt.Station:…` | `TRANSIT_ODPT_KEY` |
+| `mock` | 僅 UI／離線測試，回傳假到站 | 任意字串即可 | 不需要 |
+
+之後新城市：先在 Worker 加 Secret + 程式分支，再把新 `provider` 名加入本表與 `schema.json`。
+
+### 可選頂層 `TRANSIT_CONFIG`
+
+```js
+const TRANSIT_CONFIG = {
+  providers: ["odpt"]   // 本趟實際會用到的 provider；仍不含 key
 };
 ```
 
@@ -188,6 +220,7 @@ const ITINERARY = {
 - **`from` / `to`（字串）為必填**
 - **`fromEventId` / `toEventId`（id）為可選**
 - LLM 生成時，id 欄位一律 `null`
+- **`liveApi`**：沒有真實站碼就填 `null`；有把握才填白名單內的 `provider` + `stopId`
 
 ### `type` 允許值
 
@@ -330,6 +363,14 @@ const PHRASE_DATA = [
 - Worker 寫入 `config.js` 時檔首必須有 `// buildTime: <時間>`
 - App 優先比對 buildTime；缺該行時比對檔案內容 hash
 
+### 交通 modal → 實時到站
+
+- 僅當 `type === "transport"` 且 `transport.liveApi` 非 `null` 時顯示「到站資訊」區塊
+- App 呼叫殼的 Worker：`GET /transit?provider=&stopId=&lineId=&direction=`（**不帶 key**）
+- 顯示統一形狀：`arrivals[{ time, dest, delayMin, platform }]`
+- 依 `refreshSec` 在 modal 開啟時輪詢；關閉 modal 停止
+- 失敗時顯示錯誤文案，不阻擋地址／備註
+
 ---
 
 ## LLM 生成規則
@@ -347,6 +388,9 @@ const PHRASE_DATA = [
 11. **交通的 `from` / `to` 必填字串；`fromEventId` / `toEventId` 一律 `null`**
 12. **`INSPIRATIONS` 的 `nearEventId` 一律 `null`**
 13. **金額一律用數字**，`price` 字串只用於純顯示
+14. **`liveApi` 預設 `null`**；僅在查到真實 `stopId` 時填寫；`provider` 必須在白名單
+15. **禁止**輸出 `apiKey`、`token`、`secret`、或把 key 拼進 URL／`endpoint`
+16. **不要**再填自由字串 `endpoint`（已廢止）；改用 `provider` + `stopId`
 
 ---
 
@@ -355,3 +399,4 @@ const PHRASE_DATA = [
 - v1.0 — 2026-09-27 — 初版
 - v1.1 — 2026-09-27 — `alternatives` 併入 `INSPIRATIONS`；`nearEventId`；`tag` 改情境
 - v1.2 — 2026-10-18 — 明訂 `schema.json` 為機器契約；補 App 支援矩陣（BUDGET／CITIES／status／更新檢測）
+- v1.3 — 2026-10-18 — `liveApi` 改為 provider+stopId；`TRANSIT_CONFIG`；禁止 key 進 config
