@@ -79,8 +79,11 @@ App modal（有 liveApi）
 
 | 跟旅行走（config.js） | 留在殼（不換旅行） |
 |----------------------|-------------------|
-| `transport.liveApi.provider` + `stopId` | `index.html` 到站 UI |
+| `transport.liveApi.provider` + `stopId` | `index.html` 候車／到站 UI |
+| `transport.stopCount`（幾站；不知則 null） | 交通 modal 行程摘要 |
 | 可選 `TRANSIT_CONFIG.providers` | Worker `/transit` + Secrets |
+
+交通 modal 層級：上車站 → 幾站／車程 → 候車（實時或建議班次）→ 票價／上車點 → 備註。
 
 - `provider` 白名單見 `SCHEMA.md`（目前 `odpt`、`mock`）
 - 無可靠站碼 → `liveApi: null`（正常）

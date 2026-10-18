@@ -177,12 +177,19 @@ const ITINERARY = {
         operator: "JR West",
         line: "Haruka",
         durationMin: 75,
+        stopCount: null,  // 上車到目的地要搭幾站；不知則 null
         liveApi: null   // 或見下方 liveApi 形狀；無可靠 ID 時保持 null
       }
     }
   ]
 };
 ```
+
+### `transport.stopCount`
+
+- 整數：從**上車站**搭到**目的站**要經過幾站（下一站 = `1`）
+- 不知道就填 `null`；App 有值才顯示「約 N 站」
+- LLM 應查乘換案內／官方，勿瞎猜
 
 ### `transport.liveApi`（實時到站；可為 `null`）
 
@@ -363,13 +370,21 @@ const PHRASE_DATA = [
 - Worker 寫入 `config.js` 時檔首必須有 `// buildTime: <時間>`
 - App 優先比對 buildTime；缺該行時比對檔案內容 hash
 
-### 交通 modal → 實時到站
+### 交通 modal（資訊密度優先、層級清楚）
 
-- 僅當 `type === "transport"` 且 `transport.liveApi` 非 `null` 時顯示「到站資訊」區塊
-- App 呼叫殼的 Worker：`GET /transit?provider=&stopId=&lineId=&direction=`（**不帶 key**）
-- 顯示統一形狀：`arrivals[{ time, dest, delayMin, platform }]`
-- 依 `refreshSec` 在 modal 開啟時輪詢；關閉 modal 停止
-- 失敗時顯示錯誤文案，不阻擋地址／備註
+顯示重點（依序）：
+
+1. **上車站**（`transport.from`）→ **目的站**（`transport.to`）
+2. **幾站／車程**：`stopCount`（有才顯示）、`durationMin`
+3. **候車／到站時刻**：有 `liveApi` 時顯示即將到站；並換算「約再等 N 分」；無 live 時可用行程 `time`／`openHours` 作建議班次
+4. 營運商、路線、票價、上車點地址（次要、單行）
+5. 備註（較短行距）
+
+實時到站：
+
+- 僅 `liveApi` 非 `null` 時打 Worker：`GET /transit?provider=&stopId=…`
+- 回傳 `arrivals[{ time, dest, delayMin, platform }]`
+- modal 開啟時依 `refreshSec` 輪詢；關閉即停
 
 ---
 
@@ -391,6 +406,7 @@ const PHRASE_DATA = [
 14. **`liveApi` 預設 `null`**；僅在查到真實 `stopId` 時填寫；`provider` 必須在白名單
 15. **禁止**輸出 `apiKey`、`token`、`secret`、或把 key 拼進 URL／`endpoint`
 16. **不要**再填自由字串 `endpoint`（已廢止）；改用 `provider` + `stopId`
+17. **`stopCount`**：查得到就填整數（下一站 = 1）；查不到填 `null`，禁止亂填
 
 ---
 
@@ -400,3 +416,4 @@ const PHRASE_DATA = [
 - v1.1 — 2026-09-27 — `alternatives` 併入 `INSPIRATIONS`；`nearEventId`；`tag` 改情境
 - v1.2 — 2026-10-18 — 明訂 `schema.json` 為機器契約；補 App 支援矩陣（BUDGET／CITIES／status／更新檢測）
 - v1.3 — 2026-10-18 — `liveApi` 改為 provider+stopId；`TRANSIT_CONFIG`；禁止 key 進 config
+- v1.4 — 2026-10-18 — `stopCount`；交通 modal 強調上車站／候車／幾站

@@ -195,6 +195,11 @@
                   "operator": { "type": ["string", "null"] },
                   "line": { "type": ["string", "null"] },
                   "durationMin": { "type": ["integer", "null"] },
+                  "stopCount": {
+                    "type": ["integer", "null"],
+                    "minimum": 1,
+                    "description": "Boarding station to destination: number of stops to ride (inclusive of destination stop count as commonly stated, e.g. 1 = next station)"
+                  },
                   "liveApi": {
                     "type": ["object", "null"],
                     "required": ["provider", "stopId"],
