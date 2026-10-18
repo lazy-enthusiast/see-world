@@ -2,16 +2,23 @@
 
 App 殼跨旅行重用：API key **只**存在 Cloudflare Secrets，不進 `config.js`。
 
-現況正式 Worker：`https://see-world-worker.davchan-clp.workers.dev`（另有 `/deploy`）。
+| Worker | 網址 | 用途 |
+|--------|------|------|
+| `see-world-worker` | `https://see-world-worker.davchan-clp.workers.dev` | Grok `/deploy`（勿用本目錄蓋掉） |
+| `see-world-transit` | `https://see-world-transit.davchan-clp.workers.dev` | **到站** `/transit`（本目錄部署） |
 
-## 合併進現有 Worker（必要）
+App 的 `TRANSIT_WORKER_URL` 指向 `see-world-transit`。
 
-`index.js` 是**完整可部署的範本**，含 `/transit`；**沒有**你現有的 `/deploy` 實作。
+## 部署
 
-請擇一：
+```bash
+cd worker
+npx wrangler deploy
+```
 
-1. **建議**：把本目錄 `index.js` 裡的 `handleTransit`／`jsonResponse`／CORS 邏輯，合併進 Cloudflare 上現有的 `see-world-worker`（保留原有 `/deploy` 分支）。
-2. 或：在 Cloudflare 另建 Worker 只跑 transit，並改 App 裡的 `TRANSIT_WORKER_URL`。
+## （可選）合併進 see-world-worker
+
+若之後想合成單一 Worker：把本目錄邏輯併入 `see-world-worker`，並改回 App URL；合併前務必保留原有 `/deploy`。
 
 ## Secrets
 

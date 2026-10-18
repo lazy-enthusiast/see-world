@@ -1,8 +1,7 @@
-name = "see-world-worker"
+# Separate from see-world-worker (which owns /deploy) so we do not overwrite Grok deploy.
+name = "see-world-transit"
 main = "index.js"
 compatibility_date = "2026-10-18"
 
-# Secrets (set via dashboard or `wrangler secret put`):
+# Secrets (set via dashboard or `wrangler secret put TRANSIT_ODPT_KEY`):
 # - TRANSIT_ODPT_KEY
-# - DEPLOY_SECRET (existing deploy)
-# - GITHUB_TOKEN (existing deploy)

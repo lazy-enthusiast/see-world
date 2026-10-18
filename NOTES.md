@@ -86,7 +86,8 @@ App modal（有 liveApi）
 - 無可靠站碼 → `liveApi: null`（正常）
 - 新城市新資料商：加 Secret + SCHEMA 白名單 + Worker 分支（一次），之後只改 config
 
-App 內常數：`TRANSIT_WORKER_URL` → `https://see-world-worker.davchan-clp.workers.dev/transit`
+App 內常數：`TRANSIT_WORKER_URL` → `https://see-world-transit.davchan-clp.workers.dev/transit`  
+（獨立 Worker，與負責 `/deploy` 的 `see-world-worker` 分開，避免互相覆蓋）
 
 ---
 
