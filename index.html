@@ -1094,15 +1094,68 @@ const MODE_LABELS = {
   walk: '步行', ferry: '渡輪', flight: '航班'
 };
 
-/** Drop 【交通】 lines that mostly repeat route/schedule already shown in facts */
+/** Strip source attributions (Yahoo! 乗換案内 etc.) from a note line */
+function stripTransitAttribution(line) {
+  return String(line || '')
+    .replace(/[（(]\s*Yahoo!?[！!]?\s*乘換案內\s*[）)]/gi, '')
+    .replace(/[（(]\s*Yahoo!?[！!]?\s*乗換案内\s*[）)]/gi, '')
+    .replace(/[；;，,]?\s*Yahoo!?[！!]?\s*乘換案內/gi, '')
+    .replace(/[；;，,]?\s*Yahoo!?[！!]?\s*乗換案内/gi, '')
+    .replace(/[（(]\s*乗換案内\s*[）)]/g, '')
+    .replace(/\s*[；;]\s*$/, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/**
+ * Drop note lines that mostly repeat route / schedule already in the modal UI,
+ * and strip Yahoo!-style attributions.
+ */
 function compactTransportNote(note) {
   if (!note) return '';
   return String(note)
     .split(/\n+/)
-    .map(l => l.trim())
-    .filter(l => l && !/^【交通】/.test(l))
+    .map((l) => stripTransitAttribution(l.trim()))
+    .filter((l) => {
+      if (!l) return false;
+      if (/^【交通】/.test(l)) return false;
+      // 【路線】… usually restates from/to/line/time already shown above
+      if (/^【路線】/.test(l)) return false;
+      // Pure schedule restatement: "09:59 開 → 10:10 到…"
+      if (/^\d{1,2}:\d{2}\s*開\s*[→\-–]\s*\d{1,2}:\d{2}/.test(l)) return false;
+      return true;
+    })
     .join('\n')
     .trim();
+}
+
+/** "谷町線（往八尾南）" → "谷町線"；keep transfer chains cleaned per segment */
+function cleanLineName(line) {
+  if (!line) return '';
+  return String(line)
+    .replace(/[（(]\s*往[^）)]*[）)]/g, '')
+    .replace(/往[^→、，,／/\s]+方向/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s*[→\-–]\s*/g, ' → ')
+    .trim();
+}
+
+/** Prefer "1 號月台" / "ホーム 2" from note or address */
+function extractPlatform(text) {
+  if (!text) return null;
+  const s = String(text);
+  const patterns = [
+    /(\d+\s*[／/]\s*\d+\s*號月台)/,
+    /(\d+\s*號月台)/,
+    /(月台\s*\d+)/,
+    /(ホーム\s*\d+)/,
+    /(\d+\s*番[線ホーム台]?)/
+  ];
+  for (const re of patterns) {
+    const m = s.match(re);
+    if (m) return m[1].replace(/\s+/g, '');
+  }
+  return null;
 }
 
 function minutesUntilHHMM(hhmm) {
@@ -1126,14 +1179,29 @@ function formatWaitLabel(mins) {
   return `約再等 ${mins} 分`;
 }
 
-/** Small line under 上車站: line name or physical boarding hint (樓／出口／巴士站). */
+/**
+ * Small line under 上車站.
+ * Prefer platform (月台); never show direction like「（往八尾南）」.
+ * Fallback: cleaned line name, then place hint (樓／出口／巴士站).
+ */
 function boardingDetail(data, t) {
   const addr = String(data.addressLocal || data.address || '').trim();
-  const line = String(t.line || '').trim();
+  const note = String(data.note || '').trim();
+  const rawLine = String(t.line || '').trim();
+  const line = cleanLineName(rawLine);
   const from = String(t.from || '').trim();
-  const placeHint = /[樓层層]|出口|月台|ホーム|巴士站|バス停|巴士|閘口|番街|入口|地下/;
-  if (addr && placeHint.test(addr)) return addr;
+
+  const platform =
+    extractPlatform(note) ||
+    extractPlatform(addr) ||
+    extractPlatform(rawLine);
+
+  if (platform && line) return `${line} · ${platform}`;
+  if (platform) return platform;
   if (line) return line;
+
+  const placeHint = /[樓层層]|出口|巴士站|バス停|巴士|閘口|番街|入口|地下/;
+  if (addr && placeHint.test(addr)) return addr;
   if (addr && from && addr !== from && !addr.includes(from)) return addr;
   if (addr && addr !== from) return addr;
   return '';

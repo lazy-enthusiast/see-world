@@ -394,14 +394,14 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 #### 交通版面細節
 
 1. 類型標籤 = `mode`；標題 = **`前往{to}`**
-2. 上車站下方小字：優先 `address`／`addressLocal`（樓層、出口、巴士站）；否則 `line`
+2. 上車站下方小字：**優先月台**（從 `note`／`address` 擷取「N 號月台」）＋清理後的 `line`（**去掉**「往××」「（往八尾南）」等方向字）；無月台才只顯示線路名／上車點
 3. 車程只寫 `durationMin`／`stopCount`，不重複起訖站
-4. 有 `liveApi` → Worker `/transit` 到站列表；無 live → 只顯示「建議出發 `time`」（不再另開候車框）
-5. 備註略過純【交通】重複路線的行
+4. 有 `liveApi` → Worker `/transit` 到站列表；無 live → 只顯示「建議出發 `time`」
+5. 備註：**略過【路線】／【交通】**（與 UI 重複）；並剝除「Yahoo! 乘換案內」等資料來源字樣。保留【上車】【下車】【車資】【備案】等實用提示
 
 實時到站：僅 `liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`；modal 開啟時依 `refreshSec` 輪詢。
 
-給 LLM：交通填好 `from`／`to`／`line`／`durationMin`／`stopCount`／上車 `address`；閘口／用餐把實用細節寫進 `note`／`phone`（App 會依版面露出）。
+給 LLM：`line` 可寫「谷町線」或「谷町線 1 號月台」；方向可寫在 note，但 App 小字**不會**顯示「往××」。note 裡寫清月台／出口；不必重複 from→to，也不必標 Yahoo! 來源。
 
 ---
 
