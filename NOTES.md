@@ -37,7 +37,8 @@ GitHub repo（lazy-enthusiast/see-world）
 |------|------|
 | App | https://lazy-enthusiast.github.io/see-world/ |
 | GitHub repo | https://github.com/lazy-enthusiast/see-world |
-| Worker | https://see-world-worker.davchan-clp.workers.dev |
+| Deploy Worker | https://see-world-worker.davchan-clp.workers.dev（`/deploy`） |
+| Transit Worker | https://see-world-transit.davchan-clp.workers.dev（`/transit`） |
 | Cloudflare dashboard | https://dash.cloudflare.com |
 | xAI console | https://console.x.ai |
 
@@ -60,11 +61,12 @@ GitHub repo（lazy-enthusiast/see-world）
 - `X-Deploy-Secret` 的值（存在 Grok Bot 對話裡）
 - **不需要、也不應知道**任何交通 API key
 
-**Worker 的 transit secret：`TRANSIT_ODPT_KEY`**
-- 存在 Cloudflare 同上位置
+**Transit Worker 的 secret：`TRANSIT_ODPT_KEY`**
+- 存在 Cloudflare → Workers → **`see-world-transit`**（不是 deploy Worker）
 - 向 [developer.odpt.org](https://developer.odpt.org/) 申請
 - **絕不上 GitHub／config.js**
-- 原始碼與合併說明：repo 內 `worker/`（務必把 `/transit` **合併**進現有 Worker，勿裸取代而弄丟 `/deploy`）
+- 原始碼：repo 內 `worker/`（部署目標 `see-world-transit`）
+- 可選：之後把 `/transit` 合併進 `see-world-worker`，但**不可**用 transit 目錄裸蓋掉 `/deploy`
 
 ---
 
@@ -72,7 +74,7 @@ GitHub repo（lazy-enthusiast/see-world）
 
 ```
 App modal（有 liveApi）
-  → GET Worker /transit?provider=&stopId=
+  → GET see-world-transit /transit?provider=&stopId=
   → Worker 用 Secrets 附 key 打上游（ODPT 等）
   → 統一 JSON 回 App
 ```
@@ -80,17 +82,20 @@ App modal（有 liveApi）
 | 跟旅行走（config.js） | 留在殼（不換旅行） |
 |----------------------|-------------------|
 | `transport.liveApi.provider` + `stopId` | `index.html` 候車／到站 UI |
-| `transport.stopCount`（幾站；不知則 null） | 交通 modal 行程摘要 |
+| `transport.stopCount`（幾站；不知則 null） | modal「搭 N 站」 |
+| `transport.line`／上車用 `address` | 上車站下方小字 |
 | 可選 `TRANSIT_CONFIG.providers` | Worker `/transit` + Secrets |
 
-交通 modal 層級：上車站 → 幾站／車程 → 候車（實時或建議班次）→ 票價／上車點 → 備註。
+交通 UI（2026-10-19）：
+
+- **時間軸**：收合列；標題顯示「前往{to}」
+- **Modal**：上車站／目的地 → 上車小字 → 車程／站數（不重複起訖）→ 候車 → 票價／營運商 → 備註
 
 - `provider` 白名單見 `SCHEMA.md`（目前 `odpt`、`mock`）
 - 無可靠站碼 → `liveApi: null`（正常）
 - 新城市新資料商：加 Secret + SCHEMA 白名單 + Worker 分支（一次），之後只改 config
 
-App 內常數：`TRANSIT_WORKER_URL` → `https://see-world-transit.davchan-clp.workers.dev/transit`  
-（獨立 Worker，與負責 `/deploy` 的 `see-world-worker` 分開，避免互相覆蓋）
+App 內常數：`TRANSIT_WORKER_URL` → `https://see-world-transit.davchan-clp.workers.dev/transit`
 
 ---
 
@@ -185,7 +190,9 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 ### 想做的
 
 - [x] **Grok Bot 可自行產出 config.js 並經 Worker 部署／歸檔**（2026-10-18 已接上）
-- [ ] **把 `worker/` 的 `/transit` 合併進 Cloudflare 現有 Worker，並設定 `TRANSIT_ODPT_KEY`**
+- [x] **獨立 `see-world-transit` + App 到站／收合交通 UI**（2026-10-19 合進 main，PR #9）
+- [ ] **設定 `TRANSIT_ODPT_KEY`（可選；未設時 odpt 會 503，mock 仍可用）**
+- [ ] **（可選）把 `/transit` 合併進 `see-world-worker`，改 App URL**——目前維持雙 Worker 較安全
 - [ ] **請 Grok 為有把握的大阪地鐵點填真實 ODPT `stopId`（其餘維持 null）**
 - [ ] **實戰驗證：大阪二月行程產出品質**（含當地特殊活動、節奏是否夠緊）
 - [ ] **決定是否課金 Grok Bot / Cursor Pro**
@@ -213,6 +220,8 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 | 2026-10-18 | `schema.json` 為 Worker 機器契約；`SCHEMA.md` 為人／Bot 說明 | 避免雙份契約漂移 |
 | 2026-10-18 | App 補齊 BUDGET／CITIES／status 顯示；更新檢測加 hash fallback | 契約與畫面一致 |
 | 2026-10-18 | 實時到站：key 只在 Worker；config 只帶 provider+stopId；殼跨旅行重用 | 公開 repo + 只換 config.js |
+| 2026-10-18 | Transit 用獨立 Worker `see-world-transit`，不蓋掉 deploy | 避免 wrangler 覆蓋 `/deploy` |
+| 2026-10-19 | 交通列收合；modal「前往」+ 上車小字、車程不重複起訖 | 密度高但不吵（PR #8／#9） |
 
 ---
 
@@ -239,4 +248,4 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 
 ---
 
-*最後更新：2026-10-18*
+*最後更新：2026-10-19*
