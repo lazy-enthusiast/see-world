@@ -147,15 +147,19 @@ const ITINERARY = {
       type: "arrival",          // 見下方 type 表
       title: "抵達關西機場",
       cityId: "osaka",
-      address: "Kansai Airport",
-      addressLocal: null,
+      address: "Kansai Airport",           // Latin／英文簡稱或可讀地址
+      addressLocal: "大阪府泉佐野市泉州空港北1 関西国際空港 第1ターミナル", // 當地語詳細地址（Maps 優先）
       coords: [34.4347, 135.2329],
       tags: ["入境"],
       moodColor: "#333333",
       note: "...",
       phone: null,
+      whatsapp: null,           // 國碼電話；App → wa.me（查不到填 null）
+      line: null,               // @id 或 https://line.me/…（查不到填 null）
+      messenger: null,          // m.me 帳號或 URL（查不到填 null）
       openHours: null,
       price: null,
+      website: null,            // 評論 App／官網 URL（用餐 modal「App」＋跳轉提示）；勿寫進 note
       cost: { amount: 0, currency: "JPY", category: "other" },
       status: "confirmed",      // confirmed | pending | wishlist
       source: "user"            // user | ai | ai-edited
@@ -345,11 +349,21 @@ const PHRASE_DATA = [
 
 ## UI 行為規範
 
+### `address`／`addressLocal`（Maps 與顯示）
+
+| 欄位 | 用途 |
+|------|------|
+| `address` | Latin／英文可讀地址或簡稱 |
+| `addressLocal` | **當地語詳細地址**（日文漢字地址、樓層、のりば等）— Google Maps 導航與 modal「地址」**優先用此欄**；無則退回 `address` |
+
+時間軸非交通卡右側地圖 icon、modal 地址列／地圖按鈕、交通 modal 上車點地圖：皆 `addressLocal || address`。
+
 ### 行程卡片
 
 - 左側色條：優先 `moodColor`；若無，且 `cityId` 對得上 `CITIES[].id`，用該城 `color`；再否則用主題 accent
 - 若有 `cityId` 且對得到城市：顯示城市名稱小標籤
 - `status` 徽章：`confirmed` → 已確認；`pending` → 待定；`wishlist` → 願望（`confirmed` 可較低調）
+- **時間軸標題**：顯示時剝除括號內當地語名稱（`Foo（バー）`／`Foo (バー)` → `Foo`）；**modal 標題保留完整 `title`**（可含日文括號）
 - 若某個 `ITINERARY.items` 有 `INSPIRATIONS` 指向它（`nearEventId === item.id`），
   則在該卡片下方顯示一個小按鈕：`💡 附近備案 (N)`
 - 點按鈕 → 切換到「靈感」tab → 篩選 `nearEventId` 相符的卡片 → 第一個 `scrollIntoView` + 加 `.highlight` class（背景短暫變色）
@@ -380,25 +394,49 @@ const PHRASE_DATA = [
 - 顯示標題優先為 **`前往{transport.to}`**（config 的 `title` 作 tooltip／後備）
 - 目的是讓主行程（景點／餐）更醒目；細節進 modal
 
-### 交通 modal（少重複、層級清楚）
+### Modal 四種任務版面（同一 bottom sheet）
 
-顯示重點（依序）：
+App 依 `type` 選版面（不是四個獨立 modal）：
 
-1. 類型標籤（`mode`）+ 標題 **`前往{to}`**
-2. **上車站**（`from`）→ **目的地**（`to`）
-   - 上車站下方**小字**：優先顯示實際上車點（`address`／`addressLocal` 含樓層、出口、巴士站等）；否則顯示 `line`
-3. **車程**：只寫 `durationMin`／`stopCount`（例如「車程約 11 分 · 搭 5 站」），**不**再重複起訖站
-4. **候車／到站**：有 `liveApi` 顯示即將到站 +「約再等 N 分」；無 live 時僅用 `time` 估候車
-5. 建議出發時刻、票價；營運商（`operator`）單行
-6. 備註（會略過純【交通】重複路線的行）
+| 版面 | `type` | 顯示重點 |
+|------|--------|----------|
+| **交通** | `transport` | `前往{to}`；上車站（地圖 icon）→ 目的地；車程／站數；**上車點下一班**（live 候車，不硬定班次）；票價／營運商。時間只在時間線，modal 不顯示建議出發。備註一律展開 |
+| **航班／閘口** | `arrival`、`departure` | **地址**（優先 `addressLocal`）＋地圖；**聯絡**（撥號＋WhatsApp／LINE／Messenger icon）；備註展開。時間在時間線。無預算欄 |
+| **用餐** | `food` | **地址**（優先 `addressLocal`）；**預算**欄；**開放時間**欄；**聯絡**＋**App**同列兩欄（`website`：依 host 顯示 Tabelog／OpenRice／host 等）；備註展開並列推薦菜；底部可「搜尋預約信」 |
+| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**（優先 `addressLocal`）；可選開放時間；**聯絡**（有 `website` 時與 **App** 同列兩欄）；`hotel` 可有的士卡＋Gmail |
 
-實時到站：
+時間線上的交通列**不**再顯示右側地圖 icon（地圖改在 modal 上車點）。
 
-- 僅 `liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`
-- 回傳 `arrivals[{ time, dest, delayMin, platform }]`
-- modal 開啟時依 `refreshSec` 輪詢；關閉即停
+#### 交通版面細節
 
-給 LLM 填交通時：`from`／`to`／`line`／`durationMin`／`stopCount`／有把握再填 `liveApi`；`address` 盡量寫清上車位置（出口／樓層／巴士站），App 會當小字顯示。
+1. 類型標籤 = `mode`；標題 = **`前往{to}`**
+2. 上車站下方小字：**優先月台**（從 `note`／`address` 擷取「N 號月台」）＋清理後的 `line`（**去掉**「往××」等方向字）；無月台才只顯示線路名／上車點
+3. 車程只寫 `durationMin`／`stopCount`，不重複起訖站
+4. **永遠**顯示「上車點下一班」區塊：有 `liveApi` → Worker `/transit` 列表（強調還有多久）；無 live → 提示到站後搭下一班、不必硬卡班次。**不要**在 modal 寫死建議出發時間（`time` 只給時間線）
+5. 備註：**略過【路線】／【交通】**；剝除 Yahoo!／官方時刻表字樣；保留【上車】【下車】【車資】【備案】。**一律展開**（不摺疊）
+
+實時到站：`liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`；modal 開啟時依 `refreshSec` 輪詢。
+
+#### 聯絡欄位（景點／店家／餐廳）
+
+Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LINE、Messenger**（或官方一鍵傳訊連結）。查到就填對應 schema 欄位；**禁止**把電話／傳訊帳號／連結塞進 `note`。
+
+| 欄位 | 填法 | App 行為（「聯絡」列） |
+|------|------|----------|
+| `phone` | 可撥打號碼 | 撥號 icon（可旁顯示號碼） |
+| `whatsapp` | 含國碼電話（`+81…` 或純數字） | WhatsApp icon → `wa.me` |
+| `line` | `@帳號` 或 `https://line.me/…` | LINE icon |
+| `messenger` | 粉專 username 或 `https://m.me/…` | Messenger icon |
+| 查不到 | 該欄填 `null`（勿瞎猜） | 不顯示該 icon |
+
+#### 用餐欄位
+
+- `price`／`cost` → UI「預算」
+- `openHours` → UI「開放時間」
+- `website` → UI 標題固定「**App**」；下方短文依 **URL host** 顯示 App 名或 host（例：`tabelog.com`→「Tabelog」；`openrice.com`→「OpenRice」；其他已知評論／訂位站類似；一般官網→ host；無法解析→「開啟網頁」）。與「聯絡」同列兩欄。點擊：Tabelog 優先 deep link／Intent，OpenRice 盡量走 App／https，其餘開網頁。**URL 只放 `website`，勿寫進 `note`**
+- `note`：**精簡**——列**推薦菜目**與必要實用提示即可；**不要**把評論站 URL、電話、WhatsApp／LINE／Messenger、長評分檔塞進 `note`
+
+給 LLM：`line`（交通線路）可寫「谷町線」或含月台；方向放 note。店家 `line`（LINE 帳號）與交通 `transport.line` 是不同欄位。
 
 ---
 
@@ -421,6 +459,13 @@ const PHRASE_DATA = [
 15. **禁止**輸出 `apiKey`、`token`、`secret`、或把 key 拼進 URL／`endpoint`
 16. **不要**再填自由字串 `endpoint`（已廢止）；改用 `provider` + `stopId`
 17. **每個 `transport` 必須含 `stopCount` 鍵**（不可省略）：查得到填整數（下一站 = `1`）；查不到填 `null`，禁止亂填或省略欄位
+18. **`transport.line`**：以線路名為主（可含月台）；**避免**把「（往××）」「往××方向」當主要字串——方向放 note 即可
+19. **交通 `note`**：**不要**用【路線】重述 from／to／line／班次（App UI 已顯示）；**不要**寫「Yahoo! 乘換案內」「官方時刻表」等來源標註；優先【上車】（含**月台**）／【下車】／【車資】／【備案】；**不要**硬性規定必須搭某一班——`time` 僅作時間線參考
+20. **`phone`／`whatsapp`／`line`／`messenger`**：research 景點／店家／餐廳時**查找**公開電話與傳訊管道；查到填欄位、查不到填 `null`；禁止捏造；**禁止**寫進 `note`
+21. **`food`**：務必填 `price`（或 `cost`）與 `openHours`（查不到填 `null`）；`note` 只列推薦菜／精簡實用提示
+22. **`addressLocal`**：景點／店家／酒店／上車站盡量填**當地語詳細地址**（給 Google Maps）；`address` 可放 Latin／英文。App 導航優先 `addressLocal`
+23. **`title`**：時間軸會剝掉括號當地語（如 `（マヅラ喫茶店）`）；日文店名可放括號內供 modal 顯示，或乾脆只寫中文／英文主標題、日文詳址放 `addressLocal`
+24. **`website`**：餐廳優先填當地評論／訂位 App URL（日本 → Tabelog；香港 → OpenRice；其餘依目的地常見站）或官網；查不到填 `null`。**禁止**把評論站／官網連結寫進 `note`——URL 只放 `website`（UI 顯示「App」＋ App 名或 host）
 
 ---
 
@@ -433,3 +478,9 @@ const PHRASE_DATA = [
 - v1.4 — 2026-10-18 — `stopCount`；交通 modal 強調上車站／候車／幾站
 - v1.5 — 2026-10-19 — 收合交通列／「前往」標題；modal 去重；上車小字用 line／address
 - v1.6 — 2026-10-19 — 修正：`nearEventId` 應填真實行程 id（啟用附近備案），非一律 null
+- v1.7 — 2026-10-19 — Modal 四版面：交通／閘口／用餐／到訪
+- v1.8 — 2026-10-19 — 上車小字優先月台；note 去【路線】／Yahoo 來源；Grok 規則 18–19
+- v1.9 — 2026-10-19 — Modal 去時間；下一班候車；備註展開；WhatsApp／LINE／Messenger；用餐預算／開放時間
+- v1.10 — 2026-10-19 — 時間軸標題去括號當地語；Maps／modal 地址優先 `addressLocal`
+- v1.11 — 2026-10-19 — `website` 用餐網址／Tabelog；Grok：note 勿塞評論站 URL
+- v1.12 — 2026-10-19 — 用餐「聯絡」合併電話＋傳訊；「App」列依 host 顯示跳轉目標；Grok research 聯絡欄位勿塞 note

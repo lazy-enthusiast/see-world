@@ -88,11 +88,19 @@ App modal（有 liveApi）
 
 交通 UI（2026-10-19）：
 
-- **時間軸**：收合列；標題顯示「前往{to}」
-- **Modal**：上車站／目的地 → 上車小字 → 車程／站數（不重複起訖）→ 候車 → 票價／營運商 → 備註
+- **時間軸**：收合列；標題「前往{to}」；時間在列上；**無**右側地圖 icon
+- **Modal**：上車站／目的地 → 上車小字 → 車程／站數 → **上車點下一班**（live 或彈性提示；不寫死班次）→ 票價／營運商 → 備註（一律展開）。時間不進 modal
+- 景點／店家／餐廳：`phone`／`whatsapp`／`line`／`messenger` → modal「**聯絡**」列（撥號＋傳訊 icon）；Grok research 填欄位，**勿**塞進 `note`
+- 用餐：`price`→預算、`openHours`→開放時間；`website`→「**App**」＋依 host 短提示（Tabelog／OpenRice／host 等）；`note` 只寫推薦菜／精簡實用提示——**勿**把評論站 URL／聯絡方式塞進 `note`
+
+顯示／導航（2026-10-19）：
+
+- **時間軸標題**：剝除括號當地語（`Madura 喫茶店（マヅラ喫茶店）` → `Madura 喫茶店`）；modal 標題仍用完整 `title`
+- **Maps**：非交通卡右側 icon、modal「地址」、交通上車點地圖 → 皆優先 `addressLocal`，否則 `address`
+- **用餐 `website`**：標題固定「App」；`tabelog.com`→「Tabelog」（Intent／`tabelog://`）；`openrice.com`→「OpenRice」（Intent／https）；其他已知站類似；其餘顯示 host
 
 - `provider` 白名單見 `SCHEMA.md`（目前 `odpt`、`mock`）
-- 無可靠站碼 → `liveApi: null`（正常）
+- 無可靠站碼 → `liveApi: null`（正常；仍顯示彈性搭乘提示）
 - 新城市新資料商：加 Secret + SCHEMA 白名單 + Worker 分支（一次），之後只改 config
 
 App 內常數：`TRANSIT_WORKER_URL` → `https://see-world-transit.davchan-clp.workers.dev/transit`

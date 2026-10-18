@@ -172,8 +172,24 @@
               "moodColor": { "type": ["string", "null"] },
               "note": { "type": ["string", "null"] },
               "phone": { "type": ["string", "null"] },
+              "whatsapp": {
+                "type": ["string", "null"],
+                "description": "WhatsApp number with country code (digits or +…); App opens wa.me"
+              },
+              "line": {
+                "type": ["string", "null"],
+                "description": "LINE official account id (@xxx) or https://line.me/… URL"
+              },
+              "messenger": {
+                "type": ["string", "null"],
+                "description": "Facebook Messenger page username or https://m.me/… URL"
+              },
               "openHours": { "type": ["string", "null"] },
               "price": { "type": ["string", "null"] },
+              "website": {
+                "type": ["string", "null"],
+                "description": "Review-app or official page URL (Tabelog JP, OpenRice HK, etc.). Food modal label is App + app name or host. Do not put this URL in note."
+              },
               "cost": {
                 "type": ["object", "null"],
                 "properties": {
@@ -243,6 +259,16 @@
             ]
           },
           "nearEventId": { "type": ["string", "null"] },
+          "phone": { "type": ["string", "null"] },
+          "whatsapp": { "type": ["string", "null"] },
+          "line": { "type": ["string", "null"] },
+          "messenger": { "type": ["string", "null"] },
+          "openHours": { "type": ["string", "null"] },
+          "price": { "type": ["string", "null"] },
+          "website": {
+            "type": ["string", "null"],
+            "description": "Review-app or official page URL (Tabelog JP, OpenRice HK, etc.). Do not put this URL in note."
+          },
           "status": { "enum": ["wishlist", "done", "skipped"] },
           "source": { "enum": ["user", "ai", "ai-edited"] }
         }

@@ -114,16 +114,16 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .budget-expense { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .budget-expense:last-child { border-bottom: none; }
 
-/* Live transit arrivals (modal) */
-.live-transit-box { margin: 15px 0; padding: 12px; border: 1px solid var(--border); background: var(--bg-body); display: none; }
+/* Live transit arrivals (modal) — visibility base; spacing in transport section */
+.live-transit-box { display: none; }
 .live-transit-box.visible { display: block; }
 .live-transit-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.live-transit-status { font-size: 0.7rem; color: var(--text-sub); }
-.live-arrival-row { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.live-transit-status { font-size: 0.75rem; color: var(--text-sub); }
+.live-arrival-row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; border-bottom: 1px solid var(--border); }
 .live-arrival-row:last-child { border-bottom: none; }
 .live-arrival-time { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 3em; }
 .live-arrival-dest { flex: 1; color: var(--text-main); }
-.live-arrival-meta { font-size: 0.75rem; color: var(--text-sub); white-space: nowrap; }
+.live-arrival-meta { font-size: 0.8rem; color: var(--text-sub); white-space: nowrap; }
 
 /* Transport: one quiet line, no left accent, no duplicate title/route */
 .timeline-item.is-transport { padding-bottom: 4px; }
@@ -292,13 +292,124 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .modal-handle-container { width: 100%; height: 25px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; touch-action: none; cursor: grab; }
 .modal-handle { width: 36px; height: 4px; background: #DDDDDD; border-radius: 10px; }
 .modal-body { padding: 0 25px 25px 25px; }
-.modal-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
-.modal-label { font-size: 0.65rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 6px; font-weight: 700; }
-.modal-value { font-size: 0.95rem; font-weight: 400; color: var(--text-main); font-family: var(--font-body); }
-.modal-note-box { background: var(--bg-body); padding: 20px; border-radius: 0; margin: 15px 0; border: 1px solid var(--border); font-size: 0.9rem; line-height: 1.7; color: var(--text-main); white-space: pre-line; }
+.modal-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 8px 0 12px 0;
+}
+.modal-info-grid:empty { display: none; }
+.modal-field { min-width: 0; }
+.modal-field-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: start;
+  min-width: 0;
+}
+.modal-place-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.modal-place-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-main);
+  font-family: var(--font-heading);
+}
+.modal-field-value {
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-main);
+}
+.modal-phone-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.modal-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.modal-contact-phone {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.modal-website-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.modal-website-link {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-all;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font-family: inherit;
+}
+.modal-msg-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.tx-map-btn, .tx-call-btn, .tx-msg-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-body);
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0;
+  text-decoration: none;
+}
+.tx-msg-btn.is-wa { color: #25D366; }
+.tx-msg-btn.is-line { color: #06C755; }
+.tx-map-btn:active, .tx-call-btn:active, .tx-msg-btn:active { opacity: 0.75; transform: scale(0.96); }
+.modal-label { font-size: 0.7rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; font-weight: 700; }
+.modal-value { font-size: 1rem; font-weight: 500; color: var(--text-main); font-family: var(--font-body); line-height: 1.4; }
+.modal-note-box {
+  background: var(--bg-body);
+  padding: 16px;
+  border-radius: 0;
+  margin: 12px 0 8px 0;
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-main);
+  white-space: pre-line;
+}
 .btn-action { width: 100%; padding: 16px; border-radius: 0; border: none; font-weight: 600; cursor: pointer; font-size: 0.85rem; text-align: center; margin-bottom:10px; text-transform: uppercase; letter-spacing: 1px; }
 .btn-black { background: var(--accent); color: var(--accent-text); }
 .btn-outline { background: var(--bg-card); border: 1px solid var(--text-main); color: var(--text-main); }
+.modal-actions:empty { display: none; }
 
 /* 🔧 FIX #1: 補上小地圖容器的高度，否則 Leaflet 會塌陷成 0px 而不顯示 */
 #modal-mini-map { width: 100%; height: 180px; z-index: 1; background: var(--bg-body); }
@@ -312,74 +423,59 @@ main { flex: 1; overflow-y: hidden; position: relative; }
   text-overflow: ellipsis;
 }
 
-/* Transport modal: board · wait · stops */
+/* Transport modal: board · wait · duration */
 .modal-transport-block { display: none; margin: 4px 0 10px 0; }
 .modal-transport-block.visible { display: block; }
 .tx-route {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  gap: 8px;
+  gap: 10px;
   align-items: start;
-  padding: 8px 0 10px 0;
+  padding: 4px 0 12px 0;
   border-bottom: 1px solid var(--border);
 }
-.tx-stop-label { font-size: 0.6rem; color: var(--text-sub); letter-spacing: 0.5px; margin-bottom: 2px; text-transform: uppercase; font-weight: 700; }
-.tx-stop-name { font-size: 1.05rem; font-weight: 700; font-family: var(--font-heading); line-height: 1.25; color: var(--text-main); }
+.tx-stop-label { font-size: 0.7rem; color: var(--text-sub); letter-spacing: 0.5px; margin-bottom: 4px; text-transform: uppercase; font-weight: 700; }
+.tx-stop-name-row { display: flex; align-items: flex-start; gap: 8px; }
+.tx-stop-name { flex: 1; min-width: 0; font-size: 1.2rem; font-weight: 700; font-family: var(--font-heading); line-height: 1.25; color: var(--text-main); }
 .tx-stop-detail {
   display: none;
-  margin-top: 3px;
-  font-size: 0.72rem;
+  margin-top: 4px;
+  font-size: 0.85rem;
   font-weight: 500;
-  line-height: 1.35;
+  line-height: 1.4;
   color: var(--text-sub);
 }
 .tx-stop-detail.visible { display: block; }
-.tx-route-arrow { color: var(--text-sub); padding-top: 1.15rem; font-size: 0.85rem; }
+.tx-from-map { display: none; }
+.tx-from-map.visible { display: inline-flex; }
+.tx-route-arrow { color: var(--text-sub); padding-top: 1.35rem; font-size: 0.95rem; }
 .tx-ride {
   display: none;
-  margin: 8px 0 0 0;
+  margin: 12px 0 0 0;
   padding: 0;
-  font-size: 0.88rem;
   line-height: 1.4;
   color: var(--text-main);
 }
 .tx-ride.visible { display: block; }
-.tx-ride-main { font-weight: 600; font-size: 0.88rem; }
+.tx-ride-main { font-weight: 600; font-size: 1rem; }
 .tx-ride-main b { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
-.tx-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 10px;
-  padding: 8px 0 2px 0;
-  font-size: 0.78rem;
+.tx-meta {
+  display: none;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  line-height: 1.45;
   color: var(--text-main);
 }
-.tx-fact {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
-  padding: 2px 0;
-}
-.tx-fact b { font-variant-numeric: tabular-nums; font-weight: 700; }
-.tx-fact-sep { color: var(--border); }
-.tx-subline { font-size: 0.72rem; color: var(--text-sub); line-height: 1.4; margin-top: 4px; }
-.modal-note-box.is-compact { padding: 12px 14px; margin: 10px 0; font-size: 0.82rem; line-height: 1.55; }
+.tx-meta.visible { display: block; }
+.tx-meta b { font-variant-numeric: tabular-nums; }
+.tx-meta .tx-meta-sub { color: var(--text-sub); font-size: 0.85rem; margin-top: 2px; }
+.modal-note-box.is-compact { padding: 12px 14px; margin: 10px 0; font-size: 0.88rem; line-height: 1.55; }
 .modal-body.is-transport { padding-top: 0; }
-.live-transit-box { margin: 10px 0 0 0; padding: 10px 12px; }
-.live-arrival-row { padding: 5px 0; font-size: 0.85rem; }
+.live-transit-box { margin: 12px 0 0 0; padding: 12px; border: 1px solid var(--border); background: var(--bg-body); display: none; }
+.live-transit-box.visible { display: block; }
+.live-arrival-row { padding: 6px 0; font-size: 0.9rem; }
 .live-arrival-row.is-next { font-weight: 600; }
-.live-arrival-wait { font-size: 0.75rem; color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tx-schedule-fallback {
-  display: none;
-  margin: 10px 0 0 0;
-  padding: 10px 12px;
-  border: 1px dashed var(--border);
-  background: var(--bg-body);
-  font-size: 0.85rem;
-  line-height: 1.45;
-}
-.tx-schedule-fallback.visible { display: block; }
-.tx-schedule-fallback .tx-wait-num { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent); }
+.live-arrival-wait { font-size: 0.8rem; color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* Nav & Sidebar */
 nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--bg-card); opacity: 0.98; display: flex; justify-content: space-around; padding: 12px 0 calc(12px + var(--safe-bottom)) 0; border-top: 1px solid var(--border); z-index: 100; backdrop-filter: blur(10px); }
@@ -534,17 +630,15 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
 <div id="modal-mini-map"></div>
 <div class="modal-body" id="modal-body">
 <div id="modal-header-block" style="margin-bottom:15px;"><span class="modal-label" id="modal-type">Type</span><h2 id="modal-title" style="margin:0; font-size:1.4rem; font-family:var(--font-heading);">Title</h2></div>
-<div class="modal-info-grid" id="modal-info-grid">
-<div><span class="modal-label">時間</span><span class="modal-value" id="modal-time"></span></div>
-<div><span class="modal-label">預算</span><span class="modal-value" id="modal-price"></span></div>
-<div><span class="modal-label">開放時間</span><span class="modal-value" id="modal-open-hours"></span></div>
-<div><span class="modal-label">地址</span><span class="modal-value" id="modal-address-short" style="font-size:0.9rem;"></span></div>
-</div>
+<div class="modal-info-grid" id="modal-info-grid"></div>
 <div id="modal-transport-block" class="modal-transport-block">
   <div class="tx-route">
     <div>
       <div class="tx-stop-label">上車站</div>
-      <div class="tx-stop-name" id="tx-from">—</div>
+      <div class="tx-stop-name-row">
+        <div class="tx-stop-name" id="tx-from">—</div>
+        <button type="button" class="tx-map-btn tx-from-map" id="tx-from-map" title="Google Maps 導航" aria-label="上車點地圖"><i class="fa-solid fa-location-arrow"></i></button>
+      </div>
       <div class="tx-stop-detail" id="tx-from-detail"></div>
     </div>
     <div class="tx-route-arrow"><i class="fa-solid fa-arrow-right"></i></div>
@@ -558,16 +652,15 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
   </div>
   <div id="live-transit-box" class="live-transit-box">
     <div class="live-transit-head">
-      <span class="modal-label" style="margin:0;">候車／到站時刻</span>
+      <span class="modal-label" style="margin:0;">上車點下一班</span>
       <span id="live-transit-status" class="live-transit-status"></span>
     </div>
     <div id="live-transit-list"></div>
   </div>
-  <div id="tx-schedule-fallback" class="tx-schedule-fallback"></div>
-  <div class="tx-facts" id="tx-facts"></div>
-  <div class="tx-subline" id="tx-subline"></div>
+  <div class="tx-meta" id="tx-meta"></div>
 </div>
-<div class="modal-label" id="modal-note-label">備註</div><div class="modal-note-box" id="modal-note-box"><div id="modal-note" class="modal-note-content"></div></div>
+<div class="modal-label" id="modal-note-label">備註</div>
+<div class="modal-note-box" id="modal-note-box"><div id="modal-note" class="modal-note-content"></div></div>
 <div class="modal-actions" id="modal-actions"></div>
 </div>
 </div>
@@ -1001,20 +1094,308 @@ function callNumber(num) { window.location.href = `tel:${num}`; }
 function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => { showToast("已複製"); }); }
 function searchGmail(query) { window.open(`https://mail.google.com/mail/u/0/#search/${encodeURIComponent(query)}`, '_blank'); }
 
+/** Digits-only for wa.me (keep leading country code if present) */
+function whatsappDigits(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  return s.replace(/[^\d]/g, '');
+}
+
+function openWhatsAppChat(raw) {
+  const digits = whatsappDigits(raw);
+  if (!digits) return;
+  window.open(`https://wa.me/${digits}`, '_blank');
+}
+
+/** LINE: full https URL, or @id / id → line.me deep link */
+function openLineChat(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return;
+  if (/^https?:\/\//i.test(s)) {
+    window.open(s, '_blank');
+    return;
+  }
+  const id = s.startsWith('@') ? s : `@${s}`;
+  window.open(`https://line.me/R/ti/p/${encodeURIComponent(id)}`, '_blank');
+}
+
+function openMessengerChat(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return;
+  if (/^https?:\/\//i.test(s)) {
+    window.open(s, '_blank');
+    return;
+  }
+  const handle = s.replace(/^@/, '');
+  window.open(`https://m.me/${encodeURIComponent(handle)}`, '_blank');
+}
+
+/** Prefer schema `website`; accept legacy `link` from older configs */
+function itemWebsite(data) {
+  return String((data && (data.website || data.link)) || '').trim();
+}
+
+function normalizeWebsiteUrl(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  if (/^tabelog:\/\//i.test(s) || /^https?:\/\//i.test(s)) return s;
+  return `https://${s}`;
+}
+
+/** Soft trip region from CONFIG (DESTINATION); used only when host is ambiguous */
+function tripRegionHint() {
+  try {
+    const d = (typeof DESTINATION !== 'undefined' && DESTINATION) ? DESTINATION : null;
+    const tz = String((d && d.timezone) || '').toLowerCase();
+    const cur = String((d && (d.currency || d.currencyLabel)) || '').toLowerCase();
+    const name = String((d && d.name) || '');
+    if (tz.includes('tokyo') || cur === 'jpy' || /日本|大阪|東京|京都|奈良|神戶|神戸/.test(name)) return 'jp';
+    if (tz.includes('hong_kong') || cur === 'hkd' || /香港|Hong\s*Kong/i.test(name)) return 'hk';
+  } catch (_) { /* ignore */ }
+  return 'other';
+}
+
+function websiteHost(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  if (/^tabelog:\/\//i.test(s)) return 'tabelog.com';
+  try {
+    return new URL(normalizeWebsiteUrl(s)).hostname.toLowerCase();
+  } catch (_) {
+    const m = s.match(/(?:https?:\/\/)?([^\/\s?#]+)/i);
+    return m ? m[1].toLowerCase() : '';
+  }
+}
+
+function hostMatches(host, domain) {
+  const h = String(host || '').toLowerCase();
+  const d = String(domain || '').toLowerCase();
+  return h === d || h.endsWith('.' + d);
+}
+
+/**
+ * Detect review/booking app from URL host (primary).
+ * Returns { id, hint } for the「App」row subtitle.
+ */
+function detectAppDestination(raw) {
+  const host = websiteHost(raw);
+  const region = tripRegionHint();
+
+  if (/^tabelog:\/\//i.test(String(raw || '')) || hostMatches(host, 'tabelog.com')) {
+    return { id: 'tabelog', hint: 'Tabelog' };
+  }
+  if (hostMatches(host, 'openrice.com')) {
+    return { id: 'openrice', hint: 'OpenRice' };
+  }
+  if (hostMatches(host, 'hotpepper.jp') || hostMatches(host, 'hotpepper.com')) {
+    return { id: 'hotpepper', hint: 'ホットペッパー' };
+  }
+  if (hostMatches(host, 'gnavi.co.jp') || hostMatches(host, 'gurunavi.com')) {
+    return { id: 'gurunavi', hint: 'ぐるなび' };
+  }
+  if (hostMatches(host, 'retty.me')) {
+    return { id: 'retty', hint: 'Retty' };
+  }
+  if (hostMatches(host, 'ikyu.com')) {
+    return { id: 'ikyu', hint: '一休' };
+  }
+  if (hostMatches(host, 'yelp.com') || hostMatches(host, 'yelp.com.hk')) {
+    return { id: 'yelp', hint: 'Yelp' };
+  }
+  if (hostMatches(host, 'tripadvisor.com') || hostMatches(host, 'tripadvisor.com.hk')) {
+    return { id: 'tripadvisor', hint: 'Tripadvisor' };
+  }
+  if (hostMatches(host, 'booking.com')) {
+    return { id: 'booking', hint: 'Booking.com' };
+  }
+  if (hostMatches(host, 'tablecheck.com') || hostMatches(host, 'tablecheck.jp')) {
+    return { id: 'tablecheck', hint: 'TableCheck' };
+  }
+
+  // Soft region hint when host is blank / unparseable
+  if (!host && region === 'jp') return { id: 'web', hint: '開啟網頁' };
+  if (!host && region === 'hk') return { id: 'web', hint: '開啟網頁' };
+
+  if (host) {
+    const short = host.replace(/^www\./i, '');
+    return { id: 'web', hint: short };
+  }
+  return { id: 'web', hint: '開啟網頁' };
+}
+
+function isTabelogUrl(raw) {
+  return detectAppDestination(raw).id === 'tabelog';
+}
+
+/** Try custom-scheme deep link with https fallback if app doesn't open */
+function tryAppSchemeThenHttps(deep, httpsUrl) {
+  const started = Date.now();
+  const fallback = setTimeout(() => {
+    if (Date.now() - started < 1600 && !document.hidden) {
+      window.location.href = httpsUrl;
+    }
+  }, 900);
+  const clear = () => {
+    clearTimeout(fallback);
+    document.removeEventListener('visibilitychange', onVis);
+    window.removeEventListener('pagehide', clear);
+  };
+  const onVis = () => { if (document.hidden) clear(); };
+  document.addEventListener('visibilitychange', onVis);
+  window.addEventListener('pagehide', clear);
+  window.location.href = deep;
+}
+
+/** Open restaurant URL; Tabelog / OpenRice prefer app deep link, else https */
+function openWebsiteUrl(raw) {
+  const url = normalizeWebsiteUrl(raw);
+  if (!url) return;
+
+  if (/^tabelog:\/\//i.test(url)) {
+    window.location.href = url;
+    return;
+  }
+
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const dest = detectAppDestination(url);
+
+  if (dest.id === 'tabelog' && isMobile) {
+    if (isAndroid) {
+      try {
+        const u = new URL(url);
+        window.location.href =
+          `intent://${u.host}${u.pathname}${u.search}${u.hash}` +
+          `#Intent;scheme=https;package=jp.tabelog.android;S.browser_fallback_url=${encodeURIComponent(url)};end`;
+        return;
+      } catch (_) { /* fall through */ }
+    }
+    try {
+      const u = new URL(url);
+      tryAppSchemeThenHttps(`tabelog://${u.host}${u.pathname}${u.search}${u.hash}`, url);
+      return;
+    } catch (_) { /* fall through */ }
+    window.location.href = url;
+    return;
+  }
+
+  // OpenRice: universal / app links via https; Android Intent when possible
+  if (dest.id === 'openrice' && isMobile) {
+    if (isAndroid) {
+      try {
+        const u = new URL(url);
+        window.location.href =
+          `intent://${u.host}${u.pathname}${u.search}${u.hash}` +
+          `#Intent;scheme=https;package=com.openrice.android;S.browser_fallback_url=${encodeURIComponent(url)};end`;
+        return;
+      } catch (_) { /* fall through */ }
+    }
+    window.location.href = url;
+    return;
+  }
+
+  window.open(url, '_blank');
+}
+
+function websiteRowHtml(data) {
+  const raw = itemWebsite(data);
+  if (!raw) return '';
+  const dest = detectAppDestination(raw);
+  return `<div class="modal-field">
+    <div class="modal-label">App</div>
+    <div class="modal-website-row">
+      <button type="button" class="modal-website-link" onclick="openWebsiteUrl('${escapeAttr(raw)}')">${escapeHtml(dest.hint)}</button>
+      <button type="button" class="tx-map-btn" title="${escapeAttr(dest.hint)}" aria-label="${escapeAttr(dest.hint)}" onclick="openWebsiteUrl('${escapeAttr(raw)}')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+    </div>
+  </div>`;
+}
+
+/** 「聯絡」＋「App」同列兩欄（僅兩者皆有時）；缺一則回傳單欄 */
+function contactAppPairHtml(data) {
+  const contact = contactRowHtml(data);
+  const app = websiteRowHtml(data);
+  if (contact && app) {
+    return `<div class="modal-field-pair">${contact}${app}</div>`;
+  }
+  return contact || app;
+}
+
 const MODE_LABELS = {
   train: '火車', subway: '地鐵', bus: '巴士', taxi: '的士',
   walk: '步行', ferry: '渡輪', flight: '航班'
 };
 
-/** Drop 【交通】 lines that mostly repeat route/schedule already shown in facts */
+/** Strip source attributions (Yahoo! 乗換案内 / 官方時刻表 etc.) from a note line */
+function stripTransitAttribution(line) {
+  return String(line || '')
+    .replace(/[（(]\s*Yahoo!?[！!]?\s*乘換案內\s*[）)]/gi, '')
+    .replace(/[（(]\s*Yahoo!?[！!]?\s*乗換案内\s*[）)]/gi, '')
+    .replace(/[；;，,]?\s*Yahoo!?[！!]?\s*乘換案內/gi, '')
+    .replace(/[；;，,]?\s*Yahoo!?[！!]?\s*乗換案内/gi, '')
+    .replace(/[（(]\s*乗換案内\s*[）)]/g, '')
+    .replace(/[（(][^）)]*官方時刻表[^）)]*[）)]/g, '')
+    .replace(/[；;，,]?\s*[^；;\n（(]*官方時刻表[^；;\n）)]*/g, '')
+    .replace(/[（(]\s*直達[^）)]*[）)]/g, '')
+    .replace(/[（(]\s*[）)]/g, '')
+    .replace(/\s*[；;]\s*$/, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/**
+ * Drop note lines that mostly repeat route / schedule already in the modal UI,
+ * and strip Yahoo!-style attributions.
+ */
 function compactTransportNote(note) {
   if (!note) return '';
   return String(note)
     .split(/\n+/)
-    .map(l => l.trim())
-    .filter(l => l && !/^【交通】/.test(l))
+    .map((l) => stripTransitAttribution(l.trim()))
+    .filter((l) => {
+      if (!l) return false;
+      if (/^【交通】/.test(l)) return false;
+      // 【路線】… usually restates from/to/line/time already shown above
+      if (/^【路線】/.test(l)) return false;
+      // Pure schedule restatement: "09:59 開 → 10:10 到…"
+      if (/^\d{1,2}:\d{2}\s*開\s*[→\-–]\s*\d{1,2}:\d{2}/.test(l)) return false;
+      return true;
+    })
     .join('\n')
     .trim();
+}
+
+/** "谷町線（往八尾南）" → "谷町線"；keep transfer chains cleaned per segment */
+function cleanLineName(line) {
+  if (!line) return '';
+  return String(line)
+    .replace(/[（(]\s*往[^）)]*[）)]/g, '')
+    .replace(/往[^→、，,／/\s]+方向/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s*[→\-–]\s*/g, ' → ')
+    .trim();
+}
+
+/** Prefer "1 號月台" / "ホーム 2" from note or address */
+function extractPlatform(text) {
+  if (!text) return null;
+  const s = String(text);
+  const patterns = [
+    /(\d+\s*[／/]\s*\d+\s*號月台)/,
+    /(\d+\s*號月台)/,
+    /(月台\s*\d+)/,
+    /(ホーム\s*\d+)/,
+    /(\d+\s*番\s*(?:のりば|乗場|乗り場))/,
+    /(\d+\s*番[線ホーム台]?)/
+  ];
+  for (const re of patterns) {
+    const m = s.match(re);
+    if (m) {
+      let p = m[1].replace(/\s+/g, '');
+      if (/番(のりば|乗場|乗り場)/.test(p)) p = p.replace(/番.*/, ' 號月台');
+      return p;
+    }
+  }
+  return null;
 }
 
 function minutesUntilHHMM(hhmm) {
@@ -1038,17 +1419,162 @@ function formatWaitLabel(mins) {
   return `約再等 ${mins} 分`;
 }
 
-/** Small line under 上車站: line name or physical boarding hint (樓／出口／巴士站). */
+/**
+ * Small line under 上車站.
+ * Prefer platform (月台); never show direction like「（往八尾南）」.
+ * Fallback: cleaned line name, then place hint (樓／出口／巴士站).
+ */
 function boardingDetail(data, t) {
   const addr = String(data.addressLocal || data.address || '').trim();
-  const line = String(t.line || '').trim();
+  const note = String(data.note || '').trim();
+  const rawLine = String(t.line || '').trim();
+  const line = cleanLineName(rawLine);
   const from = String(t.from || '').trim();
-  const placeHint = /[樓层層]|出口|月台|ホーム|巴士站|バス停|巴士|閘口|番街|入口|地下/;
-  if (addr && placeHint.test(addr)) return addr;
+
+  const platform =
+    extractPlatform(note) ||
+    extractPlatform(addr) ||
+    extractPlatform(rawLine);
+
+  if (platform && line) return `${line} · ${platform}`;
+  if (platform) return platform;
   if (line) return line;
+
+  const placeHint = /[樓层層]|出口|巴士站|バス停|巴士|閘口|番街|入口|地下/;
+  if (addr && placeHint.test(addr)) return addr;
   if (addr && from && addr !== from && !addr.includes(from)) return addr;
   if (addr && addr !== from) return addr;
   return '';
+}
+
+const TYPE_LABELS = {
+  arrival: '抵達',
+  departure: '出發',
+  food: '用餐',
+  sight: '景點',
+  shop: '購物',
+  hotel: '住宿',
+  rest: '休息',
+  note: '備註',
+  transport: '交通'
+};
+
+function resolveModalLayout(type) {
+  if (type === 'transport') return 'transport';
+  if (type === 'arrival' || type === 'departure') return 'gate';
+  if (type === 'food') return 'food';
+  return 'place';
+}
+
+function escapeAttr(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;');
+}
+
+function escapeHtml(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function formatPriceLine(data) {
+  if (data.price && String(data.price).trim() && data.price !== '不適用' && data.price !== '-') {
+    return String(data.price).trim();
+  }
+  if (data.cost && data.cost.amount != null) {
+    return `${data.cost.amount} ${data.cost.currency || ''}`.trim();
+  }
+  return '';
+}
+
+/** Detailed local address for Maps / modal「地址」— prefer addressLocal */
+function detailedMapAddress(data) {
+  return String((data && (data.addressLocal || data.address)) || '').trim();
+}
+
+/** Timeline card title: strip parenthetical local names e.g. Foo（バー） / Foo (バー) */
+function timelineDisplayTitle(title) {
+  return String(title || '')
+    .replace(/（[^）]*）/g, '')
+    .replace(/\([^)]*\)/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([，,：:；;])/g, '$1')
+    .trim();
+}
+
+function placeRowHtml(address, mapQuery) {
+  if (!address && !mapQuery) return '';
+  const text = address || mapQuery;
+  const q = mapQuery || address;
+  return `<div class="modal-field">
+    <div class="modal-label">地址</div>
+    <div class="modal-place-row">
+      <div class="modal-place-text">${escapeHtml(text)}</div>
+      <button type="button" class="tx-map-btn" title="Google Maps 導航" aria-label="地圖導航" onclick="openMapQuery('${escapeAttr(q)}')"><i class="fa-solid fa-location-arrow"></i></button>
+    </div>
+  </div>`;
+}
+
+function fieldBlockHtml(label, value) {
+  const v = String(value || '').trim();
+  if (!v) return '';
+  return `<div class="modal-field">
+    <div class="modal-label">${escapeHtml(label)}</div>
+    <div class="modal-field-value">${escapeHtml(v)}</div>
+  </div>`;
+}
+
+/** 「聯絡」：撥號 + WhatsApp／LINE／Messenger icons（有值才顯示） */
+function contactRowHtml(data) {
+  const bits = [];
+  const phone = String((data && data.phone) || '').trim();
+  if (phone) {
+    bits.push(`<button type="button" class="tx-call-btn" title="撥打" aria-label="撥打電話" onclick="callNumber('${escapeAttr(phone)}')"><i class="fa-solid fa-phone"></i></button>`);
+  }
+  if (data.whatsapp && whatsappDigits(data.whatsapp)) {
+    bits.push(`<button type="button" class="tx-msg-btn is-wa" title="WhatsApp" aria-label="WhatsApp 傳訊息" onclick="openWhatsAppChat('${escapeAttr(data.whatsapp)}')"><i class="fa-brands fa-whatsapp"></i></button>`);
+  }
+  if (data.line) {
+    bits.push(`<button type="button" class="tx-msg-btn is-line" title="LINE" aria-label="LINE 傳訊息" onclick="openLineChat('${escapeAttr(data.line)}')"><i class="fa-brands fa-line"></i></button>`);
+  }
+  if (data.messenger) {
+    bits.push(`<button type="button" class="tx-msg-btn" title="Messenger" aria-label="Messenger 傳訊息" onclick="openMessengerChat('${escapeAttr(data.messenger)}')"><i class="fa-brands fa-facebook-messenger"></i></button>`);
+  }
+  if (!bits.length) return '';
+  const phoneText = phone
+    ? `<span class="modal-contact-phone">${escapeHtml(phone)}</span>`
+    : '';
+  return `<div class="modal-field">
+    <div class="modal-label">聯絡</div>
+    <div class="modal-contact-row">${bits.join('')}${phoneText}</div>
+  </div>`;
+}
+
+function fillLeanInfo(html) {
+  const grid = document.getElementById('modal-info-grid');
+  grid.innerHTML = html || '';
+  grid.style.display = html ? '' : 'none';
+}
+
+function setModalNote(text, { hideIfEmpty = true } = {}) {
+  const noteBox = document.getElementById('modal-note-box');
+  const noteLabel = document.getElementById('modal-note-label');
+  const body = String(text || '').trim();
+  noteBox.classList.remove('is-compact', 'is-collapsed');
+  if (!body && hideIfEmpty) {
+    noteLabel.style.display = 'none';
+    noteBox.style.display = 'none';
+    document.getElementById('modal-note').innerText = '';
+    return;
+  }
+  noteLabel.style.display = '';
+  noteBox.style.display = '';
+  document.getElementById('modal-note').innerText = body;
 }
 
 function fillTransportModal(data) {
@@ -1071,15 +1597,24 @@ function fillTransportModal(data) {
     fromDetail.classList.remove('visible');
   }
 
+  const mapBtn = document.getElementById('tx-from-map');
+  const mapAddr = detailedMapAddress(data);
+  if (mapAddr) {
+    mapBtn.classList.add('visible');
+    mapBtn.onclick = (e) => {
+      e.stopPropagation();
+      openMapQuery(mapAddr);
+    };
+  } else {
+    mapBtn.classList.remove('visible');
+    mapBtn.onclick = null;
+  }
+
   const ride = document.getElementById('tx-ride');
   const rideMain = document.getElementById('tx-ride-main');
   const rideBits = [];
-  if (t.durationMin != null) {
-    rideBits.push(`車程約 <b>${t.durationMin}</b> 分`);
-  }
-  if (t.stopCount != null && t.stopCount > 0) {
-    rideBits.push(`搭 <b>${t.stopCount}</b> 站`);
-  }
+  if (t.durationMin != null) rideBits.push(`車程約 <b>${t.durationMin}</b> 分`);
+  if (t.stopCount != null && t.stopCount > 0) rideBits.push(`搭 <b>${t.stopCount}</b> 站`);
   if (rideBits.length) {
     ride.classList.add('visible');
     rideMain.innerHTML = rideBits.join(' · ');
@@ -1088,127 +1623,120 @@ function fillTransportModal(data) {
     rideMain.innerHTML = '';
   }
 
-  const facts = [];
-  if (data.time) facts.push(`<span class="tx-fact"><b>${data.time}</b><span style="color:var(--text-sub)">建議出發</span></span>`);
-  if (data.price) facts.push(`<span class="tx-fact"><b>${data.price}</b></span>`);
+  const meta = document.getElementById('tx-meta');
+  const metaParts = [];
+  if (data.price) metaParts.push(escapeHtml(data.price));
   else if (data.cost && data.cost.amount != null) {
-    facts.push(`<span class="tx-fact"><b>${data.cost.amount} ${data.cost.currency || ''}</b></span>`);
+    metaParts.push(escapeHtml(`${data.cost.amount} ${data.cost.currency || ''}`.trim()));
   }
-  document.getElementById('tx-facts').innerHTML = facts.length
-    ? facts.join('<span class="tx-fact-sep">·</span>')
-    : '';
-
-  // Operator only — address/line already under 上車站
-  document.getElementById('tx-subline').innerText = t.operator || '';
-
-  const fallback = document.getElementById('tx-schedule-fallback');
-  const hasLive = t.liveApi && t.liveApi.provider && t.liveApi.stopId;
-  if (!hasLive && data.time) {
-    const waitMins = minutesUntilHHMM(data.time);
-    if (waitMins != null) {
-      fallback.innerHTML =
-        `<div class="modal-label" style="margin:0 0 4px 0;">候車參考</div>` +
-        `<div><span class="tx-wait-num">${formatWaitLabel(waitMins)}</span>` +
-        `<span style="color:var(--text-sub);font-size:0.78rem;">（相對建議出發 ${data.time}）</span></div>`;
-      fallback.classList.add('visible');
-    } else {
-      fallback.classList.remove('visible');
-      fallback.innerHTML = '';
-    }
+  if (metaParts.length || t.operator) {
+    meta.classList.add('visible');
+    meta.innerHTML =
+      (metaParts.length ? `<div>${metaParts.join(' · ')}</div>` : '') +
+      (t.operator ? `<div class="tx-meta-sub">${escapeHtml(t.operator)}</div>` : '');
   } else {
-    fallback.classList.remove('visible');
-    fallback.innerHTML = '';
+    meta.classList.remove('visible');
+    meta.innerHTML = '';
   }
 
-  const note = compactTransportNote(data.note);
-  const noteBox = document.getElementById('modal-note-box');
-  const noteLabel = document.getElementById('modal-note-label');
-  if (note) {
-    noteLabel.style.display = '';
-    noteBox.style.display = '';
-    noteBox.classList.add('is-compact');
-    document.getElementById('modal-note').innerText = note;
-  } else {
-    noteLabel.style.display = 'none';
-    noteBox.style.display = 'none';
-    document.getElementById('modal-note').innerText = '';
+  setModalNote(compactTransportNote(data.note));
+}
+
+function fillGateModal(data) {
+  document.getElementById('modal-type').innerText = TYPE_LABELS[data.type] || data.type;
+  document.getElementById('modal-title').innerText = data.title || '';
+  const place = detailedMapAddress(data);
+  let html = '';
+  html += placeRowHtml(place, place);
+  html += contactRowHtml(data);
+  fillLeanInfo(html);
+  setModalNote(data.note);
+}
+
+function fillFoodModal(data) {
+  document.getElementById('modal-type').innerText = TYPE_LABELS.food;
+  document.getElementById('modal-title').innerText = data.title || '';
+  const place = detailedMapAddress(data);
+  let html = '';
+  html += placeRowHtml(place, place);
+  html += fieldBlockHtml('預算', formatPriceLine(data));
+  html += fieldBlockHtml('開放時間', data.openHours);
+  html += contactAppPairHtml(data);
+  fillLeanInfo(html);
+  setModalNote(data.note);
+}
+
+function fillPlaceModal(data) {
+  document.getElementById('modal-type').innerText = TYPE_LABELS[data.type] || data.type || '行程';
+  document.getElementById('modal-title').innerText = data.title || '';
+  const place = detailedMapAddress(data);
+  let html = '';
+  html += placeRowHtml(place, place);
+  html += fieldBlockHtml('開放時間', data.openHours);
+  html += contactAppPairHtml(data);
+  fillLeanInfo(html);
+  setModalNote(data.note);
+}
+
+function fillModalActions(data, layout) {
+  const actionsContainer = document.getElementById('modal-actions');
+  actionsContainer.innerHTML = '';
+  const addr = detailedMapAddress(data);
+
+  // transport / gate: map + call are inline icons — no footer buttons
+  if (layout === 'transport' || layout === 'gate') return;
+
+  if (data.type === 'hotel' && addr) {
+    actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="showPhrase('${escapeAttr(addr)}', '請載我去這裡')">🚕 顯示的士卡</button>`;
+  }
+  if (data.type === 'food' || data.type === 'hotel') {
+    actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="searchGmail('${escapeAttr(data.title || '')}')">🔍 搜尋預約信 (Gmail)</button>`;
   }
 }
 
 // 11. Modal
 function openModal(data) {
   currentEventData = data;
-  const isTransport = data.type === 'transport';
+  const layout = resolveModalLayout(data.type);
   const infoGrid = document.getElementById('modal-info-grid');
   const txBlock = document.getElementById('modal-transport-block');
   const modalBody = document.getElementById('modal-body');
-  const noteBox = document.getElementById('modal-note-box');
-  const noteLabel = document.getElementById('modal-note-label');
   const headerBlock = document.getElementById('modal-header-block');
+  const titleEl = document.getElementById('modal-title');
 
-  const existingPhone = document.getElementById('dynamic-phone-row');
-  if (existingPhone) existingPhone.remove();
-
-  if (isTransport) {
+  if (layout === 'transport') {
     infoGrid.style.display = 'none';
+    infoGrid.innerHTML = '';
     txBlock.classList.add('visible');
     modalBody.classList.add('is-transport');
-    headerBlock.style.marginBottom = '6px';
-    document.getElementById('modal-title').style.fontSize = '1.15rem';
+    headerBlock.style.marginBottom = '8px';
+    titleEl.style.fontSize = '1.25rem';
     fillTransportModal(data);
   } else {
-    infoGrid.style.display = '';
     txBlock.classList.remove('visible');
     modalBody.classList.remove('is-transport');
-    headerBlock.style.marginBottom = '15px';
-    document.getElementById('modal-title').style.fontSize = '1.4rem';
-    noteLabel.style.display = '';
-    noteBox.style.display = '';
-    noteBox.classList.remove('is-compact');
-
-    document.getElementById('modal-title').innerText = data.title;
-    document.getElementById('modal-type').innerText = data.type || "Note";
-    document.getElementById('modal-time').innerText = data.time || "--:--";
-    document.getElementById('modal-price').innerText = data.price || "-";
-    document.getElementById('modal-open-hours').innerText = data.openHours || "待確認";
-    document.getElementById('modal-address-short').innerText = data.address || "";
-    document.getElementById('modal-note').innerText = data.note || "";
-
-    if (data.phone) {
-      const phoneRow = document.createElement('div');
-      phoneRow.id = 'dynamic-phone-row';
-      phoneRow.innerHTML = `<span class="modal-label">電話</span><div class="contact-container"><span class="modal-value" style="margin-right:10px;">${data.phone}</span><a href="javascript:void(0)" onclick="callNumber('${data.phone}')" class="btn-icon-sm" style="border:1px solid var(--border);"><i class="fa-solid fa-phone"></i></a></div>`;
-      infoGrid.appendChild(phoneRow);
-    }
+    headerBlock.style.marginBottom = '12px';
+    titleEl.style.fontSize = layout === 'gate' ? '1.25rem' : '1.35rem';
+    if (layout === 'gate') fillGateModal(data);
+    else if (layout === 'food') fillFoodModal(data);
+    else fillPlaceModal(data);
   }
 
-  const actionsContainer = document.getElementById('modal-actions');
-  actionsContainer.innerHTML = '';
-  const addr = data.addressLocal || data.address;
-  if (addr) {
-    if (isTransport) {
-      actionsContainer.innerHTML += `<button class="btn-action btn-black" onclick="openMapQuery('${data.address}')"><i class="fa-solid fa-location-arrow"></i> 出發點地圖</button>`;
-      actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="copyToClipboard('${addr}')"><i class="fa-regular fa-copy"></i> 複製地址</button>`;
-    } else {
-      actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="copyToClipboard('${addr}')"><i class="fa-regular fa-copy"></i> 複製地址</button>`;
-      actionsContainer.innerHTML += `<button class="btn-action btn-black" onclick="openMapQuery('${data.address}')"><i class="fa-solid fa-location-arrow"></i> Google Maps 導航</button>`;
-      if (data.type === 'hotel') {
-        actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="showPhrase('${addr}', '請載我去這裡')">🚕 顯示的士卡</button>`;
-      }
-    }
-  }
-  if (data.type === 'food' || data.type === 'hotel') {
-    actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="searchGmail('${data.title}')">🔍 搜尋預約信 (Gmail)</button>`;
-  }
-
+  fillModalActions(data, layout);
   startLiveTransit(data);
 
   document.getElementById('detail-modal').classList.add('open');
 
+  // Mini-map only for transport (context); other layouts use inline map icon to cut clutter
   const miniMapContainer = document.getElementById('modal-mini-map');
-  miniMapContainer.classList.toggle('is-compact', isTransport);
-  if (!data.coords && !data.address) {
+  const showMiniMap = layout === 'transport' && !!(data.coords || data.address);
+  miniMapContainer.classList.toggle('is-compact', true);
+  if (!showMiniMap) {
     miniMapContainer.style.display = 'none';
+    if (modalMap) {
+      modalMap.remove();
+      modalMap = null;
+    }
   } else {
     miniMapContainer.style.display = 'block';
     setTimeout(() => {
@@ -1250,15 +1778,21 @@ function startLiveTransit(data) {
   const status = document.getElementById('live-transit-status');
   if (!box || !list || !status) return;
 
-  const live = data && data.type === 'transport' && data.transport && data.transport.liveApi;
-  if (!live || !live.provider || !live.stopId) {
+  if (!data || data.type !== 'transport') {
     box.classList.remove('visible');
     return;
   }
 
+  const live = data.transport && data.transport.liveApi;
+  // Always surface「下一班還多久」for transport; never pin a fixed timetable train
   box.classList.add('visible');
-  const refreshSec = Math.max(15, Number(live.refreshSec) || 60);
+  if (!live || !live.provider || !live.stopId) {
+    status.innerText = '';
+    list.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">暫無實時到站——到站後依現場下一班搭乘即可，不必硬卡某一班。</div>`;
+    return;
+  }
 
+  const refreshSec = Math.max(15, Number(live.refreshSec) || 60);
   const load = () => fetchLiveTransit(live, list, status);
   load();
   liveTransitTimer = setInterval(load, refreshSec * 1000);
@@ -1363,10 +1897,6 @@ function transportIconClass(mode) {
   return TRANSPORT_ICONS[mode] || 'fa-route';
 }
 
-function escapeAttr(str) {
-  return String(str || '').replace(/'/g, "&#39;");
-}
-
 /** Short place label for compact transport row */
 function shortenPlace(name) {
   if (!name) return '';
@@ -1419,13 +1949,9 @@ function renderTimeline(dayKey) {
       const icon = transportIconClass(t.mode);
       const summary = escapeAttr(transportSummaryText(item));
       const dur = t.durationMin != null ? `${t.durationMin}分` : '';
-      const navBtn = item.address
-        ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${escapeAttr(item.address)}')"><i class="fa-solid fa-location-arrow"></i></div>`
-        : '';
 
       el.innerHTML = `
         <div class="card card-transport" onclick='openModal(${safeData})' title="${escapeAttr(item.title)}">
-          ${navBtn}
           <div class="transport-icon"><i class="fa-solid ${icon}"></i></div>
           <span class="card-time">${item.time || '彈性'}</span>
           <span class="transport-summary">${summary}</span>
@@ -1436,8 +1962,9 @@ function renderTimeline(dayKey) {
     }
 
     let tags = (item.tags || []).map(t => `<span class="card-tag">${t}</span>`).join('');
-    const navBtn = item.address
-      ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${escapeAttr(item.address)}')"><i class="fa-solid fa-location-arrow"></i></div>`
+    const mapQ = detailedMapAddress(item);
+    const navBtn = mapQ
+      ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${escapeAttr(mapQ)}')"><i class="fa-solid fa-location-arrow"></i></div>`
       : '';
 
     const statusKey = item.status || 'pending';
@@ -1454,12 +1981,13 @@ function renderTimeline(dayKey) {
       ? `<div style="margin-top:8px;"><button class="btn-inspiration" onclick="event.stopPropagation(); jumpToInspiration('${item.id}')"><i class="fa-solid fa-lightbulb"></i> 附近備案 (${relatedInspirations.length})</button></div>`
       : '';
 
+    const cardTitle = timelineDisplayTitle(item.title);
     el.innerHTML = `
       <div class="card" style="${colorStyle}" onclick='openModal(${safeData})'>
         ${navBtn}
         <span class="card-time">${item.time || '彈性'}</span>
         <div class="card-meta-row">${metaBits}</div>
-        <h3 class="card-title">${item.title}</h3>
+        <h3 class="card-title">${escapeHtml(cardTitle)}</h3>
         <div class="tags">${tags}</div>
         ${inspBtn}
       </div>`;
