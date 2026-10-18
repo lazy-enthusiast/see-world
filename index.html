@@ -92,6 +92,17 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .card-time { font-size: 0.7rem; color: var(--text-sub); font-weight: 600; margin-bottom: 4px; display: block; font-family: var(--font-body); letter-spacing: 0.5px; text-transform: uppercase;}
 .card-tag { font-size: 0.6rem; background: var(--bg-body); padding: 2px 6px; border-radius: 0; color: var(--text-sub); font-weight: 500; border: 1px solid var(--border); letter-spacing: 0.5px; }
 .card-meta-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; align-items: center; }
+.tx-card-route {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin: 0 0 6px 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--text-main);
+}
+.tx-card-stop-label { display: block; font-size: 0.58rem; color: var(--text-sub); letter-spacing: 0.4px; text-transform: uppercase; font-weight: 700; margin-bottom: 1px; }
+.tx-card-stop-name { font-weight: 600; }
 .status-badge { font-size: 0.55rem; padding: 2px 6px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid var(--border); }
 .status-badge.confirmed { color: var(--text-sub); background: var(--bg-body); }
 .status-badge.pending { color: var(--accent-text); background: var(--accent); border-color: var(--accent); }
@@ -960,7 +971,7 @@ function fillTransportModal(data) {
   const lineBit = t.line || '';
   document.getElementById('modal-type').innerText = lineBit ? `${modeLabel} · ${lineBit}` : modeLabel;
   document.getElementById('modal-title').innerText =
-    data.title || ((t.from && t.to) ? `${t.from} → ${t.to}` : '交通');
+    t.to ? `前往${t.to}` : (data.title || '交通');
 
   document.getElementById('tx-from').innerText = t.from || '—';
   document.getElementById('tx-to').innerText = t.to || '—';
@@ -1277,10 +1288,16 @@ function renderTimeline(dayKey) {
       metaBits += `<span class="city-badge" style="background:${cityColor};">${city.name}</span>`;
     }
 
-    // 交通卡：多顯示 from → to
+    // 交通卡：標題「前往目的地」；內容列上車／下車
+    let cardTitle = item.title;
     let transportLine = '';
     if (item.type === 'transport' && item.transport) {
-      transportLine = `<div style="font-size:0.8rem; color:var(--text-sub); margin-bottom:4px;"><i class="fa-solid fa-arrow-right" style="font-size:0.7rem;"></i> ${item.transport.from} → ${item.transport.to}</div>`;
+      const t = item.transport;
+      cardTitle = t.to ? `前往${t.to}` : (item.title || '交通');
+      transportLine = `<div class="tx-card-route">
+        <div><span class="tx-card-stop-label">上車</span><span class="tx-card-stop-name">${t.from || '—'}</span></div>
+        <div><span class="tx-card-stop-label">下車</span><span class="tx-card-stop-name">${t.to || '—'}</span></div>
+      </div>`;
     }
 
     // 附近備案按鈕
@@ -1294,7 +1311,7 @@ function renderTimeline(dayKey) {
         ${navBtn}
         <span class="card-time">${item.time || '彈性'}</span>
         <div class="card-meta-row">${metaBits}</div>
-        <h3 class="card-title">${item.title}</h3>
+        <h3 class="card-title">${cardTitle}</h3>
         ${transportLine}
         <div class="tags">${tags}</div>
         ${inspBtn}
