@@ -1094,7 +1094,7 @@ const MODE_LABELS = {
   walk: '步行', ferry: '渡輪', flight: '航班'
 };
 
-/** Strip source attributions (Yahoo! 乗換案内 etc.) from a note line */
+/** Strip source attributions (Yahoo! 乗換案内 / 官方時刻表 etc.) from a note line */
 function stripTransitAttribution(line) {
   return String(line || '')
     .replace(/[（(]\s*Yahoo!?[！!]?\s*乘換案內\s*[）)]/gi, '')
@@ -1102,6 +1102,10 @@ function stripTransitAttribution(line) {
     .replace(/[；;，,]?\s*Yahoo!?[！!]?\s*乘換案內/gi, '')
     .replace(/[；;，,]?\s*Yahoo!?[！!]?\s*乗換案内/gi, '')
     .replace(/[（(]\s*乗換案内\s*[）)]/g, '')
+    .replace(/[（(][^）)]*官方時刻表[^）)]*[）)]/g, '')
+    .replace(/[；;，,]?\s*[^；;\n（(]*官方時刻表[^；;\n）)]*/g, '')
+    .replace(/[（(]\s*直達[^）)]*[）)]/g, '')
+    .replace(/[（(]\s*[）)]/g, '')
     .replace(/\s*[；;]\s*$/, '')
     .replace(/\s{2,}/g, ' ')
     .trim();
@@ -1149,11 +1153,16 @@ function extractPlatform(text) {
     /(\d+\s*號月台)/,
     /(月台\s*\d+)/,
     /(ホーム\s*\d+)/,
+    /(\d+\s*番\s*(?:のりば|乗場|乗り場))/,
     /(\d+\s*番[線ホーム台]?)/
   ];
   for (const re of patterns) {
     const m = s.match(re);
-    if (m) return m[1].replace(/\s+/g, '');
+    if (m) {
+      let p = m[1].replace(/\s+/g, '');
+      if (/番(のりば|乗場|乗り場)/.test(p)) p = p.replace(/番.*/, ' 號月台');
+      return p;
+    }
   }
   return null;
 }
