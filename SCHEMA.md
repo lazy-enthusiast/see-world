@@ -380,25 +380,28 @@ const PHRASE_DATA = [
 - 顯示標題優先為 **`前往{transport.to}`**（config 的 `title` 作 tooltip／後備）
 - 目的是讓主行程（景點／餐）更醒目；細節進 modal
 
-### 交通 modal（少重複、層級清楚）
+### Modal 四種任務版面（同一 bottom sheet）
 
-顯示重點（依序）：
+App 依 `type` 選版面（不是四個獨立 modal）：
 
-1. 類型標籤（`mode`）+ 標題 **`前往{to}`**
-2. **上車站**（`from`）→ **目的地**（`to`）
-   - 上車站下方**小字**：優先顯示實際上車點（`address`／`addressLocal` 含樓層、出口、巴士站等）；否則顯示 `line`
-3. **車程**：只寫 `durationMin`／`stopCount`（例如「車程約 11 分 · 搭 5 站」），**不**再重複起訖站
-4. **候車／到站**：有 `liveApi` 顯示即將到站 +「約再等 N 分」；無 live 時僅用 `time` 估候車
-5. 建議出發時刻、票價；營運商（`operator`）單行
-6. 備註（會略過純【交通】重複路線的行）
+| 版面 | `type` | 顯示重點 |
+|------|--------|----------|
+| **交通** | `transport` | `前往{to}`；上車站（小字：上車點／`line`）→ 目的地；車程／站數；有 `liveApi` 才顯示候車；建議出發 · 票價 · 營運商；壓縮備註 |
+| **航班／閘口** | `arrival`、`departure` | 大字時間；地點；電話（可撥）；備註（航班／入境多寫在 note）— **不**顯示預算／開放時間 |
+| **用餐** | `food` | 時間、地址、電話（優先）、預算、開放時間；預約用 CTA |
+| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | 時間／預算／開放／地址／電話（**空值不顯示該欄**）；`hotel` 另有的士卡＋Gmail |
 
-實時到站：
+#### 交通版面細節
 
-- 僅 `liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`
-- 回傳 `arrivals[{ time, dest, delayMin, platform }]`
-- modal 開啟時依 `refreshSec` 輪詢；關閉即停
+1. 類型標籤 = `mode`；標題 = **`前往{to}`**
+2. 上車站下方小字：優先 `address`／`addressLocal`（樓層、出口、巴士站）；否則 `line`
+3. 車程只寫 `durationMin`／`stopCount`，不重複起訖站
+4. 有 `liveApi` → Worker `/transit` 到站列表；無 live → 只顯示「建議出發 `time`」（不再另開候車框）
+5. 備註略過純【交通】重複路線的行
 
-給 LLM 填交通時：`from`／`to`／`line`／`durationMin`／`stopCount`／有把握再填 `liveApi`；`address` 盡量寫清上車位置（出口／樓層／巴士站），App 會當小字顯示。
+實時到站：僅 `liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`；modal 開啟時依 `refreshSec` 輪詢。
+
+給 LLM：交通填好 `from`／`to`／`line`／`durationMin`／`stopCount`／上車 `address`；閘口／用餐把實用細節寫進 `note`／`phone`（App 會依版面露出）。
 
 ---
 
@@ -433,3 +436,4 @@ const PHRASE_DATA = [
 - v1.4 — 2026-10-18 — `stopCount`；交通 modal 強調上車站／候車／幾站
 - v1.5 — 2026-10-19 — 收合交通列／「前往」標題；modal 去重；上車小字用 line／address
 - v1.6 — 2026-10-19 — 修正：`nearEventId` 應填真實行程 id（啟用附近備案），非一律 null
+- v1.7 — 2026-10-19 — Modal 四版面：交通／閘口／用餐／到訪
