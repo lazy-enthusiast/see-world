@@ -328,6 +328,28 @@ main { flex: 1; overflow-y: hidden; position: relative; }
   font-weight: 600;
   color: var(--text-main);
 }
+.modal-website-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.modal-website-link {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-all;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  font-family: inherit;
+}
 .modal-msg-row {
   display: flex;
   flex-wrap: wrap;
@@ -1090,6 +1112,105 @@ function openMessengerChat(raw) {
   window.open(`https://m.me/${encodeURIComponent(handle)}`, '_blank');
 }
 
+/** Prefer schema `website`; accept legacy `link` from older configs */
+function itemWebsite(data) {
+  return String((data && (data.website || data.link)) || '').trim();
+}
+
+function normalizeWebsiteUrl(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  if (/^tabelog:\/\//i.test(s) || /^https?:\/\//i.test(s)) return s;
+  return `https://${s}`;
+}
+
+function isTabelogUrl(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return false;
+  if (/^tabelog:\/\//i.test(s)) return true;
+  try {
+    const u = new URL(normalizeWebsiteUrl(s));
+    return /(^|\.)tabelog\.com$/i.test(u.hostname);
+  } catch (_) {
+    return /tabelog\.com/i.test(s);
+  }
+}
+
+/** Open restaurant URL; Tabelog prefers app deep link / Intent, else https */
+function openWebsiteUrl(raw) {
+  const url = normalizeWebsiteUrl(raw);
+  if (!url) return;
+
+  if (/^tabelog:\/\//i.test(url)) {
+    window.location.href = url;
+    return;
+  }
+
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isAndroid = /Android/i.test(navigator.userAgent);
+
+  if (isTabelogUrl(url) && isMobile) {
+    if (isAndroid) {
+      try {
+        const u = new URL(url);
+        // Prefer Tabelog app via Android Intent; browser_fallback_url if not installed
+        window.location.href =
+          `intent://${u.host}${u.pathname}${u.search}${u.hash}` +
+          `#Intent;scheme=https;package=jp.tabelog.android;S.browser_fallback_url=${encodeURIComponent(url)};end`;
+        return;
+      } catch (_) { /* fall through */ }
+    }
+    try {
+      const u = new URL(url);
+      const deep = `tabelog://${u.host}${u.pathname}${u.search}${u.hash}`;
+      const started = Date.now();
+      const fallback = setTimeout(() => {
+        // If still visible after ~1s, custom scheme likely failed → open https
+        if (Date.now() - started < 1600 && !document.hidden) {
+          window.location.href = url;
+        }
+      }, 900);
+      const clear = () => {
+        clearTimeout(fallback);
+        document.removeEventListener('visibilitychange', onVis);
+        window.removeEventListener('pagehide', clear);
+      };
+      const onVis = () => { if (document.hidden) clear(); };
+      document.addEventListener('visibilitychange', onVis);
+      window.addEventListener('pagehide', clear);
+      window.location.href = deep;
+      return;
+    } catch (_) { /* fall through */ }
+    window.location.href = url;
+    return;
+  }
+
+  window.open(url, '_blank');
+}
+
+function websiteRowHtml(data) {
+  const raw = itemWebsite(data);
+  if (!raw) return '';
+  const url = normalizeWebsiteUrl(raw);
+  const label = isTabelogUrl(url) ? 'Tabelog' : '網址';
+  let display = url;
+  try {
+    if (/^tabelog:\/\//i.test(url)) {
+      display = url.replace(/^tabelog:\/\//i, '');
+    } else {
+      const u = new URL(url);
+      display = `${u.host}${u.pathname}`.replace(/\/$/, '') || url;
+    }
+  } catch (_) { /* keep url */ }
+  return `<div class="modal-field">
+    <div class="modal-label">${escapeHtml(label)}</div>
+    <div class="modal-website-row">
+      <button type="button" class="modal-website-link" onclick="openWebsiteUrl('${escapeAttr(raw)}')">${escapeHtml(display)}</button>
+      <button type="button" class="tx-map-btn" title="開啟連結" aria-label="開啟連結" onclick="openWebsiteUrl('${escapeAttr(raw)}')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+    </div>
+  </div>`;
+}
+
 const MODE_LABELS = {
   train: '火車', subway: '地鐵', bus: '巴士', taxi: '的士',
   walk: '步行', ferry: '渡輪', flight: '航班'
@@ -1262,6 +1383,21 @@ function formatPriceLine(data) {
   return '';
 }
 
+/** Detailed local address for Maps / modal「地址」— prefer addressLocal */
+function detailedMapAddress(data) {
+  return String((data && (data.addressLocal || data.address)) || '').trim();
+}
+
+/** Timeline card title: strip parenthetical local names e.g. Foo（バー） / Foo (バー) */
+function timelineDisplayTitle(title) {
+  return String(title || '')
+    .replace(/（[^）]*）/g, '')
+    .replace(/\([^)]*\)/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([，,：:；;])/g, '$1')
+    .trim();
+}
+
 function placeRowHtml(address, mapQuery) {
   if (!address && !mapQuery) return '';
   const text = address || mapQuery;
@@ -1356,7 +1492,7 @@ function fillTransportModal(data) {
   }
 
   const mapBtn = document.getElementById('tx-from-map');
-  const mapAddr = data.address || data.addressLocal;
+  const mapAddr = detailedMapAddress(data);
   if (mapAddr) {
     mapBtn.classList.add('visible');
     mapBtn.onclick = (e) => {
@@ -1403,9 +1539,9 @@ function fillTransportModal(data) {
 function fillGateModal(data) {
   document.getElementById('modal-type').innerText = TYPE_LABELS[data.type] || data.type;
   document.getElementById('modal-title').innerText = data.title || '';
-  const place = data.address || data.addressLocal;
+  const place = detailedMapAddress(data);
   let html = '';
-  html += placeRowHtml(place, data.address || data.addressLocal);
+  html += placeRowHtml(place, place);
   html += phoneChipHtml(data.phone);
   html += messagingRowHtml(data);
   fillLeanInfo(html);
@@ -1415,11 +1551,12 @@ function fillGateModal(data) {
 function fillFoodModal(data) {
   document.getElementById('modal-type').innerText = TYPE_LABELS.food;
   document.getElementById('modal-title').innerText = data.title || '';
-  const place = data.address || data.addressLocal;
+  const place = detailedMapAddress(data);
   let html = '';
-  html += placeRowHtml(place, data.address || data.addressLocal);
+  html += placeRowHtml(place, place);
   html += fieldBlockHtml('預算', formatPriceLine(data));
   html += fieldBlockHtml('開放時間', data.openHours);
+  html += websiteRowHtml(data);
   html += phoneChipHtml(data.phone);
   html += messagingRowHtml(data);
   fillLeanInfo(html);
@@ -1429,9 +1566,9 @@ function fillFoodModal(data) {
 function fillPlaceModal(data) {
   document.getElementById('modal-type').innerText = TYPE_LABELS[data.type] || data.type || '行程';
   document.getElementById('modal-title').innerText = data.title || '';
-  const place = data.address || data.addressLocal;
+  const place = detailedMapAddress(data);
   let html = '';
-  html += placeRowHtml(place, data.address || data.addressLocal);
+  html += placeRowHtml(place, place);
   html += fieldBlockHtml('開放時間', data.openHours);
   html += phoneChipHtml(data.phone);
   html += messagingRowHtml(data);
@@ -1442,7 +1579,7 @@ function fillPlaceModal(data) {
 function fillModalActions(data, layout) {
   const actionsContainer = document.getElementById('modal-actions');
   actionsContainer.innerHTML = '';
-  const addr = data.addressLocal || data.address;
+  const addr = detailedMapAddress(data);
 
   // transport / gate: map + call are inline icons — no footer buttons
   if (layout === 'transport' || layout === 'gate') return;
@@ -1723,8 +1860,9 @@ function renderTimeline(dayKey) {
     }
 
     let tags = (item.tags || []).map(t => `<span class="card-tag">${t}</span>`).join('');
-    const navBtn = item.address
-      ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${escapeAttr(item.address)}')"><i class="fa-solid fa-location-arrow"></i></div>`
+    const mapQ = detailedMapAddress(item);
+    const navBtn = mapQ
+      ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${escapeAttr(mapQ)}')"><i class="fa-solid fa-location-arrow"></i></div>`
       : '';
 
     const statusKey = item.status || 'pending';
@@ -1741,12 +1879,13 @@ function renderTimeline(dayKey) {
       ? `<div style="margin-top:8px;"><button class="btn-inspiration" onclick="event.stopPropagation(); jumpToInspiration('${item.id}')"><i class="fa-solid fa-lightbulb"></i> 附近備案 (${relatedInspirations.length})</button></div>`
       : '';
 
+    const cardTitle = timelineDisplayTitle(item.title);
     el.innerHTML = `
       <div class="card" style="${colorStyle}" onclick='openModal(${safeData})'>
         ${navBtn}
         <span class="card-time">${item.time || '彈性'}</span>
         <div class="card-meta-row">${metaBits}</div>
-        <h3 class="card-title">${item.title}</h3>
+        <h3 class="card-title">${escapeHtml(cardTitle)}</h3>
         <div class="tags">${tags}</div>
         ${inspBtn}
       </div>`;

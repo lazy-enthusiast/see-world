@@ -291,7 +291,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27001927/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27001927/"
     },
     {
       "id": "evt_d1_05",
@@ -351,7 +351,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27004819/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27004819/"
     },
     {
       "id": "trp_d2_02",
@@ -497,7 +497,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270201/27000825/"
+      "website": "https://tabelog.com/osaka/A2701/A270201/27000825/"
     },
     {
       "id": "trp_d2_06",
@@ -636,7 +636,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270204/27000581/"
+      "website": "https://tabelog.com/osaka/A2701/A270204/27000581/"
     },
     {
       "id": "trp_d2_10",
@@ -738,7 +738,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27149249/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27149249/"
     },
     {
       "id": "trp_d3_02",
@@ -886,7 +886,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/nara/A2901/A290101/29000052/"
+      "website": "https://tabelog.com/nara/A2901/A290101/29000052/"
     },
     {
       "id": "evt_d3_06",
@@ -1014,7 +1014,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/nara/A2901/A290101/29000969/"
+      "website": "https://tabelog.com/nara/A2901/A290101/29000969/"
     },
     {
       "id": "evt_d3_10",
@@ -1145,7 +1145,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27002171/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27002171/"
     },
     {
       "id": "trp_d4_02",
@@ -1295,7 +1295,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270102/27000005/"
+      "website": "https://tabelog.com/osaka/A2701/A270102/27000005/"
     },
     {
       "id": "trp_d4_06",
@@ -1501,7 +1501,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27000297/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27000297/"
     },
     {
       "id": "evt_d5_01",
@@ -1535,7 +1535,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27002171/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27002171/"
     },
     {
       "id": "trp_d5_02",
@@ -1686,7 +1686,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27003766/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27003766/"
     },
     {
       "id": "trp_d5_06",
@@ -1894,7 +1894,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270103/27136227/"
+      "website": "https://tabelog.com/osaka/A2701/A270103/27136227/"
     },
     {
       "id": "trp_d5_12",
@@ -1968,7 +1968,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27127004/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27127004/"
     },
     {
       "id": "trp_d6_02",
@@ -2045,7 +2045,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/hyogo/A2801/A280112/28066508/"
+      "website": "https://tabelog.com/hyogo/A2801/A280112/28066508/"
     },
     {
       "id": "evt_d6_04",
@@ -2310,7 +2310,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27126021/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27126021/"
     },
     {
       "id": "evt_d6_12",
@@ -2369,7 +2369,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27127004/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27127004/"
     },
     {
       "id": "trp_d7_02",
@@ -2545,7 +2545,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/hyogo/A2801/A280106/28000407/"
+      "website": "https://tabelog.com/hyogo/A2801/A280106/28000407/"
     },
     {
       "id": "evt_d7_07",
@@ -2678,7 +2678,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/hyogo/A2803/A280302/28058371/"
+      "website": "https://tabelog.com/hyogo/A2803/A280302/28058371/"
     },
     {
       "id": "trp_d7_11",
@@ -2779,7 +2779,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27149249/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27149249/"
     },
     {
       "id": "trp_d8_02",
@@ -2884,7 +2884,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270203/27049805/"
+      "website": "https://tabelog.com/osaka/A2701/A270203/27049805/"
     },
     {
       "id": "evt_d8_05",
@@ -3063,7 +3063,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270204/27117661/"
+      "website": "https://tabelog.com/osaka/A2701/A270204/27117661/"
     },
     {
       "id": "trp_d8_10",
@@ -3191,7 +3191,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2701/A270101/27127004/"
+      "website": "https://tabelog.com/osaka/A2701/A270101/27127004/"
     },
     {
       "id": "evt_d9_03",
@@ -3320,7 +3320,7 @@ const ITINERARY = {
       "status": "pending",
       "source": "ai",
       "transport": null,
-      "link": "https://tabelog.com/osaka/A2705/A270503/27158190/"
+      "website": "https://tabelog.com/osaka/A2705/A270503/27158190/"
     },
     {
       "id": "evt_d9_07",

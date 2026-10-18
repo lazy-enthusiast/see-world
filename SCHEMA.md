@@ -147,8 +147,8 @@ const ITINERARY = {
       type: "arrival",          // 見下方 type 表
       title: "抵達關西機場",
       cityId: "osaka",
-      address: "Kansai Airport",
-      addressLocal: null,
+      address: "Kansai Airport",           // Latin／英文簡稱或可讀地址
+      addressLocal: "大阪府泉佐野市泉州空港北1 関西国際空港 第1ターミナル", // 當地語詳細地址（Maps 優先）
       coords: [34.4347, 135.2329],
       tags: ["入境"],
       moodColor: "#333333",
@@ -159,6 +159,7 @@ const ITINERARY = {
       messenger: null,          // m.me 帳號或 URL（查不到填 null）
       openHours: null,
       price: null,
+      website: null,            // 官網／Tabelog 等 URL（用餐 modal「網址」／「Tabelog」）；勿寫進 note
       cost: { amount: 0, currency: "JPY", category: "other" },
       status: "confirmed",      // confirmed | pending | wishlist
       source: "user"            // user | ai | ai-edited
@@ -348,11 +349,21 @@ const PHRASE_DATA = [
 
 ## UI 行為規範
 
+### `address`／`addressLocal`（Maps 與顯示）
+
+| 欄位 | 用途 |
+|------|------|
+| `address` | Latin／英文可讀地址或簡稱 |
+| `addressLocal` | **當地語詳細地址**（日文漢字地址、樓層、のりば等）— Google Maps 導航與 modal「地址」**優先用此欄**；無則退回 `address` |
+
+時間軸非交通卡右側地圖 icon、modal 地址列／地圖按鈕、交通 modal 上車點地圖：皆 `addressLocal || address`。
+
 ### 行程卡片
 
 - 左側色條：優先 `moodColor`；若無，且 `cityId` 對得上 `CITIES[].id`，用該城 `color`；再否則用主題 accent
 - 若有 `cityId` 且對得到城市：顯示城市名稱小標籤
 - `status` 徽章：`confirmed` → 已確認；`pending` → 待定；`wishlist` → 願望（`confirmed` 可較低調）
+- **時間軸標題**：顯示時剝除括號內當地語名稱（`Foo（バー）`／`Foo (バー)` → `Foo`）；**modal 標題保留完整 `title`**（可含日文括號）
 - 若某個 `ITINERARY.items` 有 `INSPIRATIONS` 指向它（`nearEventId === item.id`），
   則在該卡片下方顯示一個小按鈕：`💡 附近備案 (N)`
 - 點按鈕 → 切換到「靈感」tab → 篩選 `nearEventId` 相符的卡片 → 第一個 `scrollIntoView` + 加 `.highlight` class（背景短暫變色）
@@ -390,9 +401,9 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 | 版面 | `type` | 顯示重點 |
 |------|--------|----------|
 | **交通** | `transport` | `前往{to}`；上車站（地圖 icon）→ 目的地；車程／站數；**上車點下一班**（live 候車，不硬定班次）；票價／營運商。時間只在時間線，modal 不顯示建議出發。備註一律展開 |
-| **航班／閘口** | `arrival`、`departure` | **地址**標籤＋地圖；電話／WhatsApp／LINE／Messenger icon；備註展開。時間在時間線。無預算欄 |
-| **用餐** | `food` | **地址**；**預算**欄；**開放時間**欄；電話／訊息 icon；備註展開並列推薦菜；底部可「搜尋預約信」 |
-| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**；可選開放時間；電話／訊息；`hotel` 可有的士卡＋Gmail |
+| **航班／閘口** | `arrival`、`departure` | **地址**（優先 `addressLocal`）＋地圖；電話／WhatsApp／LINE／Messenger icon；備註展開。時間在時間線。無預算欄 |
+| **用餐** | `food` | **地址**（優先 `addressLocal`）；**預算**欄；**開放時間**欄；**網址／Tabelog**（`website`）；電話／訊息 icon；備註展開並列推薦菜；底部可「搜尋預約信」 |
+| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**（優先 `addressLocal`）；可選開放時間；電話／訊息；`hotel` 可有的士卡＋Gmail |
 
 時間線上的交通列**不**再顯示右側地圖 icon（地圖改在 modal 上車點）。
 
@@ -421,7 +432,8 @@ Research 時查找店家是否公開 **WhatsApp／LINE／Messenger**（或類似
 
 - `price`／`cost` → UI「預算」
 - `openHours` → UI「開放時間」
-- `note` 內列**推薦菜目**（簡潔條列即可）
+- `website` → UI「網址」；若 host 為 `tabelog.com`（或 `tabelog://`）則標「Tabelog」，點擊優先開 App／Intent，否則開 https
+- `note`：**精簡**——列**推薦菜目**與必要實用提示即可；**不要**把 Tabelog／類似評論站 URL、長評分檔塞進 `note`（URL 一律放 `website`）
 
 給 LLM：`line`（交通線路）可寫「谷町線」或含月台；方向放 note。店家 `line`（LINE 帳號）與交通 `transport.line` 是不同欄位。
 
@@ -449,7 +461,10 @@ Research 時查找店家是否公開 **WhatsApp／LINE／Messenger**（或類似
 18. **`transport.line`**：以線路名為主（可含月台）；**避免**把「（往××）」「往××方向」當主要字串——方向放 note 即可
 19. **交通 `note`**：**不要**用【路線】重述 from／to／line／班次（App UI 已顯示）；**不要**寫「Yahoo! 乘換案內」「官方時刻表」等來源標註；優先【上車】（含**月台**）／【下車】／【車資】／【備案】；**不要**硬性規定必須搭某一班——`time` 僅作時間線參考
 20. **`whatsapp`／`line`／`messenger`**：research 景點／店家／餐廳時查找公開傳訊管道；查到就填、查不到填 `null`；禁止捏造
-21. **`food`**：務必填 `price`（或 `cost`）與 `openHours`（查不到填 `null`）；`note` 列推薦菜目
+21. **`food`**：務必填 `price`（或 `cost`）與 `openHours`（查不到填 `null`）；`note` 只列推薦菜／精簡實用提示
+22. **`addressLocal`**：景點／店家／酒店／上車站盡量填**當地語詳細地址**（給 Google Maps）；`address` 可放 Latin／英文。App 導航優先 `addressLocal`
+23. **`title`**：時間軸會剝掉括號當地語（如 `（マヅラ喫茶店）`）；日文店名可放括號內供 modal 顯示，或乾脆只寫中文／英文主標題、日文詳址放 `addressLocal`
+24. **`website`**：餐廳（及有需要的店家）填官網或 Tabelog 等頁面 URL；查不到填 `null`。**禁止**把 Tabelog／類似評論站連結寫進 `note`——URL 只放 `website`，保持 `note` 精簡
 
 ---
 
@@ -465,3 +480,5 @@ Research 時查找店家是否公開 **WhatsApp／LINE／Messenger**（或類似
 - v1.7 — 2026-10-19 — Modal 四版面：交通／閘口／用餐／到訪
 - v1.8 — 2026-10-19 — 上車小字優先月台；note 去【路線】／Yahoo 來源；Grok 規則 18–19
 - v1.9 — 2026-10-19 — Modal 去時間；下一班候車；備註展開；WhatsApp／LINE／Messenger；用餐預算／開放時間
+- v1.10 — 2026-10-19 — 時間軸標題去括號當地語；Maps／modal 地址優先 `addressLocal`
+- v1.11 — 2026-10-19 — `website` 用餐網址／Tabelog；Grok：note 勿塞評論站 URL
