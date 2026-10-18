@@ -96,7 +96,7 @@
   - **曼谷**：高度依賴 **BTS／MRT／機場快線** 等軌道系統。
 - 較遠但環境特別好的住宿（如溫泉酒店）可以，**前提是有接送穿梭車**。
 - 規劃須提供**點到點交通**（獨立 `type: "transport"`；`from`／`to`／`line`／`durationMin` 必盡力填）。
-- **`stopCount`**：**每個交通物件都要有這個鍵**——查得到填整數（下一站 = 1）；查不到填 `null`（不可省略欄位），勿瞎猜。
+- **`stopCount`**：查得到就填（下一站 = 1）；查不到填 `null`，勿瞎猜。
 - **`liveApi`**：預設 `null`；僅在查到白名單 provider 的真實 `stopId` 時填寫（**禁止**任何 API key／token）。日本 ODPT 等細節見 `SCHEMA.md`。
 - **`address`／`addressLocal`**：盡量寫清**實際上車位置**（例如出口編號、一樓巴士站、月台），App modal 會以小字顯示在上車站下方。
 
