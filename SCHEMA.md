@@ -370,21 +370,31 @@ const PHRASE_DATA = [
 - Worker 寫入 `config.js` 時檔首必須有 `// buildTime: <時間>`
 - App 優先比對 buildTime；缺該行時比對檔案內容 hash
 
-### 交通 modal（資訊密度優先、層級清楚）
+### 時間軸交通列（收合）
+
+- `type === "transport"` 用**收合列**：時間 + 圖示 + `from → to`（+ 可選車程分鐘）
+- 顯示標題優先為 **`前往{transport.to}`**（config 的 `title` 作 tooltip／後備）
+- 目的是讓主行程（景點／餐）更醒目；細節進 modal
+
+### 交通 modal（少重複、層級清楚）
 
 顯示重點（依序）：
 
-1. **上車站**（`transport.from`）→ **目的站**（`transport.to`）
-2. **幾站／車程**：`stopCount`（有才顯示）、`durationMin`
-3. **候車／到站時刻**：有 `liveApi` 時顯示即將到站；並換算「約再等 N 分」；無 live 時可用行程 `time`／`openHours` 作建議班次
-4. 營運商、路線、票價、上車點地址（次要、單行）
-5. 備註（較短行距）
+1. 類型標籤（`mode`）+ 標題 **`前往{to}`**
+2. **上車站**（`from`）→ **目的地**（`to`）
+   - 上車站下方**小字**：優先顯示實際上車點（`address`／`addressLocal` 含樓層、出口、巴士站等）；否則顯示 `line`
+3. **車程**：只寫 `durationMin`／`stopCount`（例如「車程約 11 分 · 搭 5 站」），**不**再重複起訖站
+4. **候車／到站**：有 `liveApi` 顯示即將到站 +「約再等 N 分」；無 live 時僅用 `time` 估候車
+5. 建議出發時刻、票價；營運商（`operator`）單行
+6. 備註（會略過純【交通】重複路線的行）
 
 實時到站：
 
-- 僅 `liveApi` 非 `null` 時打 Worker：`GET /transit?provider=&stopId=…`
+- 僅 `liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`
 - 回傳 `arrivals[{ time, dest, delayMin, platform }]`
 - modal 開啟時依 `refreshSec` 輪詢；關閉即停
+
+給 LLM 填交通時：`from`／`to`／`line`／`durationMin`／`stopCount`／有把握再填 `liveApi`；`address` 盡量寫清上車位置（出口／樓層／巴士站），App 會當小字顯示。
 
 ---
 
@@ -417,3 +427,4 @@ const PHRASE_DATA = [
 - v1.2 — 2026-10-18 — 明訂 `schema.json` 為機器契約；補 App 支援矩陣（BUDGET／CITIES／status／更新檢測）
 - v1.3 — 2026-10-18 — `liveApi` 改為 provider+stopId；`TRANSIT_CONFIG`；禁止 key 進 config
 - v1.4 — 2026-10-18 — `stopCount`；交通 modal 強調上車站／候車／幾站
+- v1.5 — 2026-10-19 — 收合交通列／「前往」標題；modal 去重；上車小字用 line／address

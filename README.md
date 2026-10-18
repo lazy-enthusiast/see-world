@@ -26,12 +26,13 @@ see-world/
 ├── NOTES.md        # pipeline 備忘（勿寫入真實 secret）
 ├── sw.js           # Service Worker（快取策略）
 ├── manifest.json   # PWA 設定
-├── worker/         # Cloudflare Worker（/transit 代理；合併進現有 deploy Worker）
+├── worker/         # 獨立 Worker：see-world-transit（GET /transit；key 在 Secrets）
 └── versions/
     └── config/     # config.js 的歷史版本
 ```
 
-每趟旅行只換 `config.js`。交通 API key 只存在 Cloudflare，見 `worker/README.md` 與 `SCHEMA.md` 的 `liveApi`。
+每趟旅行只換 `config.js`。實時到站用 `transport.liveApi`（僅公開站碼）；API key 只在 Cloudflare（`see-world-transit`），見 `worker/README.md` 與 `SCHEMA.md`。  
+部署用的 `/deploy` 仍在另一個 Worker：`see-world-worker`（勿用本目錄 `wrangler deploy` 蓋掉它）。
 
 ## 相關文件
 
@@ -54,11 +55,10 @@ App（顯示）
 
 ## 狀態
 
-- ✅ App 前端完成
-- ✅ Worker 完成
-- ✅ 認證完成
-- ✅ 版本管理完成
-- ✅ 更新提示完成
+- ✅ App 前端完成（含收合交通列、交通 modal、實時到站 UI）
+- ✅ Deploy Worker（`see-world-worker`）完成
+- ✅ Transit Worker（`see-world-transit`）完成；`mock` 可用；`odpt` 待設 `TRANSIT_ODPT_KEY`
+- ✅ 認證／版本管理／更新提示完成
 - ✅ Grok Bot 可產出 `config.js` 並部署／歸檔
 - ⏳ 待實戰驗證：大阪行程產出品質與當地活動發現能力
 

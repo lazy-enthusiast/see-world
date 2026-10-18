@@ -22,12 +22,13 @@ npx wrangler deploy
 
 ## Secrets
 
-| Secret | 用途 |
-|--------|------|
-| `TRANSIT_ODPT_KEY` | [developer.odpt.org](https://developer.odpt.org/) 發的 consumer key |
-| （既有）`DEPLOY_SECRET` / `GITHUB_TOKEN` | 部署用，與 transit 無關 |
+| Secret | 設在哪個 Worker | 用途 |
+|--------|-----------------|------|
+| `TRANSIT_ODPT_KEY` | **`see-world-transit`**（本目錄） | [developer.odpt.org](https://developer.odpt.org/) consumer key |
+| `DEPLOY_SECRET` / `GITHUB_TOKEN` | **`see-world-worker`**（另一個） | 僅 `/deploy`；與 transit 無關 |
 
-設定：Cloudflare → Workers → see-world-worker → Settings → Variables and Secrets。
+設定 transit key：Cloudflare → Workers → **see-world-transit** → Settings → Variables and Secrets  
+（或 `cd worker && npx wrangler secret put TRANSIT_ODPT_KEY`）
 
 未設定 `TRANSIT_ODPT_KEY` 時，`provider=odpt` 會回 503；`provider=mock` 不需 key，可供 UI 測試。
 
