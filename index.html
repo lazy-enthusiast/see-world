@@ -293,28 +293,117 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .modal-handle { width: 36px; height: 4px; background: #DDDDDD; border-radius: 10px; }
 .modal-body { padding: 0 25px 25px 25px; }
 .modal-info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px 20px;
-  margin: 12px 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 8px 0 12px 0;
 }
-.modal-info-grid.is-stack { grid-template-columns: 1fr; gap: 14px; }
-.modal-kv { min-width: 0; }
-.modal-kv.is-wide { grid-column: 1 / -1; }
-.modal-kv.is-time .modal-value {
-  font-size: 1.75rem;
+.modal-info-grid:empty { display: none; }
+.modal-hero-time {
+  font-size: 2rem;
   font-weight: 700;
   font-family: var(--font-heading);
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.5px;
-  line-height: 1.15;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  color: var(--text-main);
 }
+.modal-hero-caption {
+  font-size: 0.75rem;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.modal-place-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.modal-place-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-main);
+  font-family: var(--font-heading);
+}
+.modal-inline-meta {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--text-main);
+}
+.modal-inline-meta .dim { color: var(--text-sub); }
+.modal-phone-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.tx-map-btn, .tx-call-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-body);
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+}
+.tx-map-btn:active, .tx-call-btn:active { opacity: 0.75; transform: scale(0.96); }
 .modal-label { font-size: 0.7rem; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; font-weight: 700; }
 .modal-value { font-size: 1rem; font-weight: 500; color: var(--text-main); font-family: var(--font-body); line-height: 1.4; }
-.modal-note-box { background: var(--bg-body); padding: 20px; border-radius: 0; margin: 15px 0; border: 1px solid var(--border); font-size: 0.9rem; line-height: 1.7; color: var(--text-main); white-space: pre-line; }
+.modal-note-box {
+  background: var(--bg-body);
+  padding: 16px;
+  border-radius: 0;
+  margin: 12px 0 8px 0;
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-main);
+  white-space: pre-line;
+}
+.modal-note-box.is-collapsed {
+  max-height: 4.8em;
+  overflow: hidden;
+  position: relative;
+}
+.modal-note-box.is-collapsed::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2.2em;
+  background: linear-gradient(transparent, var(--bg-body));
+  pointer-events: none;
+}
+.btn-note-toggle {
+  display: none;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 6px 0 10px 0;
+  cursor: pointer;
+  text-align: left;
+}
+.btn-note-toggle.visible { display: block; }
 .btn-action { width: 100%; padding: 16px; border-radius: 0; border: none; font-weight: 600; cursor: pointer; font-size: 0.85rem; text-align: center; margin-bottom:10px; text-transform: uppercase; letter-spacing: 1px; }
 .btn-black { background: var(--accent); color: var(--accent-text); }
 .btn-outline { background: var(--bg-card); border: 1px solid var(--text-main); color: var(--text-main); }
+.modal-actions:empty { display: none; }
 
 /* 🔧 FIX #1: 補上小地圖容器的高度，否則 Leaflet 會塌陷成 0px 而不顯示 */
 #modal-mini-map { width: 100%; height: 180px; z-index: 1; background: var(--bg-body); }
@@ -340,7 +429,8 @@ main { flex: 1; overflow-y: hidden; position: relative; }
   border-bottom: 1px solid var(--border);
 }
 .tx-stop-label { font-size: 0.7rem; color: var(--text-sub); letter-spacing: 0.5px; margin-bottom: 4px; text-transform: uppercase; font-weight: 700; }
-.tx-stop-name { font-size: 1.2rem; font-weight: 700; font-family: var(--font-heading); line-height: 1.25; color: var(--text-main); }
+.tx-stop-name-row { display: flex; align-items: flex-start; gap: 8px; }
+.tx-stop-name { flex: 1; min-width: 0; font-size: 1.2rem; font-weight: 700; font-family: var(--font-heading); line-height: 1.25; color: var(--text-main); }
 .tx-stop-detail {
   display: none;
   margin-top: 4px;
@@ -350,6 +440,8 @@ main { flex: 1; overflow-y: hidden; position: relative; }
   color: var(--text-sub);
 }
 .tx-stop-detail.visible { display: block; }
+.tx-from-map { display: none; }
+.tx-from-map.visible { display: inline-flex; }
 .tx-route-arrow { color: var(--text-sub); padding-top: 1.35rem; font-size: 0.95rem; }
 .tx-ride {
   display: none;
@@ -537,7 +629,10 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
   <div class="tx-route">
     <div>
       <div class="tx-stop-label">上車站</div>
-      <div class="tx-stop-name" id="tx-from">—</div>
+      <div class="tx-stop-name-row">
+        <div class="tx-stop-name" id="tx-from">—</div>
+        <button type="button" class="tx-map-btn tx-from-map" id="tx-from-map" title="Google Maps 導航" aria-label="上車點地圖"><i class="fa-solid fa-location-arrow"></i></button>
+      </div>
       <div class="tx-stop-detail" id="tx-from-detail"></div>
     </div>
     <div class="tx-route-arrow"><i class="fa-solid fa-arrow-right"></i></div>
@@ -558,7 +653,9 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
   </div>
   <div class="tx-meta" id="tx-meta"></div>
 </div>
-<div class="modal-label" id="modal-note-label">備註</div><div class="modal-note-box" id="modal-note-box"><div id="modal-note" class="modal-note-content"></div></div>
+<div class="modal-label" id="modal-note-label">備註</div>
+<div class="modal-note-box" id="modal-note-box"><div id="modal-note" class="modal-note-content"></div></div>
+<button type="button" class="btn-note-toggle" id="btn-note-toggle">展開備註</button>
 <div class="modal-actions" id="modal-actions"></div>
 </div>
 </div>
@@ -1077,45 +1174,80 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-/** rows: [{ label, value, wide?, time?, phone? }] — empty value skipped */
-function fillModalInfoGrid(rows, { stack = false } = {}) {
+function formatPriceLine(data) {
+  if (data.price && String(data.price).trim() && data.price !== '不適用' && data.price !== '-') {
+    return String(data.price).trim();
+  }
+  if (data.cost && data.cost.amount != null) {
+    return `${data.cost.amount} ${data.cost.currency || ''}`.trim();
+  }
+  return '';
+}
+
+function placeRowHtml(address, mapQuery) {
+  if (!address && !mapQuery) return '';
+  const text = address || mapQuery;
+  const q = mapQuery || address;
+  return `<div class="modal-place-row">
+    <div class="modal-place-text">${escapeHtml(text)}</div>
+    <button type="button" class="tx-map-btn" title="Google Maps 導航" aria-label="地圖導航" onclick="openMapQuery('${escapeAttr(q)}')"><i class="fa-solid fa-location-arrow"></i></button>
+  </div>`;
+}
+
+function phoneChipHtml(phone) {
+  if (!phone) return '';
+  return `<div class="modal-phone-chip">
+    <span>${escapeHtml(phone)}</span>
+    <button type="button" class="tx-call-btn" title="撥打" aria-label="撥打電話" onclick="callNumber('${escapeAttr(phone)}')"><i class="fa-solid fa-phone"></i></button>
+  </div>`;
+}
+
+function metaLineHtml(parts) {
+  const bits = (parts || []).filter(Boolean);
+  if (!bits.length) return '';
+  return `<div class="modal-inline-meta">${bits.map(escapeHtml).join(' <span class="dim">·</span> ')}</div>`;
+}
+
+function fillLeanInfo(html) {
   const grid = document.getElementById('modal-info-grid');
-  grid.classList.toggle('is-stack', !!stack);
-  const html = (rows || [])
-    .filter((r) => r && r.value != null && String(r.value).trim() !== '')
-    .map((r) => {
-      const cls = ['modal-kv'];
-      if (r.wide) cls.push('is-wide');
-      if (r.time) cls.push('is-time');
-      let valueHtml;
-      if (r.phone) {
-        const p = String(r.value);
-        valueHtml = `<div class="contact-container"><span class="modal-value">${escapeHtml(p)}</span><a href="javascript:void(0)" onclick="callNumber('${escapeAttr(p)}')" class="btn-icon-sm" style="border:1px solid var(--border);"><i class="fa-solid fa-phone"></i></a></div>`;
-      } else {
-        valueHtml = `<span class="modal-value">${escapeHtml(r.value)}</span>`;
-      }
-      return `<div class="${cls.join(' ')}"><span class="modal-label">${escapeHtml(r.label)}</span>${valueHtml}</div>`;
-    })
-    .join('');
-  grid.innerHTML = html;
+  grid.innerHTML = html || '';
   grid.style.display = html ? '' : 'none';
 }
 
 function setModalNote(text, { compact = false, hideIfEmpty = true } = {}) {
   const noteBox = document.getElementById('modal-note-box');
   const noteLabel = document.getElementById('modal-note-label');
+  const toggle = document.getElementById('btn-note-toggle');
   const body = String(text || '').trim();
   if (!body && hideIfEmpty) {
     noteLabel.style.display = 'none';
     noteBox.style.display = 'none';
+    toggle.classList.remove('visible');
+    toggle.onclick = null;
     document.getElementById('modal-note').innerText = '';
-    noteBox.classList.remove('is-compact');
+    noteBox.classList.remove('is-compact', 'is-collapsed');
     return;
   }
   noteLabel.style.display = '';
   noteBox.style.display = '';
   noteBox.classList.toggle('is-compact', !!compact);
   document.getElementById('modal-note').innerText = body;
+
+  const long = body.length > 100 || (body.match(/\n/g) || []).length >= 2;
+  if (long) {
+    noteBox.classList.add('is-collapsed');
+    toggle.classList.add('visible');
+    toggle.innerText = '展開備註';
+    toggle.onclick = () => {
+      const open = noteBox.classList.toggle('is-collapsed');
+      // classList.toggle returns true if class is NOW present
+      toggle.innerText = open ? '展開備註' : '收起備註';
+    };
+  } else {
+    noteBox.classList.remove('is-collapsed');
+    toggle.classList.remove('visible');
+    toggle.onclick = null;
+  }
 }
 
 function fillTransportModal(data) {
@@ -1138,6 +1270,19 @@ function fillTransportModal(data) {
     fromDetail.classList.remove('visible');
   }
 
+  const mapBtn = document.getElementById('tx-from-map');
+  const mapAddr = data.address || data.addressLocal;
+  if (mapAddr) {
+    mapBtn.classList.add('visible');
+    mapBtn.onclick = (e) => {
+      e.stopPropagation();
+      openMapQuery(mapAddr);
+    };
+  } else {
+    mapBtn.classList.remove('visible');
+    mapBtn.onclick = null;
+  }
+
   const ride = document.getElementById('tx-ride');
   const rideMain = document.getElementById('tx-ride-main');
   const rideBits = [];
@@ -1151,7 +1296,6 @@ function fillTransportModal(data) {
     rideMain.innerHTML = '';
   }
 
-  // Meta: suggested depart + fare + operator (no separate wait box)
   const meta = document.getElementById('tx-meta');
   const metaParts = [];
   if (data.time) metaParts.push(`建議出發 <b>${escapeHtml(data.time)}</b>`);
@@ -1175,78 +1319,56 @@ function fillTransportModal(data) {
 function fillGateModal(data) {
   document.getElementById('modal-type').innerText = TYPE_LABELS[data.type] || data.type;
   document.getElementById('modal-title').innerText = data.title || '';
-  fillModalInfoGrid([
-    { label: data.type === 'departure' ? '出發時間' : '抵達時間', value: data.time, time: true, wide: true },
-    { label: '地點', value: data.address || data.addressLocal, wide: true },
-    { label: '電話', value: data.phone, phone: true, wide: true }
-  ], { stack: true });
-  setModalNote(data.note);
+  const timeLabel = data.type === 'departure' ? '出發時間' : '抵達時間';
+  const place = data.address || data.addressLocal;
+  let html = '';
+  if (data.time) {
+    html += `<div><div class="modal-hero-caption">${escapeHtml(timeLabel)}</div><div class="modal-hero-time">${escapeHtml(data.time)}</div></div>`;
+  }
+  html += placeRowHtml(place, data.address || data.addressLocal);
+  html += phoneChipHtml(data.phone);
+  fillLeanInfo(html);
+  setModalNote(data.note, { compact: true });
 }
 
 function fillFoodModal(data) {
   document.getElementById('modal-type').innerText = TYPE_LABELS.food;
   document.getElementById('modal-title').innerText = data.title || '';
-  const price = data.price || (data.cost && data.cost.amount != null
-    ? `${data.cost.amount} ${data.cost.currency || ''}`.trim()
-    : null);
-  fillModalInfoGrid([
-    { label: '時間', value: data.time },
-    { label: '預算', value: price },
-    { label: '地址', value: data.address || data.addressLocal, wide: true },
-    { label: '電話', value: data.phone, phone: true, wide: true },
-    { label: '開放時間', value: data.openHours, wide: true }
-  ]);
-  setModalNote(data.note);
+  const place = data.address || data.addressLocal;
+  let html = '';
+  if (data.time) {
+    html += `<div><div class="modal-hero-caption">時間</div><div class="modal-hero-time">${escapeHtml(data.time)}</div></div>`;
+  }
+  html += placeRowHtml(place, data.address || data.addressLocal);
+  html += phoneChipHtml(data.phone);
+  html += metaLineHtml([formatPriceLine(data), data.openHours]);
+  fillLeanInfo(html);
+  setModalNote(data.note, { compact: true });
 }
 
 function fillPlaceModal(data) {
   document.getElementById('modal-type').innerText = TYPE_LABELS[data.type] || data.type || '行程';
   document.getElementById('modal-title').innerText = data.title || '';
-  const price = data.price || (data.cost && data.cost.amount != null
-    ? `${data.cost.amount} ${data.cost.currency || ''}`.trim()
-    : null);
-  fillModalInfoGrid([
-    { label: '時間', value: data.time },
-    { label: '預算', value: price },
-    { label: '開放時間', value: data.openHours },
-    { label: '地址', value: data.address || data.addressLocal, wide: true },
-    { label: '電話', value: data.phone, phone: true, wide: true }
-  ]);
-  setModalNote(data.note);
+  const place = data.address || data.addressLocal;
+  let html = '';
+  if (data.time) {
+    html += `<div><div class="modal-hero-caption">時間</div><div class="modal-hero-time">${escapeHtml(data.time)}</div></div>`;
+  }
+  html += placeRowHtml(place, data.address || data.addressLocal);
+  html += phoneChipHtml(data.phone);
+  html += metaLineHtml([formatPriceLine(data), data.openHours]);
+  fillLeanInfo(html);
+  setModalNote(data.note, { compact: true });
 }
 
 function fillModalActions(data, layout) {
   const actionsContainer = document.getElementById('modal-actions');
   actionsContainer.innerHTML = '';
   const addr = data.addressLocal || data.address;
-  const mapAddr = data.address || data.addressLocal;
 
-  if (layout === 'transport') {
-    if (mapAddr) {
-      actionsContainer.innerHTML += `<button class="btn-action btn-black" onclick="openMapQuery('${escapeAttr(mapAddr)}')"><i class="fa-solid fa-location-arrow"></i> 出發點地圖</button>`;
-    }
-    if (addr) {
-      actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="copyToClipboard('${escapeAttr(addr)}')"><i class="fa-regular fa-copy"></i> 複製地址</button>`;
-    }
-    return;
-  }
+  // transport / gate: map + call are inline icons — no footer buttons
+  if (layout === 'transport' || layout === 'gate') return;
 
-  if (layout === 'gate') {
-    if (mapAddr) {
-      actionsContainer.innerHTML += `<button class="btn-action btn-black" onclick="openMapQuery('${escapeAttr(mapAddr)}')"><i class="fa-solid fa-location-arrow"></i> Google Maps</button>`;
-    }
-    if (data.phone) {
-      actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="callNumber('${escapeAttr(data.phone)}')"><i class="fa-solid fa-phone"></i> 撥打電話</button>`;
-    }
-    return;
-  }
-
-  if (addr) {
-    actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="copyToClipboard('${escapeAttr(addr)}')"><i class="fa-regular fa-copy"></i> 複製地址</button>`;
-  }
-  if (mapAddr) {
-    actionsContainer.innerHTML += `<button class="btn-action btn-black" onclick="openMapQuery('${escapeAttr(mapAddr)}')"><i class="fa-solid fa-location-arrow"></i> Google Maps 導航</button>`;
-  }
   if (data.type === 'hotel' && addr) {
     actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="showPhrase('${escapeAttr(addr)}', '請載我去這裡')">🚕 顯示的士卡</button>`;
   }
@@ -1288,10 +1410,16 @@ function openModal(data) {
 
   document.getElementById('detail-modal').classList.add('open');
 
+  // Mini-map only for transport (context); other layouts use inline map icon to cut clutter
   const miniMapContainer = document.getElementById('modal-mini-map');
-  miniMapContainer.classList.toggle('is-compact', layout === 'transport' || layout === 'gate');
-  if (!data.coords && !data.address) {
+  const showMiniMap = layout === 'transport' && !!(data.coords || data.address);
+  miniMapContainer.classList.toggle('is-compact', true);
+  if (!showMiniMap) {
     miniMapContainer.style.display = 'none';
+    if (modalMap) {
+      modalMap.remove();
+      modalMap = null;
+    }
   } else {
     miniMapContainer.style.display = 'block';
     setTimeout(() => {
