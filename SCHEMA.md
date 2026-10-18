@@ -1,26 +1,31 @@
 # config.js 結構契約（Schema）
 
-本文件定義 `config.js` 的結構。
-- **前端（index.html）** 依此渲染。
-- **LLM** 依此生成。
-- **Worker** 依此驗證。
+本文件定義 `config.js` 的結構（給人與 LLM 讀）。
+
+| 角色 | 依循 |
+|------|------|
+| **Worker 驗證** | 以 `schema.json` 為準（機器契約） |
+| **LLM 生成** | 本文件 + `schema.json`（語意與規則以本文件為準） |
+| **前端渲染** | 本文件的「App 支援矩陣」＋下方 UI 行為規範 |
+
+修改契約時：**先改 `schema.json`，再同步本文件**，避免兩邊漂移。
 
 ---
 
 ## 頂層區塊
 
-| 變數 | 用途 | 可為空 |
-|---|---|---|
-| `THEME_CONFIG` | 主題配色與字體 | ❌ |
-| `CONFIG` | 旅程 meta（日期、旅伴、貨幣） | ❌ |
-| `DESTINATION` | 主要目的地 / 起點 | ❌ |
-| `CITIES` | 多城市列表 | ✅（單城可留空陣列） |
-| `TRIP_INFO` | 航班、住宿、簽證、緊急聯絡 | ✅ |
-| `ITINERARY` | 扁平 timeline（核心） | ❌ |
-| `INSPIRATIONS` | Plan B 池（替代方案） | ✅ |
-| `DAILY_EXTRAS` | 每日購物清單 | ✅ |
-| `BUDGET` | 預算預估與實際花費 | ✅ |
-| `PHRASE_DATA` | 常用短語 | ✅ |
+| 變數 | 用途 | 可為空 | App 是否渲染 |
+|---|---|---|---|
+| `THEME_CONFIG` | 主題配色與字體 | ❌ | ✅ |
+| `CONFIG` | 旅程 meta（日期、旅伴、貨幣） | ❌ | ✅ |
+| `DESTINATION` | 主要目的地 / 起點 | ❌ | ✅ |
+| `CITIES` | 多城市列表 | ✅（單城可留空陣列） | ✅（卡片城市標籤／色條） |
+| `TRIP_INFO` | 航班、住宿、簽證、緊急聯絡 | ✅ | ✅ |
+| `ITINERARY` | 扁平 timeline（核心） | ❌ | ✅（含 `status` 徽章） |
+| `INSPIRATIONS` | Plan B 池（替代方案） | ✅ | ✅ |
+| `DAILY_EXTRAS` | 每日購物清單 | ✅ | ✅ |
+| `BUDGET` | 預算預估與實際花費 | ✅ | ✅（資訊頁） |
+| `PHRASE_DATA` | 常用短語 | ✅ | ✅ |
 
 ---
 
@@ -296,8 +301,11 @@ const PHRASE_DATA = [
 
 ## UI 行為規範
 
-### 行程卡片 → 附近備案
+### 行程卡片
 
+- 左側色條：優先 `moodColor`；若無，且 `cityId` 對得上 `CITIES[].id`，用該城 `color`；再否則用主題 accent
+- 若有 `cityId` 且對得到城市：顯示城市名稱小標籤
+- `status` 徽章：`confirmed` → 已確認；`pending` → 待定；`wishlist` → 願望（`confirmed` 可較低調）
 - 若某個 `ITINERARY.items` 有 `INSPIRATIONS` 指向它（`nearEventId === item.id`），
   則在該卡片下方顯示一個小按鈕：`💡 附近備案 (N)`
 - 點按鈕 → 切換到「靈感」tab → 篩選 `nearEventId` 相符的卡片 → 第一個 `scrollIntoView` + 加 `.highlight` class（背景短暫變色）
@@ -310,6 +318,17 @@ const PHRASE_DATA = [
   - `title`
   - `note`
   - 若有 `nearEventId`：顯示「靠近：<行程標題>」
+
+### 預算（資訊頁）
+
+- 顯示 `BUDGET.estimates`（總額與分類）若存在
+- 列出 `BUDGET.expenses`；若為空，可另彙總當日／全程 `ITINERARY.items[].cost` 作為參考
+- `estimates` 與 `expenses` 皆空時顯示「尚未填寫預算」
+
+### 更新提示
+
+- Worker 寫入 `config.js` 時檔首必須有 `// buildTime: <時間>`
+- App 優先比對 buildTime；缺該行時比對檔案內容 hash
 
 ---
 
@@ -335,3 +354,4 @@ const PHRASE_DATA = [
 
 - v1.0 — 2026-09-27 — 初版
 - v1.1 — 2026-09-27 — `alternatives` 併入 `INSPIRATIONS`；`nearEventId`；`tag` 改情境
+- v1.2 — 2026-10-18 — 明訂 `schema.json` 為機器契約；補 App 支援矩陣（BUDGET／CITIES／status／更新檢測）

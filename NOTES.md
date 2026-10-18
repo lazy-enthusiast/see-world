@@ -73,18 +73,23 @@ GitHub repo（lazy-enthusiast/see-world）
 7. **App 下拉重整，看到新行程**
 
 ### Grok Bot 呼叫 Worker 的格式
+```
 POST https://see-world-worker.davchan-clp.workers.dev/deploy
 Headers:
-Content-Type: application/json
-X-Deploy-Secret: dfjfdkfd4547454-6sdjebdss-7eds-12328463naywq-84f83he7h27s3
+  Content-Type: application/json
+  X-Deploy-Secret: <從密碼管理器／Grok 對話取得，勿寫進 repo>
 Body:
 {
-"path": "config.js", // 或 "preferences.md"
-"content": "完整檔案內容",
-"message": "auto: update config.js for Kyoto"
+  "path": "config.js",
+  "content": "完整檔案內容",
+  "message": "auto: update config.js for Osaka"
 }
+```
 
 **回傳**：`{ ok: true, path, commit, url }`
+
+> ⚠️ **絕對不要**把真實 `X-Deploy-Secret` 寫進本檔或任何會推上 GitHub 的文件。
+> 此 repo 為公開；舊 commit 若曾洩漏 secret，應在 Cloudflare 輪換 `DEPLOY_SECRET`。
 
 ---
 
@@ -127,8 +132,8 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 
 **App 啟動時會自動檢查 config.js 有沒有更新：**
 
-- Worker 每次寫 config.js，會在開頭加一行 `// buildTime: <時間>`
-- App 啟動時 fetch 最新 config.js，比對 buildTime
+- Worker **必須**在每次寫入 `config.js` 時，於檔案開頭加一行 `// buildTime: <時間>`（硬條件，不可省略）
+- App 啟動時 fetch 最新 config.js：優先比對 `buildTime`；若沒有該行，則改比對檔案內容 hash
 - 如果不同，顯示「有新版本，請下拉重整」
 
 ---
@@ -138,24 +143,21 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 ### 必須做
 
 - [ ] **確認 GitHub token 還在有效期內**（2026-12-26 到期）
-- [ ] **確認 Worker 的 secret 還記得**（在密碼管理器）
+- [ ] **確認 Worker 的 secret 還記得**（在密碼管理器；勿寫進本檔）
+- [ ] **若 secret 曾出現在公開 commit，到 Cloudflare 輪換 `DEPLOY_SECRET`**
 
 ### 想做的
 
-- [ ] **測試 Grok Bot 產出完整 config.js 的能力**
-  - 大綱（Phase 2）產得好，但 config.js 還沒測
-- [ ] **測試 Grok Bot 找當地特殊活動的能力**
-  - 已在 preferences.md 加入「主動找當地特殊活動」
-  - 還沒驗證它做不做得到
+- [x] **Grok Bot 可自行產出 config.js 並經 Worker 部署／歸檔**（2026-10-18 已接上）
+- [ ] **實戰驗證：大阪二月行程產出品質**（含當地特殊活動、節奏是否夠緊）
 - [ ] **決定是否課金 Grok Bot / Cursor Pro**
   - 課金時機：真的要去旅行時
-  - 目前用 Cursor Pro 14 天試用做第二個專案
 
 ### 未解的問題
 
 - [ ] **Grok Bot 規劃「不夠緊湊」**
   - 它排得安全，但不夠有驚喜
-  - 已寫進 preferences.md，待驗證
+  - 已寫進 preferences.md，待實戰驗證
 
 ---
 
@@ -169,6 +171,19 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 | 2026-09-27 | preferences.md 直接覆蓋，不存版本 | 只做加法，手動刪即可 |
 | 2026-09-27 | 版本檔名用 `{slug}-{YY-MM-DD-HHMM}` | HKT 時間、slug 識別 |
 | 2026-09-27 | DESTINATION 加 slug 欄位 | 檔名、agent 識別用 |
+| 2026-10-18 | 公開文件不再寫真實 Deploy Secret | 此 repo 公開，secret 只留密碼管理器／Bot 對話 |
+| 2026-10-18 | `schema.json` 為 Worker 機器契約；`SCHEMA.md` 為人／Bot 說明 | 避免雙份契約漂移 |
+| 2026-10-18 | App 補齊 BUDGET／CITIES／status 顯示；更新檢測加 hash fallback | 契約與畫面一致 |
+
+---
+
+## 契約來源（給 Bot／未來的我）
+
+| 檔案 | 角色 |
+|------|------|
+| `schema.json` | **機器契約**：Worker 驗證以此為準 |
+| `SCHEMA.md` | **人類／Bot 說明**：欄位語意、LLM 規則、UI 行為；須與 `schema.json` 同步 |
+| `preferences.md` | 旅遊偏好（最高優先參考） |
 
 ---
 
@@ -178,10 +193,11 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 
 1. 打開 `https://lazy-enthusiast.github.io/see-world/` 確認 App 還活著
 2. 打開 Cloudflare dashboard 確認 Worker 還活著
-3. 打開 Grok Bot 對話，確認 secret 還在
-4. 看 `preferences.md` 和 `SCHEMA.md` 有沒有要更新的
-5. **然後，開始規劃下一趟旅行**
+3. 打開 Grok Bot 對話，確認 secret 還在（密碼管理器）
+4. 確認 GitHub PAT 未過期（2026-12-26）
+5. 看 `preferences.md` 和 `SCHEMA.md` 有沒有要更新的
+6. **然後，開始規劃下一趟旅行**
 
 ---
 
-*最後更新：2026-09-27*
+*最後更新：2026-10-18*

@@ -11,35 +11,43 @@
 ## 怎麼用
 
 1. 打開 App：https://lazy-enthusiast.github.io/see-world/
-2. 行程由 `config.js` 決定
+2. 行程由 `config.js` 決定（主題配色也在這裡）
 3. 要更新行程時，由 Grok Bot 透過 Worker 部署
 
 ## 檔案結構
+
+```
 see-world/
-├── index.html # App 主體（含渲染邏輯）
-├── config.js # 客製化行程資料（App 讀這個）
-├── preferences.md # 旅遊偏好（Grok Bot 讀這個）
-├── SCHEMA.md # config.js 的結構契約
-├── NOTES.md # 給未來的我的備忘錄
-├── sw.js # Service Worker（快取策略）
-├── manifest.json # PWA 設定
+├── index.html      # App 主體（含渲染邏輯）
+├── config.js       # 客製化行程資料（App 讀這個）
+├── preferences.md  # 旅遊偏好（Grok Bot 讀這個）
+├── SCHEMA.md       # 給人／Bot 的結構說明
+├── schema.json     # Worker 驗證用的機器契約（以此為準）
+├── NOTES.md        # pipeline 備忘（勿寫入真實 secret）
+├── sw.js           # Service Worker（快取策略）
+├── manifest.json   # PWA 設定
 └── versions/
-└── config/ # config.js 的歷史版本
+    └── config/     # config.js 的歷史版本
+```
 
 ## 相關文件
 
-- **`SCHEMA.md`**：`config.js` 的結構契約
+- **`SCHEMA.md`**：`config.js` 的結構說明與 LLM 規則
+- **`schema.json`**：Worker 驗證契約
 - **`NOTES.md`**：pipeline 的運作方式、從哪裡開始
-- **`preferences.md`**：我的旅遊偏好
+- **`preferences.md`**：旅遊偏好
 
 ## 技術架構
+
+```
 Grok Bot（規劃）
-↓ HTTP POST（帶 X-Deploy-Secret）
+  ↓ HTTP POST（帶 X-Deploy-Secret；真值不進 repo）
 Cloudflare Worker（驗證、存舊版、寫入 GitHub）
-↓
+  ↓
 GitHub repo
-↓ 自動部署
+  ↓ 自動部署
 App（顯示）
+```
 
 ## 狀態
 
@@ -48,10 +56,9 @@ App（顯示）
 - ✅ 認證完成
 - ✅ 版本管理完成
 - ✅ 更新提示完成
-- ⏳ 待驗證：Grok Bot 產出完整 `config.js` 的能力
-- ⏳ 待驗證：Grok Bot 找當地特殊活動的能力
+- ✅ Grok Bot 可產出 `config.js` 並部署／歸檔
+- ⏳ 待實戰驗證：大阪行程產出品質與當地活動發現能力
 
 ## 課金狀態
 
-目前使用 Grok Bot 免費額度（已用完，7 天後補充）。
 課金時機：真的要去旅行時。
