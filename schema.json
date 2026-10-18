@@ -53,9 +53,10 @@
 
     "DESTINATION": {
       "type": "object",
-      "required": ["name", "lat", "lon", "timezone"],
+      "required": ["name", "slug", "lat", "lon", "timezone"],
       "properties": {
         "name": { "type": "string" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
         "lat": { "type": "number" },
         "lon": { "type": "number" },
         "timezone": { "type": "string" },
@@ -210,23 +211,40 @@
       }
     },
 
+    "INSPIRATIONS": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "tag", "type", "status", "source"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "tag": { "enum": ["RAINY", "TIRED", "PHOTO", "FOOD", "SHOP", "TIME", "SOLO"] },
+          "note": { "type": ["string", "null"] },
+          "type": {
+            "enum": ["arrival", "departure", "transport", "food", "sight", "hotel", "shop", "rest", "note"]
+          },
+          "cityId": { "type": ["string", "null"] },
+          "address": { "type": ["string", "null"] },
+          "addressLocal": { "type": ["string", "null"] },
+          "coords": {
+            "oneOf": [
+              { "type": "null" },
+              { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 }
+            ]
+          },
+          "nearEventId": { "type": ["string", "null"] },
+          "status": { "enum": ["wishlist", "done", "skipped"] },
+          "source": { "enum": ["user", "ai", "ai-edited"] }
+        }
+      }
+    },
+
     "DAILY_EXTRAS": {
       "type": "object",
       "additionalProperties": {
         "type": "object",
         "properties": {
-          "inspiration": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": { "type": "string" },
-                "tag": { "type": "string" },
-                "note": { "type": "string" },
-                "type": { "type": "string" }
-              }
-            }
-          },
           "shopping": { "type": "array", "items": { "type": "string" } }
         }
       }

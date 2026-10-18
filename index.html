@@ -91,6 +91,17 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .card-title { font-size: 1rem; font-weight: 700; margin: 0 0 5px 0; line-height: 1.3; font-family: var(--font-heading); color: var(--text-main); letter-spacing: 0.2px; }
 .card-time { font-size: 0.7rem; color: var(--text-sub); font-weight: 600; margin-bottom: 4px; display: block; font-family: var(--font-body); letter-spacing: 0.5px; text-transform: uppercase;}
 .card-tag { font-size: 0.6rem; background: var(--bg-body); padding: 2px 6px; border-radius: 0; color: var(--text-sub); font-weight: 500; border: 1px solid var(--border); letter-spacing: 0.5px; }
+.card-meta-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; align-items: center; }
+.status-badge { font-size: 0.55rem; padding: 2px 6px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid var(--border); }
+.status-badge.confirmed { color: var(--text-sub); background: var(--bg-body); }
+.status-badge.pending { color: var(--accent-text); background: var(--accent); border-color: var(--accent); }
+.status-badge.wishlist { color: var(--text-main); background: transparent; border-style: dashed; }
+.city-badge { font-size: 0.55rem; padding: 2px 6px; font-weight: 700; letter-spacing: 0.5px; color: var(--accent-text); }
+.budget-summary { display: flex; flex-direction: column; gap: 8px; }
+.budget-total { font-size: 1.4rem; font-weight: 700; font-family: var(--font-heading); }
+.budget-cat-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.budget-expense { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.budget-expense:last-child { border-bottom: none; }
 
 /* Weather - Modified for Auto Layout */
 .weather-main-card { background: var(--text-main); color: var(--bg-body); border-radius: 0; padding: 20px; margin: 0 15px 20px 15px; text-align: center; position: relative; overflow: hidden;}
@@ -514,7 +525,79 @@ function renderInfoPage() {
     });
     html += `</div>`;
   }
+
+  html += renderBudgetSection();
   container.innerHTML = html;
+}
+
+const STATUS_LABELS = { confirmed: '已確認', pending: '待定', wishlist: '願望' };
+
+function getCityById(cityId) {
+  if (!cityId || !Array.isArray(CITIES)) return null;
+  return CITIES.find(c => c.id === cityId) || null;
+}
+
+function formatMoney(amount, currency) {
+  if (amount == null || isNaN(amount)) return '—';
+  const n = Number(amount);
+  const formatted = Number.isInteger(n) ? n.toLocaleString('en-US') : n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  return `${formatted} ${currency || ''}`.trim();
+}
+
+function sumItineraryCosts() {
+  const byCategory = {};
+  let total = 0;
+  let currency = (typeof DESTINATION !== 'undefined' && DESTINATION.currencyLabel) || 'JPY';
+  (ITINERARY.items || []).forEach(it => {
+    if (!it.cost || it.cost.amount == null) return;
+    const amt = Number(it.cost.amount) || 0;
+    if (amt === 0) return;
+    total += amt;
+    if (it.cost.currency) currency = it.cost.currency;
+    const cat = it.cost.category || 'other';
+    byCategory[cat] = (byCategory[cat] || 0) + amt;
+  });
+  return { total, currency, byCategory };
+}
+
+function renderBudgetSection() {
+  const budget = (typeof BUDGET !== 'undefined' && BUDGET) ? BUDGET : null;
+  const estimates = budget && budget.estimates;
+  const expenses = (budget && Array.isArray(budget.expenses)) ? budget.expenses : [];
+  const fromItinerary = sumItineraryCosts();
+  const hasEstimates = estimates && estimates.total != null;
+  const hasExpenses = expenses.length > 0;
+  const hasItineraryCosts = fromItinerary.total > 0;
+
+  if (!hasEstimates && !hasExpenses && !hasItineraryCosts) {
+    return `<div class="info-card"><div class="info-header">預算</div><div style="color:var(--text-sub); font-size:0.9rem;">尚未填寫預算</div></div>`;
+  }
+
+  let html = `<div class="info-card"><div class="info-header">預算</div><div class="budget-summary">`;
+
+  if (hasEstimates) {
+    html += `<div><span class="info-label">預估總額</span><div class="budget-total">${formatMoney(estimates.total, estimates.currency)}</div></div>`;
+    if (estimates.byCategory && typeof estimates.byCategory === 'object') {
+      Object.entries(estimates.byCategory).forEach(([cat, amt]) => {
+        html += `<div class="budget-cat-row"><span>${cat}</span><span>${formatMoney(amt, estimates.currency)}</span></div>`;
+      });
+    }
+  }
+
+  if (hasExpenses) {
+    html += `<div style="margin-top:12px;"><span class="info-label">已記帳</span></div>`;
+    expenses.forEach(exp => {
+      html += `<div class="budget-expense"><div style="font-weight:600;">${exp.title || exp.category}</div><div style="display:flex; justify-content:space-between; color:var(--text-sub); font-size:0.85rem;"><span>${exp.day ? 'Day ' + exp.day : ''} ${exp.category || ''}</span><span>${formatMoney(exp.amount, exp.currency)}</span></div></div>`;
+    });
+  } else if (!hasEstimates && hasItineraryCosts) {
+    html += `<div style="margin-top:4px;"><span class="info-label">行程成本參考（來自行程 cost）</span><div class="budget-total" style="font-size:1.1rem; margin-top:4px;">${formatMoney(fromItinerary.total, fromItinerary.currency)}</div></div>`;
+    Object.entries(fromItinerary.byCategory).forEach(([cat, amt]) => {
+      html += `<div class="budget-cat-row"><span>${cat}</span><span>${formatMoney(amt, fromItinerary.currency)}</span></div>`;
+    });
+  }
+
+  html += `</div></div>`;
+  return html;
 }
 
 function showToast(msg) {
@@ -831,7 +914,18 @@ function renderTimeline(dayKey) {
     const navBtn = item.address
       ? `<div class="card-nav-btn" onclick="event.stopPropagation(); openMapQuery('${item.address}')"><i class="fa-solid fa-location-arrow"></i></div>`
       : '';
-    const colorStyle = item.moodColor ? `border-left-color: ${item.moodColor};` : 'border-left-color: var(--accent);';
+
+    const city = getCityById(item.cityId);
+    const borderColor = item.moodColor || (city && city.color) || null;
+    const colorStyle = borderColor ? `border-left-color: ${borderColor};` : 'border-left-color: var(--accent);';
+
+    const statusKey = item.status || 'pending';
+    const statusLabel = STATUS_LABELS[statusKey] || statusKey;
+    let metaBits = `<span class="status-badge ${statusKey}">${statusLabel}</span>`;
+    if (city) {
+      const cityColor = city.color || 'var(--accent)';
+      metaBits += `<span class="city-badge" style="background:${cityColor};">${city.name}</span>`;
+    }
 
     // 交通卡：多顯示 from → to
     let transportLine = '';
@@ -839,7 +933,7 @@ function renderTimeline(dayKey) {
       transportLine = `<div style="font-size:0.8rem; color:var(--text-sub); margin-bottom:4px;"><i class="fa-solid fa-arrow-right" style="font-size:0.7rem;"></i> ${item.transport.from} → ${item.transport.to}</div>`;
     }
 
-    // 🆕 附近備案按鈕
+    // 附近備案按鈕
     const relatedInspirations = INSPIRATIONS.filter(ins => ins.nearEventId === item.id);
     const inspBtn = relatedInspirations.length > 0
       ? `<div style="margin-top:8px;"><button class="btn-inspiration" onclick="event.stopPropagation(); jumpToInspiration('${item.id}')"><i class="fa-solid fa-lightbulb"></i> 附近備案 (${relatedInspirations.length})</button></div>`
@@ -849,6 +943,7 @@ function renderTimeline(dayKey) {
       <div class="card" style="${colorStyle}" onclick='openModal(${safeData})'>
         ${navBtn}
         <span class="card-time">${item.time || '彈性'}</span>
+        <div class="card-meta-row">${metaBits}</div>
         <h3 class="card-title">${item.title}</h3>
         ${transportLine}
         <div class="tags">${tags}</div>
@@ -988,19 +1083,37 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+async function simpleHash(text) {
+  if (window.crypto && window.crypto.subtle) {
+    const data = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  let h = 0;
+  for (let i = 0; i < text.length; i++) h = ((h << 5) - h) + text.charCodeAt(i) | 0;
+  return String(h);
+}
+
 async function checkForUpdate() {
   try {
     const res = await fetch(`config.js?t=${Date.now()}`, { cache: 'reload' });
     if (!res.ok) return;
     const text = await res.text();
     const match = text.match(/^\/\/ buildTime:\s*(.+)$/m);
-    if (!match) return;
-    const serverBuildTime = match[1].trim();
-    const lastSeen = localStorage.getItem('lastSeenBuildTime');
-    if (lastSeen && lastSeen !== serverBuildTime) {
+    const fingerprint = match ? `bt:${match[1].trim()}` : `hash:${await simpleHash(text)}`;
+
+    let prev = localStorage.getItem('lastSeenConfigFingerprint');
+    if (!prev) {
+      const legacy = localStorage.getItem('lastSeenBuildTime');
+      if (legacy) {
+        prev = `bt:${legacy}`;
+        localStorage.removeItem('lastSeenBuildTime');
+      }
+    }
+    if (prev && prev !== fingerprint) {
       showToast('有新版本，請下拉重整');
     }
-    localStorage.setItem('lastSeenBuildTime', serverBuildTime);
+    localStorage.setItem('lastSeenConfigFingerprint', fingerprint);
   } catch (e) {
     console.warn('檢查更新失敗：', e);
   }
