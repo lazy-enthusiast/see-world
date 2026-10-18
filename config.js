@@ -41,7 +41,7 @@ const CONFIG = {
 // 3. 📍 目的地
 const DESTINATION = {
   "name": "大阪 Osaka",
-  "slug": "osaka",
+  slug: "osaka",
   "lat": 34.6937,
   "lon": 135.5023,
   "timezone": "Asia/Tokyo",
