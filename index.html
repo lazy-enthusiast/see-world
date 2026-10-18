@@ -325,21 +325,27 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 }
 .tx-stop-label { font-size: 0.6rem; color: var(--text-sub); letter-spacing: 0.5px; margin-bottom: 2px; text-transform: uppercase; font-weight: 700; }
 .tx-stop-name { font-size: 1.05rem; font-weight: 700; font-family: var(--font-heading); line-height: 1.25; color: var(--text-main); }
+.tx-stop-detail {
+  display: none;
+  margin-top: 3px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--text-sub);
+}
+.tx-stop-detail.visible { display: block; }
 .tx-route-arrow { color: var(--text-sub); padding-top: 1.15rem; font-size: 0.85rem; }
 .tx-ride {
   display: none;
-  margin: 10px 0 0 0;
-  padding: 10px 12px;
-  background: var(--bg-body);
-  border: 1px solid var(--border);
-  font-size: 0.9rem;
-  line-height: 1.45;
+  margin: 8px 0 0 0;
+  padding: 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
   color: var(--text-main);
 }
 .tx-ride.visible { display: block; }
-.tx-ride-main { font-weight: 700; font-family: var(--font-heading); font-size: 1rem; }
-.tx-ride-main b { font-variant-numeric: tabular-nums; color: var(--accent); }
-.tx-ride-sub { margin-top: 2px; font-size: 0.78rem; color: var(--text-sub); }
+.tx-ride-main { font-weight: 600; font-size: 0.88rem; }
+.tx-ride-main b { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
 .tx-facts {
   display: flex;
   flex-wrap: wrap;
@@ -539,6 +545,7 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
     <div>
       <div class="tx-stop-label">上車站</div>
       <div class="tx-stop-name" id="tx-from">—</div>
+      <div class="tx-stop-detail" id="tx-from-detail"></div>
     </div>
     <div class="tx-route-arrow"><i class="fa-solid fa-arrow-right"></i></div>
     <div>
@@ -548,7 +555,6 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
   </div>
   <div class="tx-ride" id="tx-ride">
     <div class="tx-ride-main" id="tx-ride-main"></div>
-    <div class="tx-ride-sub" id="tx-ride-sub"></div>
   </div>
   <div id="live-transit-box" class="live-transit-box">
     <div class="live-transit-head">
@@ -1032,37 +1038,54 @@ function formatWaitLabel(mins) {
   return `約再等 ${mins} 分`;
 }
 
+/** Small line under 上車站: line name or physical boarding hint (樓／出口／巴士站). */
+function boardingDetail(data, t) {
+  const addr = String(data.addressLocal || data.address || '').trim();
+  const line = String(t.line || '').trim();
+  const from = String(t.from || '').trim();
+  const placeHint = /[樓层層]|出口|月台|ホーム|巴士站|バス停|巴士|閘口|番街|入口|地下/;
+  if (addr && placeHint.test(addr)) return addr;
+  if (line) return line;
+  if (addr && from && addr !== from && !addr.includes(from)) return addr;
+  if (addr && addr !== from) return addr;
+  return '';
+}
+
 function fillTransportModal(data) {
   const t = data.transport || {};
   const modeLabel = MODE_LABELS[t.mode] || data.type || '交通';
-  const lineBit = t.line || '';
-  document.getElementById('modal-type').innerText = lineBit ? `${modeLabel} · ${lineBit}` : modeLabel;
+  document.getElementById('modal-type').innerText = modeLabel;
   document.getElementById('modal-title').innerText =
     t.to ? `前往${t.to}` : (data.title || '交通');
 
   document.getElementById('tx-from').innerText = t.from || '—';
   document.getElementById('tx-to').innerText = t.to || '—';
 
+  const fromDetail = document.getElementById('tx-from-detail');
+  const detail = boardingDetail(data, t);
+  if (detail) {
+    fromDetail.innerText = detail;
+    fromDetail.classList.add('visible');
+  } else {
+    fromDetail.innerText = '';
+    fromDetail.classList.remove('visible');
+  }
+
   const ride = document.getElementById('tx-ride');
   const rideMain = document.getElementById('tx-ride-main');
-  const rideSub = document.getElementById('tx-ride-sub');
   const rideBits = [];
-  if (t.stopCount != null && t.stopCount > 0) {
-    rideBits.push(`搭 <b>${t.stopCount}</b> 站到${t.to ? `「${t.to}」` : '目的地'}`);
-  }
   if (t.durationMin != null) {
-    rideBits.push(rideBits.length ? `車程約 <b>${t.durationMin}</b> 分` : `車程約 <b>${t.durationMin}</b> 分`);
+    rideBits.push(`車程約 <b>${t.durationMin}</b> 分`);
+  }
+  if (t.stopCount != null && t.stopCount > 0) {
+    rideBits.push(`搭 <b>${t.stopCount}</b> 站`);
   }
   if (rideBits.length) {
     ride.classList.add('visible');
     rideMain.innerHTML = rideBits.join(' · ');
-    rideSub.innerText = t.from && t.to
-      ? `在「${t.from}」上車 → 「${t.to}」下車`
-      : '';
   } else {
     ride.classList.remove('visible');
     rideMain.innerHTML = '';
-    rideSub.innerText = '';
   }
 
   const facts = [];
@@ -1075,23 +1098,23 @@ function fillTransportModal(data) {
     ? facts.join('<span class="tx-fact-sep">·</span>')
     : '';
 
-  const subParts = [];
-  if (t.operator) subParts.push(t.operator);
-  if (data.address) subParts.push(`上車點：${data.address}`);
-  document.getElementById('tx-subline').innerText = subParts.join(' · ');
+  // Operator only — address/line already under 上車站
+  document.getElementById('tx-subline').innerText = t.operator || '';
 
   const fallback = document.getElementById('tx-schedule-fallback');
   const hasLive = t.liveApi && t.liveApi.provider && t.liveApi.stopId;
-  if (!hasLive && (data.time || data.openHours)) {
-    const waitMins = data.time ? minutesUntilHHMM(data.time) : null;
-    const waitHtml = waitMins != null
-      ? `<div>到上車站後：<span class="tx-wait-num">${formatWaitLabel(waitMins)}</span>（相對建議出發 ${data.time}）</div>`
-      : '';
-    const sched = data.openHours
-      ? `<div style="margin-top:${waitHtml ? '4px' : '0'};color:var(--text-sub);font-size:0.78rem;">${data.openHours}</div>`
-      : '';
-    fallback.innerHTML = `<div class="modal-label" style="margin:0 0 6px 0;">候車參考</div>${waitHtml}${sched}`;
-    fallback.classList.add('visible');
+  if (!hasLive && data.time) {
+    const waitMins = minutesUntilHHMM(data.time);
+    if (waitMins != null) {
+      fallback.innerHTML =
+        `<div class="modal-label" style="margin:0 0 4px 0;">候車參考</div>` +
+        `<div><span class="tx-wait-num">${formatWaitLabel(waitMins)}</span>` +
+        `<span style="color:var(--text-sub);font-size:0.78rem;">（相對建議出發 ${data.time}）</span></div>`;
+      fallback.classList.add('visible');
+    } else {
+      fallback.classList.remove('visible');
+      fallback.innerHTML = '';
+    }
   } else {
     fallback.classList.remove('visible');
     fallback.innerHTML = '';
