@@ -26,9 +26,12 @@ see-world/
 ├── NOTES.md        # pipeline 備忘（勿寫入真實 secret）
 ├── sw.js           # Service Worker（快取策略）
 ├── manifest.json   # PWA 設定
+├── worker/         # Cloudflare Worker（/transit 代理；合併進現有 deploy Worker）
 └── versions/
     └── config/     # config.js 的歷史版本
 ```
+
+每趟旅行只換 `config.js`。交通 API key 只存在 Cloudflare，見 `worker/README.md` 與 `SCHEMA.md` 的 `liveApi`。
 
 ## 相關文件
 

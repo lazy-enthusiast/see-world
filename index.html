@@ -92,6 +92,17 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .card-time { font-size: 0.7rem; color: var(--text-sub); font-weight: 600; margin-bottom: 4px; display: block; font-family: var(--font-body); letter-spacing: 0.5px; text-transform: uppercase;}
 .card-tag { font-size: 0.6rem; background: var(--bg-body); padding: 2px 6px; border-radius: 0; color: var(--text-sub); font-weight: 500; border: 1px solid var(--border); letter-spacing: 0.5px; }
 .card-meta-row { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; align-items: center; }
+.tx-card-route {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin: 0 0 6px 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--text-main);
+}
+.tx-card-stop-label { display: block; font-size: 0.58rem; color: var(--text-sub); letter-spacing: 0.4px; text-transform: uppercase; font-weight: 700; margin-bottom: 1px; }
+.tx-card-stop-name { font-weight: 600; }
 .status-badge { font-size: 0.55rem; padding: 2px 6px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid var(--border); }
 .status-badge.confirmed { color: var(--text-sub); background: var(--bg-body); }
 .status-badge.pending { color: var(--accent-text); background: var(--accent); border-color: var(--accent); }
@@ -102,6 +113,17 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .budget-cat-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .budget-expense { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .budget-expense:last-child { border-bottom: none; }
+
+/* Live transit arrivals (modal) */
+.live-transit-box { margin: 15px 0; padding: 12px; border: 1px solid var(--border); background: var(--bg-body); display: none; }
+.live-transit-box.visible { display: block; }
+.live-transit-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.live-transit-status { font-size: 0.7rem; color: var(--text-sub); }
+.live-arrival-row { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+.live-arrival-row:last-child { border-bottom: none; }
+.live-arrival-time { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 3em; }
+.live-arrival-dest { flex: 1; color: var(--text-main); }
+.live-arrival-meta { font-size: 0.75rem; color: var(--text-sub); white-space: nowrap; }
 
 /* Transport: one quiet line, no left accent, no duplicate title/route */
 .timeline-item.is-transport { padding-bottom: 4px; }
@@ -280,6 +302,7 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 
 /* 🔧 FIX #1: 補上小地圖容器的高度，否則 Leaflet 會塌陷成 0px 而不顯示 */
 #modal-mini-map { width: 100%; height: 180px; z-index: 1; background: var(--bg-body); }
+#modal-mini-map.is-compact { height: 120px; }
 #modal-mini-map .leaflet-control-attribution {
   font-size: 9px;
   background: rgba(255,255,255,0.75);
@@ -288,6 +311,75 @@ main { flex: 1; overflow-y: hidden; position: relative; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Transport modal: board · wait · stops */
+.modal-transport-block { display: none; margin: 4px 0 10px 0; }
+.modal-transport-block.visible { display: block; }
+.tx-route {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: start;
+  padding: 8px 0 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tx-stop-label { font-size: 0.6rem; color: var(--text-sub); letter-spacing: 0.5px; margin-bottom: 2px; text-transform: uppercase; font-weight: 700; }
+.tx-stop-name { font-size: 1.05rem; font-weight: 700; font-family: var(--font-heading); line-height: 1.25; color: var(--text-main); }
+.tx-stop-detail {
+  display: none;
+  margin-top: 3px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--text-sub);
+}
+.tx-stop-detail.visible { display: block; }
+.tx-route-arrow { color: var(--text-sub); padding-top: 1.15rem; font-size: 0.85rem; }
+.tx-ride {
+  display: none;
+  margin: 8px 0 0 0;
+  padding: 0;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: var(--text-main);
+}
+.tx-ride.visible { display: block; }
+.tx-ride-main { font-weight: 600; font-size: 0.88rem; }
+.tx-ride-main b { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
+.tx-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  padding: 8px 0 2px 0;
+  font-size: 0.78rem;
+  color: var(--text-main);
+}
+.tx-fact {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 2px 0;
+}
+.tx-fact b { font-variant-numeric: tabular-nums; font-weight: 700; }
+.tx-fact-sep { color: var(--border); }
+.tx-subline { font-size: 0.72rem; color: var(--text-sub); line-height: 1.4; margin-top: 4px; }
+.modal-note-box.is-compact { padding: 12px 14px; margin: 10px 0; font-size: 0.82rem; line-height: 1.55; }
+.modal-body.is-transport { padding-top: 0; }
+.live-transit-box { margin: 10px 0 0 0; padding: 10px 12px; }
+.live-arrival-row { padding: 5px 0; font-size: 0.85rem; }
+.live-arrival-row.is-next { font-weight: 600; }
+.live-arrival-wait { font-size: 0.75rem; color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tx-schedule-fallback {
+  display: none;
+  margin: 10px 0 0 0;
+  padding: 10px 12px;
+  border: 1px dashed var(--border);
+  background: var(--bg-body);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+.tx-schedule-fallback.visible { display: block; }
+.tx-schedule-fallback .tx-wait-num { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent); }
 
 /* Nav & Sidebar */
 nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--bg-card); opacity: 0.98; display: flex; justify-content: space-around; padding: 12px 0 calc(12px + var(--safe-bottom)) 0; border-top: 1px solid var(--border); z-index: 100; backdrop-filter: blur(10px); }
@@ -440,15 +532,42 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
 <div class="modal-content">
 <div class="modal-handle-container" id="modal-drag-area"><div class="modal-handle"></div></div>
 <div id="modal-mini-map"></div>
-<div class="modal-body">
-<div style="margin-bottom:15px;"><span class="modal-label" id="modal-type">Type</span><h2 id="modal-title" style="margin:0; font-size:1.4rem; font-family:var(--font-heading);">Title</h2></div>
-<div class="modal-info-grid">
+<div class="modal-body" id="modal-body">
+<div id="modal-header-block" style="margin-bottom:15px;"><span class="modal-label" id="modal-type">Type</span><h2 id="modal-title" style="margin:0; font-size:1.4rem; font-family:var(--font-heading);">Title</h2></div>
+<div class="modal-info-grid" id="modal-info-grid">
 <div><span class="modal-label">時間</span><span class="modal-value" id="modal-time"></span></div>
 <div><span class="modal-label">預算</span><span class="modal-value" id="modal-price"></span></div>
 <div><span class="modal-label">開放時間</span><span class="modal-value" id="modal-open-hours"></span></div>
 <div><span class="modal-label">地址</span><span class="modal-value" id="modal-address-short" style="font-size:0.9rem;"></span></div>
 </div>
-<div class="modal-label">備註</div><div class="modal-note-box"><div id="modal-note" class="modal-note-content"></div></div>
+<div id="modal-transport-block" class="modal-transport-block">
+  <div class="tx-route">
+    <div>
+      <div class="tx-stop-label">上車站</div>
+      <div class="tx-stop-name" id="tx-from">—</div>
+      <div class="tx-stop-detail" id="tx-from-detail"></div>
+    </div>
+    <div class="tx-route-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+    <div>
+      <div class="tx-stop-label">目的地</div>
+      <div class="tx-stop-name" id="tx-to">—</div>
+    </div>
+  </div>
+  <div class="tx-ride" id="tx-ride">
+    <div class="tx-ride-main" id="tx-ride-main"></div>
+  </div>
+  <div id="live-transit-box" class="live-transit-box">
+    <div class="live-transit-head">
+      <span class="modal-label" style="margin:0;">候車／到站時刻</span>
+      <span id="live-transit-status" class="live-transit-status"></span>
+    </div>
+    <div id="live-transit-list"></div>
+  </div>
+  <div id="tx-schedule-fallback" class="tx-schedule-fallback"></div>
+  <div class="tx-facts" id="tx-facts"></div>
+  <div class="tx-subline" id="tx-subline"></div>
+</div>
+<div class="modal-label" id="modal-note-label">備註</div><div class="modal-note-box" id="modal-note-box"><div id="modal-note" class="modal-note-content"></div></div>
 <div class="modal-actions" id="modal-actions"></div>
 </div>
 </div>
@@ -456,6 +575,10 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+// Transit Worker（殼固定；key 在 Cloudflare，不進 config.js）
+const TRANSIT_WORKER_URL = 'https://see-world-transit.davchan-clp.workers.dev/transit';
+let liveTransitTimer = null;
+
 // 1. 🎨 應用主題
 function applyTheme() {
   const root = document.documentElement;
@@ -878,44 +1001,212 @@ function callNumber(num) { window.location.href = `tel:${num}`; }
 function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => { showToast("已複製"); }); }
 function searchGmail(query) { window.open(`https://mail.google.com/mail/u/0/#search/${encodeURIComponent(query)}`, '_blank'); }
 
-// 11. Modal（跟原本一樣）
+const MODE_LABELS = {
+  train: '火車', subway: '地鐵', bus: '巴士', taxi: '的士',
+  walk: '步行', ferry: '渡輪', flight: '航班'
+};
+
+/** Drop 【交通】 lines that mostly repeat route/schedule already shown in facts */
+function compactTransportNote(note) {
+  if (!note) return '';
+  return String(note)
+    .split(/\n+/)
+    .map(l => l.trim())
+    .filter(l => l && !/^【交通】/.test(l))
+    .join('\n')
+    .trim();
+}
+
+function minutesUntilHHMM(hhmm) {
+  if (!hhmm || !/^\d{1,2}:\d{2}$/.test(String(hhmm).trim())) return null;
+  const [h, m] = String(hhmm).trim().split(':').map(Number);
+  const now = new Date();
+  const target = new Date(now);
+  target.setHours(h, m, 0, 0);
+  let diff = Math.round((target - now) / 60000);
+  if (diff < -90) {
+    target.setDate(target.getDate() + 1);
+    diff = Math.round((target - now) / 60000);
+  }
+  return diff;
+}
+
+function formatWaitLabel(mins) {
+  if (mins == null) return '';
+  if (mins <= 0) return '即將到站';
+  if (mins === 1) return '約再等 1 分';
+  return `約再等 ${mins} 分`;
+}
+
+/** Small line under 上車站: line name or physical boarding hint (樓／出口／巴士站). */
+function boardingDetail(data, t) {
+  const addr = String(data.addressLocal || data.address || '').trim();
+  const line = String(t.line || '').trim();
+  const from = String(t.from || '').trim();
+  const placeHint = /[樓层層]|出口|月台|ホーム|巴士站|バス停|巴士|閘口|番街|入口|地下/;
+  if (addr && placeHint.test(addr)) return addr;
+  if (line) return line;
+  if (addr && from && addr !== from && !addr.includes(from)) return addr;
+  if (addr && addr !== from) return addr;
+  return '';
+}
+
+function fillTransportModal(data) {
+  const t = data.transport || {};
+  const modeLabel = MODE_LABELS[t.mode] || data.type || '交通';
+  document.getElementById('modal-type').innerText = modeLabel;
+  document.getElementById('modal-title').innerText =
+    t.to ? `前往${t.to}` : (data.title || '交通');
+
+  document.getElementById('tx-from').innerText = t.from || '—';
+  document.getElementById('tx-to').innerText = t.to || '—';
+
+  const fromDetail = document.getElementById('tx-from-detail');
+  const detail = boardingDetail(data, t);
+  if (detail) {
+    fromDetail.innerText = detail;
+    fromDetail.classList.add('visible');
+  } else {
+    fromDetail.innerText = '';
+    fromDetail.classList.remove('visible');
+  }
+
+  const ride = document.getElementById('tx-ride');
+  const rideMain = document.getElementById('tx-ride-main');
+  const rideBits = [];
+  if (t.durationMin != null) {
+    rideBits.push(`車程約 <b>${t.durationMin}</b> 分`);
+  }
+  if (t.stopCount != null && t.stopCount > 0) {
+    rideBits.push(`搭 <b>${t.stopCount}</b> 站`);
+  }
+  if (rideBits.length) {
+    ride.classList.add('visible');
+    rideMain.innerHTML = rideBits.join(' · ');
+  } else {
+    ride.classList.remove('visible');
+    rideMain.innerHTML = '';
+  }
+
+  const facts = [];
+  if (data.time) facts.push(`<span class="tx-fact"><b>${data.time}</b><span style="color:var(--text-sub)">建議出發</span></span>`);
+  if (data.price) facts.push(`<span class="tx-fact"><b>${data.price}</b></span>`);
+  else if (data.cost && data.cost.amount != null) {
+    facts.push(`<span class="tx-fact"><b>${data.cost.amount} ${data.cost.currency || ''}</b></span>`);
+  }
+  document.getElementById('tx-facts').innerHTML = facts.length
+    ? facts.join('<span class="tx-fact-sep">·</span>')
+    : '';
+
+  // Operator only — address/line already under 上車站
+  document.getElementById('tx-subline').innerText = t.operator || '';
+
+  const fallback = document.getElementById('tx-schedule-fallback');
+  const hasLive = t.liveApi && t.liveApi.provider && t.liveApi.stopId;
+  if (!hasLive && data.time) {
+    const waitMins = minutesUntilHHMM(data.time);
+    if (waitMins != null) {
+      fallback.innerHTML =
+        `<div class="modal-label" style="margin:0 0 4px 0;">候車參考</div>` +
+        `<div><span class="tx-wait-num">${formatWaitLabel(waitMins)}</span>` +
+        `<span style="color:var(--text-sub);font-size:0.78rem;">（相對建議出發 ${data.time}）</span></div>`;
+      fallback.classList.add('visible');
+    } else {
+      fallback.classList.remove('visible');
+      fallback.innerHTML = '';
+    }
+  } else {
+    fallback.classList.remove('visible');
+    fallback.innerHTML = '';
+  }
+
+  const note = compactTransportNote(data.note);
+  const noteBox = document.getElementById('modal-note-box');
+  const noteLabel = document.getElementById('modal-note-label');
+  if (note) {
+    noteLabel.style.display = '';
+    noteBox.style.display = '';
+    noteBox.classList.add('is-compact');
+    document.getElementById('modal-note').innerText = note;
+  } else {
+    noteLabel.style.display = 'none';
+    noteBox.style.display = 'none';
+    document.getElementById('modal-note').innerText = '';
+  }
+}
+
+// 11. Modal
 function openModal(data) {
   currentEventData = data;
-  document.getElementById('modal-title').innerText = data.title;
-  document.getElementById('modal-type').innerText = data.type || "Note";
-  document.getElementById('modal-time').innerText = data.time || "--:--";
-  document.getElementById('modal-price').innerText = data.price || "-";
-  document.getElementById('modal-open-hours').innerText = data.openHours || "待確認";
-  document.getElementById('modal-address-short').innerText = data.address || "";
-  document.getElementById('modal-note').innerText = data.note || "";
+  const isTransport = data.type === 'transport';
+  const infoGrid = document.getElementById('modal-info-grid');
+  const txBlock = document.getElementById('modal-transport-block');
+  const modalBody = document.getElementById('modal-body');
+  const noteBox = document.getElementById('modal-note-box');
+  const noteLabel = document.getElementById('modal-note-label');
+  const headerBlock = document.getElementById('modal-header-block');
 
-  const infoGrid = document.querySelector('.modal-info-grid');
   const existingPhone = document.getElementById('dynamic-phone-row');
   if (existingPhone) existingPhone.remove();
-  if (data.phone) {
-    const phoneRow = document.createElement('div');
-    phoneRow.id = 'dynamic-phone-row';
-    phoneRow.innerHTML = `<span class="modal-label">電話</span><div class="contact-container"><span class="modal-value" style="margin-right:10px;">${data.phone}</span><a href="javascript:void(0)" onclick="callNumber('${data.phone}')" class="btn-icon-sm" style="border:1px solid var(--border);"><i class="fa-solid fa-phone"></i></a></div>`;
-    infoGrid.appendChild(phoneRow);
+
+  if (isTransport) {
+    infoGrid.style.display = 'none';
+    txBlock.classList.add('visible');
+    modalBody.classList.add('is-transport');
+    headerBlock.style.marginBottom = '6px';
+    document.getElementById('modal-title').style.fontSize = '1.15rem';
+    fillTransportModal(data);
+  } else {
+    infoGrid.style.display = '';
+    txBlock.classList.remove('visible');
+    modalBody.classList.remove('is-transport');
+    headerBlock.style.marginBottom = '15px';
+    document.getElementById('modal-title').style.fontSize = '1.4rem';
+    noteLabel.style.display = '';
+    noteBox.style.display = '';
+    noteBox.classList.remove('is-compact');
+
+    document.getElementById('modal-title').innerText = data.title;
+    document.getElementById('modal-type').innerText = data.type || "Note";
+    document.getElementById('modal-time').innerText = data.time || "--:--";
+    document.getElementById('modal-price').innerText = data.price || "-";
+    document.getElementById('modal-open-hours').innerText = data.openHours || "待確認";
+    document.getElementById('modal-address-short').innerText = data.address || "";
+    document.getElementById('modal-note').innerText = data.note || "";
+
+    if (data.phone) {
+      const phoneRow = document.createElement('div');
+      phoneRow.id = 'dynamic-phone-row';
+      phoneRow.innerHTML = `<span class="modal-label">電話</span><div class="contact-container"><span class="modal-value" style="margin-right:10px;">${data.phone}</span><a href="javascript:void(0)" onclick="callNumber('${data.phone}')" class="btn-icon-sm" style="border:1px solid var(--border);"><i class="fa-solid fa-phone"></i></a></div>`;
+      infoGrid.appendChild(phoneRow);
+    }
   }
 
   const actionsContainer = document.getElementById('modal-actions');
   actionsContainer.innerHTML = '';
   const addr = data.addressLocal || data.address;
   if (addr) {
-    actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="copyToClipboard('${addr}')"><i class="fa-regular fa-copy"></i> 複製地址</button>`;
-    actionsContainer.innerHTML += `<button class="btn-action btn-black" onclick="openMapQuery('${data.address}')"><i class="fa-solid fa-location-arrow"></i> Google Maps 導航</button>`;
-    if (data.type === 'hotel' || data.type === 'transport') {
-      actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="showPhrase('${addr}', '請載我去這裡')">🚕 顯示的士卡</button>`;
+    if (isTransport) {
+      actionsContainer.innerHTML += `<button class="btn-action btn-black" onclick="openMapQuery('${data.address}')"><i class="fa-solid fa-location-arrow"></i> 出發點地圖</button>`;
+      actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="copyToClipboard('${addr}')"><i class="fa-regular fa-copy"></i> 複製地址</button>`;
+    } else {
+      actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="copyToClipboard('${addr}')"><i class="fa-regular fa-copy"></i> 複製地址</button>`;
+      actionsContainer.innerHTML += `<button class="btn-action btn-black" onclick="openMapQuery('${data.address}')"><i class="fa-solid fa-location-arrow"></i> Google Maps 導航</button>`;
+      if (data.type === 'hotel') {
+        actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="showPhrase('${addr}', '請載我去這裡')">🚕 顯示的士卡</button>`;
+      }
     }
   }
   if (data.type === 'food' || data.type === 'hotel') {
     actionsContainer.innerHTML += `<button class="btn-action btn-outline" onclick="searchGmail('${data.title}')">🔍 搜尋預約信 (Gmail)</button>`;
   }
 
+  startLiveTransit(data);
+
   document.getElementById('detail-modal').classList.add('open');
 
   const miniMapContainer = document.getElementById('modal-mini-map');
+  miniMapContainer.classList.toggle('is-compact', isTransport);
   if (!data.coords && !data.address) {
     miniMapContainer.style.display = 'none';
   } else {
@@ -938,8 +1229,89 @@ function openModal(data) {
 }
 
 function closeModal() {
+  stopLiveTransit();
   document.getElementById('detail-modal').classList.remove('open');
   document.querySelector('.modal-content').style.transform = '';
+}
+
+function stopLiveTransit() {
+  if (liveTransitTimer) {
+    clearInterval(liveTransitTimer);
+    liveTransitTimer = null;
+  }
+  const box = document.getElementById('live-transit-box');
+  if (box) box.classList.remove('visible');
+}
+
+function startLiveTransit(data) {
+  stopLiveTransit();
+  const box = document.getElementById('live-transit-box');
+  const list = document.getElementById('live-transit-list');
+  const status = document.getElementById('live-transit-status');
+  if (!box || !list || !status) return;
+
+  const live = data && data.type === 'transport' && data.transport && data.transport.liveApi;
+  if (!live || !live.provider || !live.stopId) {
+    box.classList.remove('visible');
+    return;
+  }
+
+  box.classList.add('visible');
+  const refreshSec = Math.max(15, Number(live.refreshSec) || 60);
+
+  const load = () => fetchLiveTransit(live, list, status);
+  load();
+  liveTransitTimer = setInterval(load, refreshSec * 1000);
+}
+
+async function fetchLiveTransit(live, listEl, statusEl) {
+  statusEl.innerText = '更新中…';
+  listEl.innerHTML = '';
+  try {
+    const q = new URLSearchParams({
+      provider: live.provider,
+      stopId: live.stopId
+    });
+    if (live.lineId) q.set('lineId', live.lineId);
+    if (live.direction) q.set('direction', live.direction);
+
+    const res = await fetch(`${TRANSIT_WORKER_URL}?${q.toString()}`, { cache: 'no-store' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      const detail = data.detail || data.error || `HTTP ${res.status}`;
+      statusEl.innerText = '無法取得';
+      listEl.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">${detail}</div>`;
+      return;
+    }
+
+    const arrivals = Array.isArray(data.arrivals) ? data.arrivals : [];
+    const updated = data.updatedAt
+      ? new Date(data.updatedAt).toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit', hour12: false })
+      : '';
+    statusEl.innerText = updated ? `${data.provider} · ${updated}` : (data.provider || '');
+
+    if (arrivals.length === 0) {
+      listEl.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">目前無即將到站資料</div>`;
+      return;
+    }
+
+    listEl.innerHTML = arrivals.map((a, i) => {
+      const waitMins = minutesUntilHHMM(a.time);
+      const waitLabel = formatWaitLabel(waitMins);
+      const meta = [
+        a.platform ? `月台 ${a.platform}` : null,
+        a.delayMin != null && a.delayMin > 0 ? `延誤 ${a.delayMin} 分` : null
+      ].filter(Boolean).join(' · ');
+      return `<div class="live-arrival-row${i === 0 ? ' is-next' : ''}">
+        <span class="live-arrival-time">${a.time || '--:--'}</span>
+        <span class="live-arrival-dest">${a.dest || '—'}${meta ? `<span class="live-arrival-meta" style="margin-left:6px;">${meta}</span>` : ''}</span>
+        <span class="live-arrival-wait">${waitLabel}</span>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    statusEl.innerText = '離線';
+    listEl.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">網路錯誤，稍後再試</div>`;
+  }
 }
 document.getElementById('detail-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
@@ -1076,6 +1448,7 @@ function renderTimeline(dayKey) {
       metaBits += `<span class="city-badge" style="background:${cityColor};">${city.name}</span>`;
     }
 
+    // 附近備案按鈕（交通卡已在上方以收合列渲染）
     const relatedInspirations = INSPIRATIONS.filter(ins => ins.nearEventId === item.id);
     const inspBtn = relatedInspirations.length > 0
       ? `<div style="margin-top:8px;"><button class="btn-inspiration" onclick="event.stopPropagation(); jumpToInspiration('${item.id}')"><i class="fa-solid fa-lightbulb"></i> 附近備案 (${relatedInspirations.length})</button></div>`
