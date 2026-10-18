@@ -284,8 +284,9 @@ const INSPIRATIONS = [
 
 - 若有填，代表這個 Plan B **特別靠近某個行程點**
 - UI 會在該行程卡片下方顯示「附近備案」按鈕
-- 點按鈕 → 切到靈感 tab → 自動 scroll 到該卡片 + 高亮
+- 點按鈕 → 切到靈感 tab（對應日）→ 自動 scroll 到該卡片 + 高亮
 - 靈感卡也會顯示「靠近：\<該行程標題\>」
+- **依日分組**：有 `nearEventId` 時，用對應 `ITINERARY.items[].day` 歸入該日；`null` 或 id 找不到 →「未分日」
 - **應填**：同一份 `config.js` 裡已存在的 `ITINERARY.items[].id`（例如 `"evt_d2_05"`）
 - **填 `null`**：沒有明確靠近的行程點時
 - **禁止**編造不存在的 id
@@ -370,12 +371,13 @@ const PHRASE_DATA = [
 
 ### 靈感 tab
 
-- 篩選 chip：`全部` / `☔ 雨天` / `☕ 休息` / `📷 拍照` / `🍜 美食` / `🛍️ 購物` / `⏱️ 時間` / `🧍 獨旅`
+- **依日**：跟隨頂部日期選擇器；只顯示 `nearEventId` → 該日行程的備案
+- 篩選 chip：`全部` / `☔ 雨天` / … / `🧍 獨旅`；另有「未分日」（無／無效 `nearEventId`）
 - 每張卡片顯示：
   - `tag` badge
   - `title`
   - `note`
-  - 若有 `nearEventId`：顯示「靠近：<行程標題>」
+  - 若有 `nearEventId` 且對得到行程：顯示「靠近：<行程標題>」
 
 ### 預算（資訊頁）
 
@@ -484,3 +486,4 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 - v1.10 — 2026-10-19 — 時間軸標題去括號當地語；Maps／modal 地址優先 `addressLocal`
 - v1.11 — 2026-10-19 — `website` 用餐網址／Tabelog；Grok：note 勿塞評論站 URL
 - v1.12 — 2026-10-19 — 用餐「聯絡」合併電話＋傳訊；「App」列依 host 顯示跳轉目標；Grok research 聯絡欄位勿塞 note
+- v1.13 — 2026-10-19 — 靈感池依 `nearEventId`→`day` 分日；無／無效 id →「未分日」
