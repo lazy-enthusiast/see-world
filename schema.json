@@ -188,7 +188,7 @@
               "price": { "type": ["string", "null"] },
               "website": {
                 "type": ["string", "null"],
-                "description": "Restaurant/shop page URL (e.g. Tabelog or official site). App food modal shows as 網址／Tabelog. Do not put this URL in note."
+                "description": "Review-app or official page URL (Tabelog JP, OpenRice HK, etc.). Food modal label is App + host-based jump hint. Do not put this URL in note."
               },
               "cost": {
                 "type": ["object", "null"],
@@ -267,7 +267,7 @@
           "price": { "type": ["string", "null"] },
           "website": {
             "type": ["string", "null"],
-            "description": "Restaurant/shop page URL (e.g. Tabelog or official site). Do not put this URL in note."
+            "description": "Review-app or official page URL (Tabelog JP, OpenRice HK, etc.). Do not put this URL in note."
           },
           "status": { "enum": ["wishlist", "done", "skipped"] },
           "source": { "enum": ["user", "ai", "ai-edited"] }

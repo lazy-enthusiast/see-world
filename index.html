@@ -328,6 +328,17 @@ main { flex: 1; overflow-y: hidden; position: relative; }
   font-weight: 600;
   color: var(--text-main);
 }
+.modal-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.modal-contact-phone {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
 .modal-website-row {
   display: flex;
   align-items: flex-start;
@@ -1124,19 +1135,111 @@ function normalizeWebsiteUrl(raw) {
   return `https://${s}`;
 }
 
-function isTabelogUrl(raw) {
-  const s = String(raw || '').trim();
-  if (!s) return false;
-  if (/^tabelog:\/\//i.test(s)) return true;
+/** Soft trip region from CONFIG (DESTINATION); used only when host is ambiguous */
+function tripRegionHint() {
   try {
-    const u = new URL(normalizeWebsiteUrl(s));
-    return /(^|\.)tabelog\.com$/i.test(u.hostname);
+    const d = (typeof DESTINATION !== 'undefined' && DESTINATION) ? DESTINATION : null;
+    const tz = String((d && d.timezone) || '').toLowerCase();
+    const cur = String((d && (d.currency || d.currencyLabel)) || '').toLowerCase();
+    const name = String((d && d.name) || '');
+    if (tz.includes('tokyo') || cur === 'jpy' || /日本|大阪|東京|京都|奈良|神戶|神戸/.test(name)) return 'jp';
+    if (tz.includes('hong_kong') || cur === 'hkd' || /香港|Hong\s*Kong/i.test(name)) return 'hk';
+  } catch (_) { /* ignore */ }
+  return 'other';
+}
+
+function websiteHost(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  if (/^tabelog:\/\//i.test(s)) return 'tabelog.com';
+  try {
+    return new URL(normalizeWebsiteUrl(s)).hostname.toLowerCase();
   } catch (_) {
-    return /tabelog\.com/i.test(s);
+    const m = s.match(/(?:https?:\/\/)?([^\/\s?#]+)/i);
+    return m ? m[1].toLowerCase() : '';
   }
 }
 
-/** Open restaurant URL; Tabelog prefers app deep link / Intent, else https */
+function hostMatches(host, domain) {
+  const h = String(host || '').toLowerCase();
+  const d = String(domain || '').toLowerCase();
+  return h === d || h.endsWith('.' + d);
+}
+
+/**
+ * Detect review/booking app from URL host (primary).
+ * Returns { id, hint } for the「App」row subtitle.
+ */
+function detectAppDestination(raw) {
+  const host = websiteHost(raw);
+  const region = tripRegionHint();
+
+  if (/^tabelog:\/\//i.test(String(raw || '')) || hostMatches(host, 'tabelog.com')) {
+    return { id: 'tabelog', hint: '跳轉 Tabelog' };
+  }
+  if (hostMatches(host, 'openrice.com')) {
+    return { id: 'openrice', hint: '跳轉 OpenRice' };
+  }
+  if (hostMatches(host, 'hotpepper.jp') || hostMatches(host, 'hotpepper.com')) {
+    return { id: 'hotpepper', hint: '跳轉 ホットペッパー' };
+  }
+  if (hostMatches(host, 'gnavi.co.jp') || hostMatches(host, 'gurunavi.com')) {
+    return { id: 'gurunavi', hint: '跳轉 ぐるなび' };
+  }
+  if (hostMatches(host, 'retty.me')) {
+    return { id: 'retty', hint: '跳轉 Retty' };
+  }
+  if (hostMatches(host, 'ikyu.com')) {
+    return { id: 'ikyu', hint: '跳轉 一休' };
+  }
+  if (hostMatches(host, 'yelp.com') || hostMatches(host, 'yelp.com.hk')) {
+    return { id: 'yelp', hint: '跳轉 Yelp' };
+  }
+  if (hostMatches(host, 'tripadvisor.com') || hostMatches(host, 'tripadvisor.com.hk')) {
+    return { id: 'tripadvisor', hint: '跳轉 Tripadvisor' };
+  }
+  if (hostMatches(host, 'booking.com')) {
+    return { id: 'booking', hint: '跳轉 Booking.com' };
+  }
+  if (hostMatches(host, 'tablecheck.com') || hostMatches(host, 'tablecheck.jp')) {
+    return { id: 'tablecheck', hint: '跳轉 TableCheck' };
+  }
+
+  // Soft region hint when host is blank / unparseable
+  if (!host && region === 'jp') return { id: 'web', hint: '開啟網頁' };
+  if (!host && region === 'hk') return { id: 'web', hint: '開啟網頁' };
+
+  if (host) {
+    const short = host.replace(/^www\./i, '');
+    return { id: 'web', hint: `開啟 ${short}` };
+  }
+  return { id: 'web', hint: '開啟網頁' };
+}
+
+function isTabelogUrl(raw) {
+  return detectAppDestination(raw).id === 'tabelog';
+}
+
+/** Try custom-scheme deep link with https fallback if app doesn't open */
+function tryAppSchemeThenHttps(deep, httpsUrl) {
+  const started = Date.now();
+  const fallback = setTimeout(() => {
+    if (Date.now() - started < 1600 && !document.hidden) {
+      window.location.href = httpsUrl;
+    }
+  }, 900);
+  const clear = () => {
+    clearTimeout(fallback);
+    document.removeEventListener('visibilitychange', onVis);
+    window.removeEventListener('pagehide', clear);
+  };
+  const onVis = () => { if (document.hidden) clear(); };
+  document.addEventListener('visibilitychange', onVis);
+  window.addEventListener('pagehide', clear);
+  window.location.href = deep;
+}
+
+/** Open restaurant URL; Tabelog / OpenRice prefer app deep link, else https */
 function openWebsiteUrl(raw) {
   const url = normalizeWebsiteUrl(raw);
   if (!url) return;
@@ -1148,12 +1251,12 @@ function openWebsiteUrl(raw) {
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const isAndroid = /Android/i.test(navigator.userAgent);
+  const dest = detectAppDestination(url);
 
-  if (isTabelogUrl(url) && isMobile) {
+  if (dest.id === 'tabelog' && isMobile) {
     if (isAndroid) {
       try {
         const u = new URL(url);
-        // Prefer Tabelog app via Android Intent; browser_fallback_url if not installed
         window.location.href =
           `intent://${u.host}${u.pathname}${u.search}${u.hash}` +
           `#Intent;scheme=https;package=jp.tabelog.android;S.browser_fallback_url=${encodeURIComponent(url)};end`;
@@ -1162,25 +1265,24 @@ function openWebsiteUrl(raw) {
     }
     try {
       const u = new URL(url);
-      const deep = `tabelog://${u.host}${u.pathname}${u.search}${u.hash}`;
-      const started = Date.now();
-      const fallback = setTimeout(() => {
-        // If still visible after ~1s, custom scheme likely failed → open https
-        if (Date.now() - started < 1600 && !document.hidden) {
-          window.location.href = url;
-        }
-      }, 900);
-      const clear = () => {
-        clearTimeout(fallback);
-        document.removeEventListener('visibilitychange', onVis);
-        window.removeEventListener('pagehide', clear);
-      };
-      const onVis = () => { if (document.hidden) clear(); };
-      document.addEventListener('visibilitychange', onVis);
-      window.addEventListener('pagehide', clear);
-      window.location.href = deep;
+      tryAppSchemeThenHttps(`tabelog://${u.host}${u.pathname}${u.search}${u.hash}`, url);
       return;
     } catch (_) { /* fall through */ }
+    window.location.href = url;
+    return;
+  }
+
+  // OpenRice: universal / app links via https; Android Intent when possible
+  if (dest.id === 'openrice' && isMobile) {
+    if (isAndroid) {
+      try {
+        const u = new URL(url);
+        window.location.href =
+          `intent://${u.host}${u.pathname}${u.search}${u.hash}` +
+          `#Intent;scheme=https;package=com.openrice.android;S.browser_fallback_url=${encodeURIComponent(url)};end`;
+        return;
+      } catch (_) { /* fall through */ }
+    }
     window.location.href = url;
     return;
   }
@@ -1191,22 +1293,12 @@ function openWebsiteUrl(raw) {
 function websiteRowHtml(data) {
   const raw = itemWebsite(data);
   if (!raw) return '';
-  const url = normalizeWebsiteUrl(raw);
-  const label = isTabelogUrl(url) ? 'Tabelog' : '網址';
-  let display = url;
-  try {
-    if (/^tabelog:\/\//i.test(url)) {
-      display = url.replace(/^tabelog:\/\//i, '');
-    } else {
-      const u = new URL(url);
-      display = `${u.host}${u.pathname}`.replace(/\/$/, '') || url;
-    }
-  } catch (_) { /* keep url */ }
+  const dest = detectAppDestination(raw);
   return `<div class="modal-field">
-    <div class="modal-label">${escapeHtml(label)}</div>
+    <div class="modal-label">App</div>
     <div class="modal-website-row">
-      <button type="button" class="modal-website-link" onclick="openWebsiteUrl('${escapeAttr(raw)}')">${escapeHtml(display)}</button>
-      <button type="button" class="tx-map-btn" title="開啟連結" aria-label="開啟連結" onclick="openWebsiteUrl('${escapeAttr(raw)}')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
+      <button type="button" class="modal-website-link" onclick="openWebsiteUrl('${escapeAttr(raw)}')">${escapeHtml(dest.hint)}</button>
+      <button type="button" class="tx-map-btn" title="${escapeAttr(dest.hint)}" aria-label="${escapeAttr(dest.hint)}" onclick="openWebsiteUrl('${escapeAttr(raw)}')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
     </div>
   </div>`;
 }
@@ -1420,19 +1512,13 @@ function fieldBlockHtml(label, value) {
   </div>`;
 }
 
-function phoneChipHtml(phone) {
-  if (!phone) return '';
-  return `<div class="modal-field">
-    <div class="modal-label">電話</div>
-    <div class="modal-phone-chip">
-      <span>${escapeHtml(phone)}</span>
-      <button type="button" class="tx-call-btn" title="撥打" aria-label="撥打電話" onclick="callNumber('${escapeAttr(phone)}')"><i class="fa-solid fa-phone"></i></button>
-    </div>
-  </div>`;
-}
-
-function messagingRowHtml(data) {
+/** 「聯絡」：撥號 + WhatsApp／LINE／Messenger icons（有值才顯示） */
+function contactRowHtml(data) {
   const bits = [];
+  const phone = String((data && data.phone) || '').trim();
+  if (phone) {
+    bits.push(`<button type="button" class="tx-call-btn" title="撥打" aria-label="撥打電話" onclick="callNumber('${escapeAttr(phone)}')"><i class="fa-solid fa-phone"></i></button>`);
+  }
   if (data.whatsapp && whatsappDigits(data.whatsapp)) {
     bits.push(`<button type="button" class="tx-msg-btn is-wa" title="WhatsApp" aria-label="WhatsApp 傳訊息" onclick="openWhatsAppChat('${escapeAttr(data.whatsapp)}')"><i class="fa-brands fa-whatsapp"></i></button>`);
   }
@@ -1443,9 +1529,12 @@ function messagingRowHtml(data) {
     bits.push(`<button type="button" class="tx-msg-btn" title="Messenger" aria-label="Messenger 傳訊息" onclick="openMessengerChat('${escapeAttr(data.messenger)}')"><i class="fa-brands fa-facebook-messenger"></i></button>`);
   }
   if (!bits.length) return '';
+  const phoneText = phone
+    ? `<span class="modal-contact-phone">${escapeHtml(phone)}</span>`
+    : '';
   return `<div class="modal-field">
-    <div class="modal-label">傳訊息</div>
-    <div class="modal-msg-row">${bits.join('')}</div>
+    <div class="modal-label">聯絡</div>
+    <div class="modal-contact-row">${bits.join('')}${phoneText}</div>
   </div>`;
 }
 
@@ -1542,8 +1631,7 @@ function fillGateModal(data) {
   const place = detailedMapAddress(data);
   let html = '';
   html += placeRowHtml(place, place);
-  html += phoneChipHtml(data.phone);
-  html += messagingRowHtml(data);
+  html += contactRowHtml(data);
   fillLeanInfo(html);
   setModalNote(data.note);
 }
@@ -1557,8 +1645,7 @@ function fillFoodModal(data) {
   html += fieldBlockHtml('預算', formatPriceLine(data));
   html += fieldBlockHtml('開放時間', data.openHours);
   html += websiteRowHtml(data);
-  html += phoneChipHtml(data.phone);
-  html += messagingRowHtml(data);
+  html += contactRowHtml(data);
   fillLeanInfo(html);
   setModalNote(data.note);
 }
@@ -1570,8 +1657,7 @@ function fillPlaceModal(data) {
   let html = '';
   html += placeRowHtml(place, place);
   html += fieldBlockHtml('開放時間', data.openHours);
-  html += phoneChipHtml(data.phone);
-  html += messagingRowHtml(data);
+  html += contactRowHtml(data);
   fillLeanInfo(html);
   setModalNote(data.note);
 }

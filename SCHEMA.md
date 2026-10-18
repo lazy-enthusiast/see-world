@@ -159,7 +159,7 @@ const ITINERARY = {
       messenger: null,          // m.me 帳號或 URL（查不到填 null）
       openHours: null,
       price: null,
-      website: null,            // 官網／Tabelog 等 URL（用餐 modal「網址」／「Tabelog」）；勿寫進 note
+      website: null,            // 評論 App／官網 URL（用餐 modal「App」＋跳轉提示）；勿寫進 note
       cost: { amount: 0, currency: "JPY", category: "other" },
       status: "confirmed",      // confirmed | pending | wishlist
       source: "user"            // user | ai | ai-edited
@@ -401,9 +401,9 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 | 版面 | `type` | 顯示重點 |
 |------|--------|----------|
 | **交通** | `transport` | `前往{to}`；上車站（地圖 icon）→ 目的地；車程／站數；**上車點下一班**（live 候車，不硬定班次）；票價／營運商。時間只在時間線，modal 不顯示建議出發。備註一律展開 |
-| **航班／閘口** | `arrival`、`departure` | **地址**（優先 `addressLocal`）＋地圖；電話／WhatsApp／LINE／Messenger icon；備註展開。時間在時間線。無預算欄 |
-| **用餐** | `food` | **地址**（優先 `addressLocal`）；**預算**欄；**開放時間**欄；**網址／Tabelog**（`website`）；電話／訊息 icon；備註展開並列推薦菜；底部可「搜尋預約信」 |
-| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**（優先 `addressLocal`）；可選開放時間；電話／訊息；`hotel` 可有的士卡＋Gmail |
+| **航班／閘口** | `arrival`、`departure` | **地址**（優先 `addressLocal`）＋地圖；**聯絡**（撥號＋WhatsApp／LINE／Messenger icon）；備註展開。時間在時間線。無預算欄 |
+| **用餐** | `food` | **地址**（優先 `addressLocal`）；**預算**欄；**開放時間**欄；**App**（`website`：依 host 顯示跳轉 Tabelog／OpenRice／網頁等）；**聯絡**（撥號＋訊息 icon）；備註展開並列推薦菜；底部可「搜尋預約信」 |
+| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**（優先 `addressLocal`）；可選開放時間；**聯絡**；`hotel` 可有的士卡＋Gmail |
 
 時間線上的交通列**不**再顯示右側地圖 icon（地圖改在 modal 上車點）。
 
@@ -417,23 +417,24 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 
 實時到站：`liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`；modal 開啟時依 `refreshSec` 輪詢。
 
-#### 訊息欄位（景點／店家／餐廳）
+#### 聯絡欄位（景點／店家／餐廳）
 
-Research 時查找店家是否公開 **WhatsApp／LINE／Messenger**（或類似一鍵傳訊管道）：
+Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LINE、Messenger**（或官方一鍵傳訊連結）。查到就填對應 schema 欄位；**禁止**把電話／傳訊帳號／連結塞進 `note`。
 
-| 欄位 | 填法 | App 行為 |
+| 欄位 | 填法 | App 行為（「聯絡」列） |
 |------|------|----------|
-| `whatsapp` | 含國碼電話（`+81…` 或純數字） | `wa.me` 開啟聊天 |
-| `line` | `@帳號` 或 `https://line.me/…` | LINE 傳訊 |
-| `messenger` | 粉專 username 或 `https://m.me/…` | Messenger |
-| 查不到 | 各欄填 `null`（勿瞎猜） | 不顯示按鈕 |
+| `phone` | 可撥打號碼 | 撥號 icon（可旁顯示號碼） |
+| `whatsapp` | 含國碼電話（`+81…` 或純數字） | WhatsApp icon → `wa.me` |
+| `line` | `@帳號` 或 `https://line.me/…` | LINE icon |
+| `messenger` | 粉專 username 或 `https://m.me/…` | Messenger icon |
+| 查不到 | 該欄填 `null`（勿瞎猜） | 不顯示該 icon |
 
 #### 用餐欄位
 
 - `price`／`cost` → UI「預算」
 - `openHours` → UI「開放時間」
-- `website` → UI「網址」；若 host 為 `tabelog.com`（或 `tabelog://`）則標「Tabelog」，點擊優先開 App／Intent，否則開 https
-- `note`：**精簡**——列**推薦菜目**與必要實用提示即可；**不要**把 Tabelog／類似評論站 URL、長評分檔塞進 `note`（URL 一律放 `website`）
+- `website` → UI 標題固定「**App**」；下方短文依 **URL host** 說明開哪個 App（例：`tabelog.com`→「跳轉 Tabelog」；`openrice.com`→「跳轉 OpenRice」；其他已知評論／訂位站類似；一般官網→「開啟 {host}」或「開啟網頁」）。點擊：Tabelog 優先 deep link／Intent，OpenRice 盡量走 App／https，其餘開網頁。**URL 只放 `website`，勿寫進 `note`**
+- `note`：**精簡**——列**推薦菜目**與必要實用提示即可；**不要**把評論站 URL、電話、WhatsApp／LINE／Messenger、長評分檔塞進 `note`
 
 給 LLM：`line`（交通線路）可寫「谷町線」或含月台；方向放 note。店家 `line`（LINE 帳號）與交通 `transport.line` 是不同欄位。
 
@@ -460,11 +461,11 @@ Research 時查找店家是否公開 **WhatsApp／LINE／Messenger**（或類似
 17. **每個 `transport` 必須含 `stopCount` 鍵**（不可省略）：查得到填整數（下一站 = `1`）；查不到填 `null`，禁止亂填或省略欄位
 18. **`transport.line`**：以線路名為主（可含月台）；**避免**把「（往××）」「往××方向」當主要字串——方向放 note 即可
 19. **交通 `note`**：**不要**用【路線】重述 from／to／line／班次（App UI 已顯示）；**不要**寫「Yahoo! 乘換案內」「官方時刻表」等來源標註；優先【上車】（含**月台**）／【下車】／【車資】／【備案】；**不要**硬性規定必須搭某一班——`time` 僅作時間線參考
-20. **`whatsapp`／`line`／`messenger`**：research 景點／店家／餐廳時查找公開傳訊管道；查到就填、查不到填 `null`；禁止捏造
+20. **`phone`／`whatsapp`／`line`／`messenger`**：research 景點／店家／餐廳時**查找**公開電話與傳訊管道；查到填欄位、查不到填 `null`；禁止捏造；**禁止**寫進 `note`
 21. **`food`**：務必填 `price`（或 `cost`）與 `openHours`（查不到填 `null`）；`note` 只列推薦菜／精簡實用提示
 22. **`addressLocal`**：景點／店家／酒店／上車站盡量填**當地語詳細地址**（給 Google Maps）；`address` 可放 Latin／英文。App 導航優先 `addressLocal`
 23. **`title`**：時間軸會剝掉括號當地語（如 `（マヅラ喫茶店）`）；日文店名可放括號內供 modal 顯示，或乾脆只寫中文／英文主標題、日文詳址放 `addressLocal`
-24. **`website`**：餐廳（及有需要的店家）填官網或 Tabelog 等頁面 URL；查不到填 `null`。**禁止**把 Tabelog／類似評論站連結寫進 `note`——URL 只放 `website`，保持 `note` 精簡
+24. **`website`**：餐廳優先填當地評論／訂位 App URL（日本 → Tabelog；香港 → OpenRice；其餘依目的地常見站）或官網；查不到填 `null`。**禁止**把評論站／官網連結寫進 `note`——URL 只放 `website`（UI 顯示「App」＋跳轉提示）
 
 ---
 
@@ -482,3 +483,4 @@ Research 時查找店家是否公開 **WhatsApp／LINE／Messenger**（或類似
 - v1.9 — 2026-10-19 — Modal 去時間；下一班候車；備註展開；WhatsApp／LINE／Messenger；用餐預算／開放時間
 - v1.10 — 2026-10-19 — 時間軸標題去括號當地語；Maps／modal 地址優先 `addressLocal`
 - v1.11 — 2026-10-19 — `website` 用餐網址／Tabelog；Grok：note 勿塞評論站 URL
+- v1.12 — 2026-10-19 — 用餐「聯絡」合併電話＋傳訊；「App」列依 host 顯示跳轉目標；Grok research 聯絡欄位勿塞 note
