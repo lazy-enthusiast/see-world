@@ -276,12 +276,15 @@ const INSPIRATIONS = [
 | `TIME` | 時間不夠 / 太多時 |
 | `SOLO` | 一個人特別適合 |
 
-### `nearEventId` 的用途
+### `nearEventId` 的用途（請填，方便連到後備）
 
 - 若有填，代表這個 Plan B **特別靠近某個行程點**
-- UI 會在該行程卡片下方顯示「💡 附近備案」按鈕
+- UI 會在該行程卡片下方顯示「附近備案」按鈕
 - 點按鈕 → 切到靈感 tab → 自動 scroll 到該卡片 + 高亮
-- LLM 生成時一律填 `null`
+- 靈感卡也會顯示「靠近：\<該行程標題\>」
+- **應填**：同一份 `config.js` 裡已存在的 `ITINERARY.items[].id`（例如 `"evt_d2_05"`）
+- **填 `null`**：沒有明確靠近的行程點時
+- **禁止**編造不存在的 id
 
 ---
 
@@ -412,7 +415,7 @@ const PHRASE_DATA = [
 9. **所有必填欄位不能省**（即使值 `null`）
 10. **交通一定要獨立成 `type: "transport"`**
 11. **交通的 `from` / `to` 必填字串；`fromEventId` / `toEventId` 一律 `null`**
-12. **`INSPIRATIONS` 的 `nearEventId` 一律 `null`**
+12. **`INSPIRATIONS.nearEventId`**：有明確靠近的行程就填該 item 的 `id`（必須已存在於 `ITINERARY.items`）；沒有就填 `null`——**這是「附近備案」按鈕的依據，有就填，勿一律留空**
 13. **金額一律用數字**，`price` 字串只用於純顯示
 14. **`liveApi` 預設 `null`**；僅在查到真實 `stopId` 時填寫；`provider` 必須在白名單
 15. **禁止**輸出 `apiKey`、`token`、`secret`、或把 key 拼進 URL／`endpoint`
@@ -429,3 +432,4 @@ const PHRASE_DATA = [
 - v1.3 — 2026-10-18 — `liveApi` 改為 provider+stopId；`TRANSIT_CONFIG`；禁止 key 進 config
 - v1.4 — 2026-10-18 — `stopCount`；交通 modal 強調上車站／候車／幾站
 - v1.5 — 2026-10-19 — 收合交通列／「前往」標題；modal 去重；上車小字用 line／address
+- v1.6 — 2026-10-19 — 修正：`nearEventId` 應填真實行程 id（啟用附近備案），非一律 null
