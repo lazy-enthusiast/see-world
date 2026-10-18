@@ -1,7 +1,7 @@
-// buildTime: 2026-10-18T16:37:20.335Z
+// buildTime: 2026-10-18T18:54:41.218Z
 // ============================================================
-// 🧳 客製化設定檔 config.js —— 大阪 2027 年 2 月（v4：v3＋去陳套化（獨立皮革工房、古道具、酒藏試飲））
-// 結構契約見 schema.json／SCHEMA.md
+// 🧳 客製化設定檔 config.js —— 大阪 2027 年 2 月（v5：酒店改 Dormy Inn 大阪谷町、全程交通重排、超市宵夜；按 SCHEMA v1.12 調整）
+// 結構契約見 schema.json／SCHEMA.md（v1.12：website／聯絡欄位、交通 note 去【路線】、回酒店即收工）
 // 座標：國土地理院地址檢索（番地級）／OSM Nominatim（地標、車站），4 位小數；交通項目用出發點
 // ============================================================
 
@@ -96,6 +96,11 @@ const CITIES = [
   }
 ];
 
+// 本趟到站 provider 宣告（不含 API key；key 在 Cloudflare Worker）；所有 liveApi 為 null，所以不宣告 provider
+const TRANSIT_CONFIG = {
+  "providers": []
+};
+
 // 5. ✈️ 航班與住宿
 const TRIP_INFO = {
   "visa": {
@@ -120,16 +125,16 @@ const TRIP_INFO = {
       "date": "02/15",
       "dep": "KIX 15:15",
       "arr": "HKG 18:55",
-      "note": "約 13:00 到關西第 1 航廈；HK$2,450；回程建議加購 32kg（約 HK$430）",
+      "note": "約 12:31 巴士到關西第 1 航廈；HK$2,450；回程建議加購 32kg（約 HK$430）",
       "bookingRef": null
     }
   ],
   "hotels": [
     {
       "cityId": "osaka",
-      "name": "Hotel Elcient 大阪梅田（ホテル エルシエント大阪梅田）",
-      "address": "〒530-0057 大阪府大阪市北区曽根崎1-2-7",
-      "phone": "+81-6-6360-2200",
+      "name": "天然溫泉 浪華之湯 Dormy Inn 大阪谷町（天然温泉 浪華の湯 ドーミーイン大阪谷町）",
+      "address": "〒540-0026 大阪府大阪市中央区内本町2-1-9",
+      "phone": "+81-6-6945-5489",
       "checkIn": "2027-02-07（15:00 起）",
       "checkOut": "2027-02-15（11:00 前）",
       "bookingRef": null
@@ -153,8 +158,8 @@ const TRIP_INFO = {
       "phone": "+852 1868"
     },
     {
-      "name": "酒店 Hotel Elcient 大阪梅田",
-      "phone": "+81-6-6360-2200"
+      "name": "酒店 Dormy Inn 大阪谷町",
+      "phone": "+81-6-6945-5489"
     }
   ]
 };
@@ -180,10 +185,14 @@ const ITINERARY = {
         "入境"
       ],
       "moodColor": "#3A3A3A",
-      "note": "【航班】HK Express（HX）16:25 抵達關西機場第 1 航廈（航班號待訂票後確認）。\n【入境】出發前填好 Visit Japan Web（入境＋海關申報 QR code），入境連提行李預留 45–60 分鐘（估算）。\n【攻略】出閘後可在便利店 ATM 提取備用現金；之後乘巴士直達梅田。機場總合案內 24 小時有中文服務。",
+      "note": "【航班】HK Express（HX）16:25 抵達關西機場第 1 航廈（航班號待訂票後確認）。\n【入境】出發前填好 Visit Japan Web（入境＋海關申報 QR code），入境連提行李預留 45–60 分鐘（估算）。\n【攻略】出閘後可在便利店 ATM 提取備用現金；之後乘利木津巴士到近鐵上本町（第 1 航廈 1 樓 7 號站）。機場總合案內 24 小時有中文服務。",
       "phone": "+81-72-455-2500",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "機場總合案內 24 小時",
       "price": "不適用",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -192,13 +201,13 @@ const ITINERARY = {
     {
       "id": "trp_d1_02",
       "day": 1,
-      "time": "17:40",
+      "time": "17:55",
       "timeHint": "evening",
       "type": "transport",
-      "title": "機場利木津巴士：關西機場第 1 航廈 5 號站 → 大阪站前（Herbis 大阪）",
+      "title": "前往近鐵上本町（機場利木津巴士）",
       "cityId": "osaka",
-      "address": "關西國際機場第 1 航廈 1 樓 利木津巴士 5 號站",
-      "addressLocal": "関西空港 第1ターミナル 1階 リムジンバス 5番のりば（大阪駅前（梅田）行き）",
+      "address": "關西國際機場第 1 航廈 1 樓 利木津巴士 7 號站",
+      "addressLocal": "関西空港 第1ターミナル 1階 リムジンバス 7番のりば（近鉄上本町・心斎橋行き）",
       "coords": [
         34.4343,
         135.2442
@@ -207,10 +216,14 @@ const ITINERARY = {
         "機場巴士"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【上車】第 1 航廈 1 樓國際線入境大堂出閘後，到 1 樓利木津巴士 5 號站（大阪站前（梅田）線，關西空港交通、阪急觀光巴士官方資料）。先在售票機買票；2026 年 3 月起此線可用信用卡感應付款，ICOCA 能否使用待確認。\n【班次】目標 17:40 一班（17:25 開出的一班也可以，如入境快）；17:40 → 18:40 到 Hotel 阪急 Respire 大阪（UM9）、18:50 到 Herbis 大阪（UM2）。官方註明第 1 航廈 08:45–19:30 開出的班次不停阪急三番街。\n【下車】Herbis 大阪（UM2）步行約 15 分鐘到酒店（估算），行李多可乘的士。大件行李交司機放車底。\n【備案】南海空港急行（1 號月台，往難波）17:39 → 新今宮轉 JR 關空快速 → 18:43 到 JR 大阪，IC ¥1,170（Yahoo! 乘換案內）。",
+      "note": "【上車】第 1 航廈 1 樓入境大堂出閘後，到 7 號巴士站（近鐵上本町／心齋橋線；關西空港交通官方乘車處資料）。先在售票機買票（售票處可用信用卡）。\n【班次】傍晚約 20–30 分鐘一班，車程約 55–60 分鐘；入境順利就搭最近一班，慢了搭下一班也可以，百貨地庫 20:00 才關門。\n【下車】近鐵上本町（2 樓巴士總站，UH1）下車，直接進近鐵百貨上本町店地庫買晚餐。\n【備案】南海空港急行 1 號月台（往難波，始發）→ 天下茶屋轉堺筋線 → 堺筋本町轉中央線到谷町四丁目，轉乘 2 次，IC ¥1,210；或關西空港交通「天滿橋站」線（第 1 航廈 10 號站）直達天滿橋。",
       "phone": null,
-      "openHours": "第 1 航廈開出 17:25、17:40、17:50、18:00…（2026-01-27 版官方時刻表）",
-      "price": "成人 ¥1,800（售票機買票，或信用卡感應付款）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "約 20–30 分鐘一班（傍晚），到站搭下一班即可",
+      "price": "成人 ¥1,800（官方）",
+      "website": null,
       "cost": {
         "amount": 1800,
         "currency": "JPY",
@@ -221,100 +234,191 @@ const ITINERARY = {
       "transport": {
         "mode": "bus",
         "from": "關西機場第 1 航廈",
-        "to": "大阪站前（Herbis 大阪）",
+        "to": "近鐵上本町",
         "fromEventId": null,
         "toEventId": null,
-        "operator": "阪急觀光巴士／關西空港交通",
-        "line": "大阪站前（梅田）線",
-        "durationMin": 70,
-        "stopCount": null,
+        "operator": "關西空港交通／近鐵巴士",
+        "line": "近鐵上本町／心齋橋線",
+        "durationMin": 61,
+        "stopCount": 1,
         "liveApi": null
       }
     },
     {
       "id": "evt_d1_03",
       "day": 1,
-      "time": "19:05",
+      "time": "19:00",
       "timeHint": "evening",
-      "type": "hotel",
-      "title": "入住：Hotel Elcient 大阪梅田",
+      "type": "shop",
+      "title": "近鐵百貨上本町店 地庫 1 樓：西淺鮮魚刺身＋和洋酒（第一晚宵夜採購）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
+      "address": "日本大阪府大阪市天王寺區上本町6-1-55 近鐵百貨上本町店 地庫 1 樓",
+      "addressLocal": "大阪府大阪市天王寺区上本町6-1-55 近鉄百貨店上本町店 B1F 鮮魚 西浅／和洋酒売場",
       "coords": [
-        34.6983,
-        135.5027
+        34.6659,
+        135.5195
       ],
       "tags": [
-        "大浴場",
-        "Lounge"
+        "百貨地庫",
+        "刺身",
+        "清酒"
       ],
-      "moodColor": "#3A3A3A",
-      "note": "【攻略】一連 8 晚同一間，不用換酒店。住客可免費用 2 樓大浴場（有桑拿）和 Premium Lounge；房內毛巾帶到大浴場使用。\n【實用】Check-in 15:00、Check-out 11:00；退房後可寄存行李。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "Check-in 15:00／Check-out 11:00；大浴場（2 樓，設桑拿，住客專用）16:00–翌日 01:00、06:00–09:00",
-      "price": "8 晚約 ¥127,330＋宿泊稅約 ¥3,000（2026-10-18 報價）",
+      "moodColor": "#8C8378",
+      "note": "【攻略】巴士總站在同一座大樓，下車即到地庫 1 樓。鮮魚店「西淺」（職人が鮮魚を扱う店 西浅）有刺身、壽司及熟食，買一盒刺身拼盤或幾款切好的刺身；同層和洋酒賣場買一枝四合瓶（720ml）大阪或奈良地酒，作為第一晚的「超市宵夜」。\n【實用】鮮魚西淺 10:00–20:00（西淺官方）；和洋酒賣場同為 10:00–20:00（Tabelog／百貨資料）。減價貼紙時間官方未公布，19:00 後到可能有減價（待確認）。刺身要求保冷劑（保冷剤をお願いします）。\n【備案】如巴士延誤到 20:00 後，直接回酒店，在樓下 KOHYO 內本町店（營業至 23:00）買。",
+      "phone": "+81-6-6773-8002",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "10:00–20:00",
+      "price": "刺身約 ¥1,000–2,000＋地酒四合瓶約 ¥1,500–2,500（估算）",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "evt_d1_04",
+      "id": "trp_d1_04",
       "day": 1,
-      "time": "19:30",
+      "time": "19:46",
       "timeHint": "evening",
-      "type": "food",
-      "title": "晚餐：串炸松葉 總本店（串かつ 松葉 総本店，新梅田食道街）",
+      "type": "transport",
+      "title": "前往谷町四丁目（地鐵谷町線）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區角田町9-20 新梅田食道街 1 樓",
-      "addressLocal": "大阪府大阪市北区角田町9-20 新梅田食道街1F 串かつ専門店 松葉 総本店",
+      "address": "大阪地鐵谷町九丁目站（谷町線）2 號月台",
+      "addressLocal": "Osaka Metro 谷町九丁目駅 2番線（谷町線・大日方面）／近鉄百貨店上本町店 B1 から地下通路",
       "coords": [
-        34.7035,
-        135.4977
+        34.665,
+        135.5175
       ],
       "tags": [
-        "串炸",
-        "立食",
+        "地鐵"
+      ],
+      "moodColor": "#2A7F7A",
+      "note": "【上車】由近鐵百貨地庫經地下通道步行約 5 分鐘到谷町九丁目站（估算）；2 號月台，谷町線往大日方向。\n【下車】谷町四丁目站 4 號出口步行約 4 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】行李多可在上本町乘的士到酒店，約 2 km（車資估算約 ¥1,000）。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥190（ICOCA）",
+      "website": null,
+      "cost": {
+        "amount": 190,
+        "currency": "JPY",
+        "category": "transport"
+      },
+      "status": "pending",
+      "source": "ai",
+      "transport": {
+        "mode": "subway",
+        "from": "谷町九丁目",
+        "to": "谷町四丁目",
+        "fromEventId": null,
+        "toEventId": null,
+        "operator": "大阪地鐵 Osaka Metro",
+        "line": "谷町線",
+        "durationMin": 3,
+        "stopCount": 2,
+        "liveApi": null
+      }
+    },
+    {
+      "id": "evt_d1_05",
+      "day": 1,
+      "time": "19:55",
+      "timeHint": "evening",
+      "type": "hotel",
+      "title": "入住：天然溫泉 浪華之湯 Dormy Inn 大阪谷町",
+      "cityId": "osaka",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
+      "coords": [
+        34.6835,
+        135.5139
+      ],
+      "tags": [
+        "天然溫泉",
+        "樓下超市"
+      ],
+      "moodColor": "#3A3A3A",
+      "note": "【攻略】一連 8 晚同一間，不用換酒店。樓頂 13 樓天然溫泉「浪華之湯」連桑拿，住客免費；樓下就是 KOHYO 內本町店超市（07:00–23:00）。\n【免費服務】歡迎飲品 14:30–23:00、06:00–11:00；浴後雪條 15:00–翌日 01:00；夜鳴蕎麥麵（夜鳴きそば）每晚 21:30–23:00；浴後乳酸菌飲品 05:00–10:00（官方）。不提供免費酒精飲品。\n【實用】Check-in 15:00、Check-out 11:00（樂天房型說明）；房間 14㎡、只有淋浴間。酒店電郵見官網。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "Check-in 15:00／Check-out 11:00；大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
+      "price": "8 晚 ¥118,125（樂天，素泊，含稅，2026-10-19 查價）＋宿泊稅現場支付（約 ¥1,600，估算）",
+      "website": "https://dormy-hotels.com/dormyinn/hotels/osakatanimachi/",
+      "cost": null,
+      "status": "pending",
+      "source": "ai",
+      "transport": null
+    },
+    {
+      "id": "evt_d1_06",
+      "day": 1,
+      "time": "20:15",
+      "timeHint": "evening",
+      "type": "food",
+      "title": "超市宵夜：上本町刺身＋地酒，在房間慢慢吃",
+      "cityId": "osaka",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町） 客房",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
+      "coords": [
+        34.6835,
+        135.5139
+      ],
+      "tags": [
+        "超市宵夜",
+        "刺身",
         "清酒"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.49（約 1,460 則評價；立食串炸老字號（分數略低於 3.5，以名店身分保留））https://tabelog.com/osaka/A2701/A270101/27001927/\n【攻略】新梅田食道街代表性的老字號立食串炸店，昭和風味濃厚，椰菜任吃。先點若雞、豬肉、蓮藕等經典串，再試口碑推介的巨型大蝦串；醬汁共用，切勿二度蘸醬。配一杯生啤或熱清酒，第一晚輕鬆收結。\n【實用】全店站立（約 70 位），不設預約，一人最自然；可用信用卡及 IC 卡；2025 年 4 月起全店禁煙。由酒店步行約 12 分鐘（估算）。星期日及假期營業至 21:30。",
-      "phone": "+81-6-6312-6615",
-      "openHours": "星期一至六 11:00–22:00；日及假期 11:00–21:30（Tabelog）",
-      "price": "Tabelog 預算 ¥1,000–1,999；連一兩杯酒約 ¥2,500（估算）",
+      "note": "【攻略】第一晚不再出梅田，像在福岡一樣：在近鐵百貨買好的刺身配地酒，回房間慢慢吃；想加料可到樓下 KOHYO 補一盒壽司或沙律。\n【攻略】KOHYO 必看：刺身拼盤、握壽司盒、關東煮及小菜；晚上常有減價貼紙（具體時間未公布，待確認）。酒杯可問前台借（待確認），或在 KOHYO 買紙杯。\n【實用】酒店休息室可否自帶酒水未確認（可經官網電郵查詢）；大浴場禁止酒精，建議留在房間吃。喝酒後休息至少 30 分鐘、多喝水才去泡湯。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "—",
+      "price": "刺身＋地酒約 ¥3,000（估算）",
+      "website": null,
       "cost": {
-        "amount": 2500,
+        "amount": 3000,
         "currency": "JPY",
         "category": "food"
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27001927/"
+      "transport": null
     },
     {
-      "id": "evt_d1_05",
+      "id": "evt_d1_07",
       "day": 1,
-      "time": "20:30",
-      "timeHint": "evening",
+      "time": "21:30",
+      "timeHint": "night",
       "type": "rest",
-      "title": "酒店大浴場＋Lounge Bar Time",
+      "title": "天然溫泉 浪華之湯＋免費夜鳴蕎麥麵",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F 大浴場",
       "coords": [
-        34.6983,
-        135.5027
+        34.6835,
+        135.5139
       ],
       "tags": [
-        "大浴場"
+        "天然溫泉",
+        "夜鳴蕎麥麵"
       ],
       "moodColor": "#9AA8A3",
-      "note": "【攻略】先到 Premium Lounge 的 Bar Time 喝一杯（住客免費，最後入場 20:40），之後到 2 樓大浴場泡浴，消除旅途疲勞。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "Lounge 11:00–21:00（Bar Time 最後入場 20:40）；大浴場（2 樓，設桑拿，住客專用）16:00–翌日 01:00、06:00–09:00",
+      "note": "【攻略】吃完宵夜休息一會再上 13 樓泡湯：先浸室內的生駒山天然溫泉，再到露天風呂和一人壺湯，桑拿後用冷水池降溫、到外湯區外氣浴。\n【攻略】21:30–23:00 有免費夜鳴蕎麥麵（13 樓 HATAGO，官方），小碗醬油拉麵，餓的話就吃半碗。\n【實用】浴場內嚴禁帶食物及酒精飲品（官方），只可帶補充水分的飲品；有紋身不可入浴（官方）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
       "price": "住客免費",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -326,57 +430,64 @@ const ITINERARY = {
       "time": "09:00",
       "timeHint": "morning",
       "type": "food",
-      "title": "早餐：Madura 喫茶店（マヅラ喫茶店）",
+      "title": "早餐：喫茶 Monaco（モナコ，谷町四丁目老喫茶）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區梅田1-3-1 大阪站前第 1 大廈 B1",
-      "addressLocal": "大阪府大阪市北区梅田1-3-1 大阪駅前第1ビル B1F マヅラ喫茶店",
+      "address": "日本大阪府大阪市中央區谷町3-5-2",
+      "addressLocal": "大阪府大阪市中央区谷町3丁目5-2 モナコ（MONACO）",
       "coords": [
-        34.6989,
-        135.4965
+        34.6832,
+        135.5171
       ],
       "tags": [
         "老喫茶",
         "現金"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.59（1,019 則評價）https://tabelog.com/osaka/A2701/A270101/27004819/\n【攻略】1947 年創業、1970 年遷入大阪站前第 1 大廈的老牌純喫茶，太空船般的裝潢是大阪市「活建築博物館（生きた建築ミュージアム）」之一。09:00–11:00 早餐套餐：多士或半份蛋三文治配熱咖啡 ¥500，自家烘焙咖啡單點 ¥350。\n【實用】只收現金；分煙制有煙味，介意可改吃酒店早餐。09:45 前結帳，步行約 5 分鐘到東梅田站。星期日及假期休，2/8 星期一照常營業。",
-      "phone": "+81-6-6345-3400",
-      "openHours": "星期一至六 09:00 起；日及假期休",
-      "price": "早餐套餐 ¥500（只收現金）",
+      "note": "【Tabelog】3.31（99 則評價）\n【攻略】谷町四丁目 3 號出口即到的昭和老喫茶，三層大舖，平日早上有多士、蛋、BLT 三文治等早餐套餐（舊資料約 ¥450–500，現價待確認）。\n【實用】只收現金、全席禁煙；平日 08:00–17:30，日 11:30–15:30，星期六休。由酒店步行約 5 分鐘（估算）。09:50 前結帳，下樓即入谷町四丁目站。",
+      "phone": "+81-6-6941-3908",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "星期一至五 08:00–17:30；日 11:30–15:30；六休（Tabelog）",
+      "price": "早餐套餐約 ¥800（估算，只收現金）",
+      "website": "https://tabelog.com/osaka/A2701/A270104/27017721/",
       "cost": {
-        "amount": 500,
+        "amount": 800,
         "currency": "JPY",
         "category": "food"
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27004819/"
+      "transport": null
     },
     {
       "id": "trp_d2_02",
       "day": 2,
-      "time": "09:59",
+      "time": "09:55",
       "timeHint": "morning",
       "type": "transport",
-      "title": "地鐵谷町線：東梅田 → 谷町九丁目",
+      "title": "前往谷町九丁目（地鐵谷町線）",
       "cityId": "osaka",
-      "address": "大阪地鐵東梅田站（谷町線）",
-      "addressLocal": "Osaka Metro 東梅田駅（谷町線）",
+      "address": "大阪地鐵谷町四丁目站（谷町線）1 號月台",
+      "addressLocal": "Osaka Metro 谷町四丁目駅 1番線（谷町線・八尾南方面）／3番出口から入場",
       "coords": [
-        34.7006,
-        135.4998
+        34.6826,
+        135.5176
       ],
       "tags": [
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】東梅田站 1 號月台，谷町線往八尾南方向，09:59 開 → 10:10 到谷町九丁目（直達、11 分鐘、不用轉車；Yahoo! 乘換案內）。\n【上車】由酒店步行約 7 分鐘到東梅田站 7 號出口（酒店官方資料）。\n【下車】谷町九丁目站 3 號出口，步行約 4 分鐘到生國魂神社（Osaka Metro 官方景點資料）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班，錯過就等下一班。",
+      "note": "【上車】Monaco 門口就是谷町四丁目站 3 號出口；1 號月台，谷町線往八尾南方向。\n【下車】谷町九丁目站 3 號出口，步行約 4 分鐘到生國魂神社（Osaka Metro 官方景點資料）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班；或由酒店步行約 25 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 09:59 → 10:10",
-      "price": "IC ¥240（ICOCA）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
-        "amount": 240,
+        "amount": 190,
         "currency": "JPY",
         "category": "transport"
       },
@@ -384,14 +495,14 @@ const ITINERARY = {
       "source": "ai",
       "transport": {
         "mode": "subway",
-        "from": "東梅田",
+        "from": "谷町四丁目",
         "to": "谷町九丁目",
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往八尾南）",
-        "durationMin": 11,
-        "stopCount": null,
+        "line": "谷町線",
+        "durationMin": 3,
+        "stopCount": 2,
         "liveApi": null
       }
     },
@@ -416,8 +527,12 @@ const ITINERARY = {
       "moodColor": "#6B7F7A",
       "note": "【攻略】每月 8 日在表參道擺的小型古物市，約 10 檔，但檔主多是專業古道具商，舊器皿、古布、小飾物值得慢慢翻看。看中後可先問「品相怎樣？（状態はどうですか）」，議價要客氣。\n【實用】07:00 開，好貨早上就被買走；多數攤檔只收現金。小雨照開，撲空就直接去心齋橋。",
       "phone": "+81-6-6771-0002",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "每月 8 日 07:00–14:00（小雨照開）",
       "price": "免費入場",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -429,10 +544,10 @@ const ITINERARY = {
       "time": "11:35",
       "timeHint": "morning",
       "type": "transport",
-      "title": "地鐵千日前線→御堂筋線：谷町九丁目 → 心齋橋",
+      "title": "前往心齋橋（地鐵千日前線→御堂筋線）",
       "cityId": "osaka",
       "address": "大阪地鐵谷町九丁目站",
-      "addressLocal": "Osaka Metro 谷町九丁目駅",
+      "addressLocal": "Osaka Metro 谷町九丁目駅 2番線",
       "coords": [
         34.6671,
         135.5158
@@ -441,10 +556,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】谷町九丁目站 2 號月台，千日前線往野田阪神方向，11:35 開 → 11:38 到難波；轉御堂筋線 2 號月台往新大阪方向，11:44 開 → 11:45 到心齋橋（轉乘 1 次，共 10 分鐘；Yahoo! 乘換案內）。\n【下車】心齋橋站步行約 2 分鐘到西家（出口號碼待確認；第三方資料指 5 號出口）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由生國魂神社乘的士約 10 分鐘（估算）。",
+      "note": "【上車】谷町九丁目站 2 號月台，千日前線往野田阪神方向。\n【轉車】難波站轉御堂筋線 2 號月台（往新大阪方向），坐 1 個站到心齋橋。\n【下車】心齋橋站步行約 2 分鐘到西家（出口號碼待確認；第三方資料指 5 號出口）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由生國魂神社乘的士約 10 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 11:35 → 11:45",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 190,
         "currency": "JPY",
@@ -459,9 +578,9 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "千日前線（往野田阪神）→ 御堂筋線（往新大阪）",
+        "line": "千日前線 → 御堂筋線",
         "durationMin": 10,
-        "stopCount": null,
+        "stopCount": 3,
         "liveApi": null
       }
     },
@@ -485,10 +604,14 @@ const ITINERARY = {
         "地酒"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.59（1,031 則評價）https://tabelog.com/osaka/A2701/A270201/27000825/\n【攻略】1957 年創業，「烏冬海鮮鍋（うどんちり）」是其註冊商標：活蝦、蛤蜊及季節蔬菜的海鮮鍋，蘸特製柚子醋，最後加入自家製大阪烏冬，烏冬可任添。官網稱此鍋「適合配酒」，店內備有日本各地地酒，可配一合冷酒。\n【預約】一人鍋套餐要在官網預約（10 人以下 24 小時網上受理）；官網價為一人鍋套餐（きり）¥6,000 起，Tabelog 另列一人鍋套餐（かえで）¥6,500，以預約頁面為準。不想吃鍋可單點御膳 ¥1,958 起。",
+      "note": "【Tabelog】3.59（1,031 則評價）\n【攻略】1957 年創業，「烏冬海鮮鍋（うどんちり）」是其註冊商標：活蝦、蛤蜊及季節蔬菜的海鮮鍋，蘸特製柚子醋，最後加入自家製大阪烏冬，烏冬可任添。官網稱此鍋「適合配酒」，店內備有日本各地地酒，可配一合冷酒。\n【預約】一人鍋套餐要在官網預約（10 人以下 24 小時網上受理）；官網價為一人鍋套餐（きり）¥6,000 起，Tabelog 另列一人鍋套餐（かえで）¥6,500，以預約頁面為準。不想吃鍋可單點御膳 ¥1,958 起。",
       "phone": "+81-50-5385-3448",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期一至六 11:00–22:30（L.O. 22:00）；日及假期至 22:00；1/1 休、另有不定休（官網）",
       "price": "一人鍋套餐 ¥6,000–6,500＋地酒一合，約 ¥7,500（估算）",
+      "website": "https://tabelog.com/osaka/A2701/A270201/27000825/",
       "cost": {
         "amount": 7500,
         "currency": "JPY",
@@ -496,8 +619,7 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270201/27000825/"
+      "transport": null
     },
     {
       "id": "trp_d2_06",
@@ -505,10 +627,10 @@ const ITINERARY = {
       "time": "13:28",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "地鐵長堀鶴見綠地線：心齋橋 → 玉造",
+      "title": "前往玉造（地鐵長堀鶴見綠地線）",
       "cityId": "osaka",
       "address": "大阪地鐵心齋橋站",
-      "addressLocal": "心斎橋駅（Osaka Metro 長堀鶴見緑地線）",
+      "addressLocal": "心斎橋駅（Osaka Metro 長堀鶴見緑地線） 1番線",
       "coords": [
         34.6749,
         135.502
@@ -517,10 +639,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】心齋橋站 1 號月台，長堀鶴見綠地線往門真南方向，13:28 開 → 13:34 到玉造（直達、6 分鐘；Yahoo! 乘換案內）。\n【下車】玉造站步行約 7 分鐘到 CRAFT HOUSE 510（官網；出口號碼待確認）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】下一班約 5 分鐘後；或在谷町六丁目站下車，沿空堀商店街步行約 15 分鐘（估算）。",
+      "note": "【上車】心齋橋站 1 號月台，長堀鶴見綠地線往門真南方向。\n【下車】玉造站步行約 7 分鐘到 CRAFT HOUSE 510（官網；出口號碼待確認）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】下一班約 5 分鐘後；或在谷町六丁目站下車，沿空堀商店街步行約 15 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 13:28 → 13:34",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 190,
         "currency": "JPY",
@@ -535,9 +661,9 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵",
-        "line": "長堀鶴見綠地線（往門真南）",
+        "line": "長堀鶴見綠地線",
         "durationMin": 6,
-        "stopCount": null,
+        "stopCount": 4,
         "liveApi": null
       }
     },
@@ -561,10 +687,14 @@ const ITINERARY = {
         "要預約"
       ],
       "moodColor": "#8C8378",
-      "note": "【攻略】空堀一帶的獨立皮革工房兼教室，平日也替客人做燒印、刻印。不用成為會員也可報一次性「體驗」課程，一人參加沒有問題：先揀皮革顏色，再由導師教打孔和手縫收邊（かがり縫い），約 1–2 小時完成一個卡片套（¥3,300）。手快可改做零錢包（¥3,600）或鎖匙包（¥3,800）。這是自己親手做的小皮件，用得越久顏色越深，正好補回當年沒買下的那個錢包。\n【預約】須預約：電話 06-6762-1353（09:00–18:00）或電郵 info@ch-510.com，指定 2/8（星期一）14:00–16:00 一節；不定休，預約時確認當日開課。導師以日語教學，可在電郵中說明是初學者。Asoview 亦有網上預約頁。",
+      "note": "【攻略】空堀一帶的獨立皮革工房兼教室，平日也替客人做燒印、刻印。不用成為會員也可報一次性「體驗」課程，一人參加沒有問題：先揀皮革顏色，再由導師教打孔和手縫收邊（かがり縫い），約 1–2 小時完成一個卡片套（¥3,300）。手快可改做零錢包（¥3,600）或鎖匙包（¥3,800）。這是自己親手做的小皮件，用得越久顏色越深，正好補回當年沒買下的那個錢包。\n【預約】須預約：電話（09:00–18:00）或經官網表格／電郵，指定 2/8（星期一）14:00–16:00 一節；不定休，預約時確認當日開課。導師以日語教學，可在電郵中說明是初學者。Asoview 亦有網上預約頁。",
       "phone": "+81-6-6762-1353",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "體驗 11:00–13:00、14:00–16:00（其他時段可商量）；不定休，須預約",
       "price": "卡片套（かがり縫い）¥3,300；零錢包 ¥3,600；鎖匙包 ¥3,800",
+      "website": "https://www.ch-510.com/taiken/",
       "cost": {
         "amount": 3300,
         "currency": "JPY",
@@ -596,8 +726,12 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】由工房沿空堀商店街向西慢行約 15 分鐘（估算），沿途是長屋改建的小店和本地老商店。土居是創業百多年的昆布老店，只用天然真昆布，可請店員介紹熬高湯用和直接食用的分別。天然真昆布（寸切）30g ¥550，輕身易帶，適合買回香港自用；講究一點可買按量計價的一本撰（每 100g ¥2,500）。\n【實用】2/8 星期一營業；16:50 離開，步行約 10 分鐘到長堀居酒屋（估算）。",
       "phone": "+81-6-6761-3914",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "09:30–18:00；逢星期日及假期休",
       "price": "天然真昆布（寸切）30g ¥550；一本撰 每 100g ¥2,500（按量計價）",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -624,10 +758,14 @@ const ITINERARY = {
         "要預約"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.78（488 則評價；居酒屋 WEST 百名店 2026（2021、2022、2024、2025 亦入選））https://tabelog.com/osaka/A2701/A270204/27000581/\n【攻略】大阪居酒屋的標竿級名店，以嚴選食材、刺身及比內地雞料理聞名。招牌蟹膏可樂餅（蟹味噌コロッケ）必點；刺身約 ¥1,300 起，清酒一杯約 ¥850 起（BRUTUS 介紹）。說出喜歡的口味，請店方按料理配全國地酒，先冷酒配刺身，再燙酒配雞料理。\n【預約】電話 06-6768-0515，一般建議約 2 星期前預約；吧枱 12 位，指定吧枱一人位。\n【注意】Tabelog 店方公告 2026 年 8 月起改為星期一營業（17:00–22:00）、星期三休，但頁首仍顯示星期一休，訂位時必須確認 2/8（一）營業。如不營業，改去燗之美穗（安堂寺町，步行約 10 分鐘，見靈感）。",
+      "note": "【Tabelog】3.78（488 則評價；居酒屋 WEST 百名店 2026（2021、2022、2024、2025 亦入選））\n【攻略】大阪居酒屋的標竿級名店，以嚴選食材、刺身及比內地雞料理聞名。招牌蟹膏可樂餅（蟹味噌コロッケ）必點；刺身約 ¥1,300 起，清酒一杯約 ¥850 起（BRUTUS 介紹）。說出喜歡的口味，請店方按料理配全國地酒，先冷酒配刺身，再燙酒配雞料理。\n【預約】打電話預約，一般建議約 2 星期前預約；吧枱 12 位，指定吧枱一人位。\n【注意】Tabelog 店方公告 2026 年 8 月起改為星期一營業（17:00–22:00）、星期三休，但頁首仍顯示星期一休，訂位時必須確認 2/8（一）營業。如不營業，改去燗之美穗（安堂寺町，步行約 10 分鐘，見靈感）。",
       "phone": "+81-6-6768-0515",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期二至五 17:00–22:00；六 13:00–22:00；2026-08 起星期一 17:00–22:00、星期三休（Tabelog 店方公告，訂位時確認）",
       "price": "Tabelog 預算 ¥10,000–14,999（連清酒）",
+      "website": "https://tabelog.com/osaka/A2701/A270204/27000581/",
       "cost": {
         "amount": 12000,
         "currency": "JPY",
@@ -635,8 +773,7 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270204/27000581/"
+      "transport": null
     },
     {
       "id": "trp_d2_10",
@@ -644,10 +781,10 @@ const ITINERARY = {
       "time": "20:20",
       "timeHint": "evening",
       "type": "transport",
-      "title": "地鐵谷町線：谷町六丁目 → 東梅田",
+      "title": "前往谷町四丁目（地鐵谷町線）",
       "cityId": "osaka",
-      "address": "大阪地鐵谷町六丁目站",
-      "addressLocal": "Osaka Metro 谷町六丁目駅（谷町線）",
+      "address": "大阪地鐵谷町六丁目站 2 號月台",
+      "addressLocal": "Osaka Metro 谷町六丁目駅 2番線（谷町線・大日方面）",
       "coords": [
         34.6761,
         135.5157
@@ -656,12 +793,16 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【上車】由長堀居酒屋步行約 15 分鐘到谷町六丁目站（估算）；2 號月台，谷町線往大日方向。\n【路線】20:20 開 → 20:29 到東梅田（直達、9 分鐘；Yahoo! 乘換案內）。\n【下車】東梅田站 7 號出口步行約 7 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】長堀居酒屋門口截的士回酒店約 15 分鐘（估算）。",
+      "note": "【上車】由長堀居酒屋步行約 15 分鐘到谷町六丁目站（估算）；2 號月台，谷町線往大日方向。\n【下車】谷町四丁目站 4 號出口步行約 4 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】長堀居酒屋門口截的士回酒店約 10 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 20:20 → 20:29（約 5–7 分鐘一班）",
-      "price": "IC ¥240（ICOCA）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
-        "amount": 240,
+        "amount": 190,
         "currency": "JPY",
         "category": "transport"
       },
@@ -670,13 +811,13 @@ const ITINERARY = {
       "transport": {
         "mode": "subway",
         "from": "谷町六丁目",
-        "to": "東梅田",
+        "to": "谷町四丁目",
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往大日）",
-        "durationMin": 8,
-        "stopCount": null,
+        "line": "谷町線",
+        "durationMin": 2,
+        "stopCount": 1,
         "liveApi": null
       }
     },
@@ -686,22 +827,27 @@ const ITINERARY = {
       "time": "20:30",
       "timeHint": "evening",
       "type": "rest",
-      "title": "酒店大浴場",
+      "title": "天然溫泉 浪華之湯",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F 大浴場",
       "coords": [
-        34.6983,
-        135.5027
+        34.6835,
+        135.5139
       ],
       "tags": [
-        "大浴場"
+        "天然溫泉",
+        "桑拿"
       ],
       "moodColor": "#9AA8A3",
-      "note": "【攻略】喝完清酒不要立即泡太熱的水，先休息 30 分鐘、多喝水再去大浴場；大浴場開到凌晨 1 點。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "大浴場（2 樓，設桑拿，住客專用）16:00–翌日 01:00、06:00–09:00",
+      "note": "【攻略】喝完清酒不要立即泡太熱的水，先休息 30 分鐘、多喝水再上 13 樓；21:30 後有免費夜鳴蕎麥麵（官方）。\n【實用】浴場內嚴禁帶食物及酒精飲品（官方），只可帶補充水分的飲品；有紋身不可入浴（官方）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
       "price": "住客免費",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -713,58 +859,65 @@ const ITINERARY = {
       "time": "09:00",
       "timeHint": "morning",
       "type": "food",
-      "title": "早餐：純喫茶 Sunshine（サンシャイン，大阪站前第 3 大廈）",
+      "title": "早餐：麵包店 Boulangerie & cafe gout（ブーランジュリー&カフェ グウ）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區梅田1-1-3 大阪站前第 3 大廈 B2",
-      "addressLocal": "大阪府大阪市北区梅田1-1-3 大阪駅前第3ビル B2F サンシャイン",
+      "address": "日本大阪府大阪市中央區內本町1-1-10 Rinsan 大廈 1 樓",
+      "addressLocal": "大阪府大阪市中央区内本町1-1-10 リンサンビル 1F ブーランジュリー&カフェ グウ",
       "coords": [
-        34.6984,
-        135.4999
+        34.6835,
+        135.516
       ],
       "tags": [
-        "老喫茶",
-        "熱香餅"
+        "麵包百名店",
+        "PayPay"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.57（424 則評價；喫茶店 百名店 2022（遷址前舊店））https://tabelog.com/osaka/A2701/A270101/27149249/\n【攻略】曾入選喫茶店百名店的老牌喫茶，2025 年 5 月遷到大阪站前第 3 大廈地庫。招牌是厚身熱香餅（ホットケーキ）配壺裝紅茶或自家烘焙咖啡，口碑一致好評。\n【實用】不設預約，繁忙時用發券機取票等位；平日 07:30 開，09:00 到一般較快入座。09:40 前結帳，步行約 5 分鐘到東梅田站。可用信用卡及 PayPay。",
-      "phone": "+81-6-6313-6797",
-      "openHours": "星期一至五 07:30–19:45（L.O. 19:15）；六日及假期 08:00–18:30（L.O. 18:00）",
-      "price": "Tabelog 預算 ¥1,000–1,999",
+      "note": "【Tabelog】3.72（1,082 則評價；パン WEST 百名店 2026（2020、2022 亦入選））\n【攻略】用國產小麥的麵包百名店，早上有每日麵包 3 款＋沙律＋小菜＋飲品或湯的早餐套餐（2026-09 食評：¥600 起）。\n【實用】07:30 開，星期三、四休；店內用餐至 19:00。不收信用卡，可用 PayPay 或現金。由酒店步行約 3 分鐘（估算）；09:50 出發去谷町四丁目站。",
+      "phone": "+81-6-6585-0833",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "星期一、二、五、六、日 07:30–20:00（店內用餐至 19:00）；三、四休（Tabelog）",
+      "price": "早餐套餐 ¥600 起（Tabelog 食評）",
+      "website": "https://tabelog.com/osaka/A2701/A270104/27075014/",
       "cost": {
-        "amount": 1300,
+        "amount": 700,
         "currency": "JPY",
         "category": "food"
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27149249/"
+      "transport": null
     },
     {
       "id": "trp_d3_02",
       "day": 3,
-      "time": "09:53",
+      "time": "10:04",
       "timeHint": "morning",
       "type": "transport",
-      "title": "地鐵谷町線→中央線（直通近鐵京阪奈線）：東梅田 → 新石切",
+      "title": "前往新石切（地鐵中央線直通）",
       "cityId": "osaka",
-      "address": "大阪地鐵東梅田站（谷町線）",
-      "addressLocal": "Osaka Metro 東梅田駅（谷町線）",
+      "address": "大阪地鐵谷町四丁目站（中央線）1 號月台",
+      "addressLocal": "Osaka Metro 谷町四丁目駅 1番線（中央線・生駒方面）",
       "coords": [
-        34.7006,
-        135.4998
+        34.6826,
+        135.5176
       ],
       "tags": [
         "地鐵",
         "近鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】東梅田站 1 號月台，谷町線往八尾南方向，09:53 開 → 10:00 到谷町四丁目；轉中央線 1 號月台往生駒方向（直通近鐵京阪奈線），10:04 開 → 10:22 到新石切（轉乘 1 次，共 29 分鐘；Yahoo! 乘換案內）。\n【上車】酒店步行約 7 分鐘到東梅田站 7 號出口。\n【下車】新石切站步行約 7 分鐘到石切神社（出口號碼待確認）。\n【車資】IC ¥590，ICOCA 拍卡（Osaka Metro 與近鐵直通，一次拍卡即可）。\n【備案】中央線約 10 分鐘一班。",
+      "note": "【上車】由 gout 步行約 3 分鐘到谷町四丁目站（估算）；中央線 1 號月台，往生駒方向。\n【實用】中央線直通近鐵京阪奈線，不用轉車；住谷町四丁目比由梅田出發少轉一次車。\n【下車】新石切站步行約 7 分鐘到石切劍箭神社。\n【車資】IC ¥540，ICOCA 拍卡。\n【備案】中央線約 8–10 分鐘一班，錯過可乘下一班。",
       "phone": null,
-      "openHours": "建議班次 09:53 → 10:22",
-      "price": "IC ¥590（ICOCA）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥540（ICOCA）",
+      "website": null,
       "cost": {
-        "amount": 590,
+        "amount": 540,
         "currency": "JPY",
         "category": "transport"
       },
@@ -772,14 +925,14 @@ const ITINERARY = {
       "source": "ai",
       "transport": {
         "mode": "subway",
-        "from": "東梅田",
+        "from": "谷町四丁目",
         "to": "新石切",
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵／近鐵",
-        "line": "谷町線（往八尾南）→ 中央線（往生駒，直通近鐵京阪奈線）",
-        "durationMin": 29,
-        "stopCount": null,
+        "line": "中央線 → 近鐵京阪奈線直通",
+        "durationMin": 18,
+        "stopCount": 8,
         "liveApi": null
       }
     },
@@ -804,8 +957,12 @@ const ITINERARY = {
       "moodColor": "#6B7F7A",
       "note": "【攻略】石切劍箭神社以「百度參拜（お百度参り）」聞名，完全個人修行：先在本殿右邊授與所領百度紐，本殿前二禮二拍手一禮，然後在本殿和鳥居附近的百度石之間來回，每圈摺一條紐記數；完成後再參拜，把紐放入賽錢箱左邊的奉納箱。不一定要 100 次，自己決定次數也可以。\n【實用】100 次約 1 小時；要趕 11:46 近鐵，時間不夠就減少次數。",
       "phone": "+81-72-982-3621",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "境內 24 小時；百度紐授與 08:00–16:30",
       "price": "免費（香油隨意）",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -817,10 +974,10 @@ const ITINERARY = {
       "time": "11:46",
       "timeHint": "morning",
       "type": "transport",
-      "title": "近鐵：新石切 → 近鐵奈良",
+      "title": "前往近鐵奈良（近鐵）",
       "cityId": "nara",
       "address": "近鐵新石切站",
-      "addressLocal": "近鉄 新石切駅",
+      "addressLocal": "近鉄 新石切駅 1番線",
       "coords": [
         34.6801,
         135.6409
@@ -829,10 +986,14 @@ const ITINERARY = {
         "近鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】新石切站 1 號月台，近鐵京阪奈線往學研奈良登美丘方向，11:46 開 → 11:52 到生駒；轉近鐵奈良線 3 號月台往近鐵奈良方向，11:58 開 → 12:18 到近鐵奈良（轉乘 1 次，共 32 分鐘；Yahoo! 乘換案內）。\n【下車】近鐵奈良站步行約 15 分鐘到玄（Tabelog），或乘的士約 5 分鐘（估算）；玄最後入店 13:00。出口號碼待確認。\n【車資】IC ¥550，ICOCA 拍卡。\n【備案】錯過就等下一班，到奈良後改乘的士。",
+      "note": "【上車】新石切站 1 號月台，近鐵京阪奈線往學研奈良登美丘方向。\n【轉車】生駒站轉近鐵奈良線 3 號月台（往近鐵奈良方向）。\n【下車】近鐵奈良站步行約 15 分鐘到玄（Tabelog），或乘的士約 5 分鐘（估算）；玄最後入店 13:00。出口號碼待確認。\n【車資】IC ¥550，ICOCA 拍卡。\n【備案】錯過就等下一班，到奈良後改乘的士。",
       "phone": null,
-      "openHours": "建議班次 11:46 → 12:18",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥550（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 550,
         "currency": "JPY",
@@ -847,9 +1008,9 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "近畿日本鐵道",
-        "line": "近鐵京阪奈線（往學研奈良登美丘）→ 近鐵奈良線（往近鐵奈良）",
+        "line": "近鐵京阪奈線 → 近鐵奈良線",
         "durationMin": 32,
-        "stopCount": null,
+        "stopCount": 8,
         "liveApi": null
       }
     },
@@ -874,10 +1035,14 @@ const ITINERARY = {
         "現金"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】4.03（585 則評價；蕎麥 WEST 百名店 2025（2017–2024 多次入選））https://tabelog.com/nara/A2901/A290101/29000052/\n【攻略】奈良町古民家裡的手打蕎麥名店，Tabelog 奈良最高分蕎麥店之一。午市只做蕎麥，按預約份數供應；建議點兩款不同蕎麥比較香氣，最後喝蕎麥湯（蕎麦湯）收結，可配一小杯奈良地酒。\n【預約】完全預約制。午市要電話 0742-27-6868 預約蕎麥份數（每日約 40 份），通常要提早致電；最後入店 13:00，遲到可能失去座位。只收現金。",
+      "note": "【Tabelog】4.03（585 則評價；蕎麥 WEST 百名店 2025（2017–2024 多次入選））\n【攻略】奈良町古民家裡的手打蕎麥名店，Tabelog 奈良最高分蕎麥店之一。午市只做蕎麥，按預約份數供應；建議點兩款不同蕎麥比較香氣，最後喝蕎麥湯（蕎麦湯）收結，可配一小杯奈良地酒。\n【預約】完全預約制。午市要電話預約蕎麥份數（每日約 40 份），通常要提早致電；最後入店 13:00，遲到可能失去座位。只收現金。",
       "phone": "+81-742-27-6868",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期二至五 午市 11:30–13:00（最後入店）、晚市 18:00–21:00；星期日、一休（Tabelog）",
       "price": "午市約 ¥3,000–4,000（Tabelog；只收現金）",
+      "website": "https://tabelog.com/nara/A2901/A290101/29000052/",
       "cost": {
         "amount": 3500,
         "currency": "JPY",
@@ -885,8 +1050,7 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/nara/A2901/A290101/29000052/"
+      "transport": null
     },
     {
       "id": "evt_d3_06",
@@ -908,10 +1072,14 @@ const ITINERARY = {
         "試飲"
       ],
       "moodColor": "#6B7F7A",
-      "note": "【攻略】奈良町東南、高畑一帶的老酒藏（舊八木酒造），代表酒「升平」。商店已遷往隔鄰的新建築，營業時間內可免費試飲；2 月正值釀酒季。可比較「升平」純米酒和當季新酒，再挑 1–2 支四合瓶帶回。\n【預約】試飲不用預約；酒藏參觀免費、最多 20 人，須提前致電 0742-26-2300 預約，可詢問一人參觀是否可行，講解以日語為主。由玄步行約 6 分鐘（估算）；14:15 出發，步行約 25 分鐘（或乘的士）到錦光園。",
+      "note": "【攻略】奈良町東南、高畑一帶的老酒藏（舊八木酒造），代表酒「升平」。商店已遷往隔鄰的新建築，營業時間內可免費試飲；2 月正值釀酒季。可比較「升平」純米酒和當季新酒，再挑 1–2 支四合瓶帶回。\n【預約】試飲不用預約；酒藏參觀免費、最多 20 人，須提前致電預約，可詢問一人參觀是否可行，講解以日語為主。由玄步行約 6 分鐘（估算）；14:15 出發，步行約 25 分鐘（或乘的士）到錦光園。",
       "phone": "+81-742-26-2300",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "平日 09:00–17:00；逢星期六、日及假期休",
       "price": "試飲免費；酒藏參觀免費（須預約）",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -939,8 +1107,12 @@ const ITINERARY = {
       "moodColor": "#6B7F7A",
       "note": "【攻略】由室町時代傳承至今的奈良墨工房。流程：墨的歷史講解 → 職人示範入模 → 親手握住溫暖柔軟的生墨，留下指紋和手形 → 放入桐箱帶走。手幾乎不會弄髒。帶回香港後放在陰涼處，3 個月內不要打開，讓它慢慢乾透。\n【預約】要預約，前一日 21:00 前；訂 14:45。由春日山酒造步行約 25 分鐘（估算）。取消要體驗前一日 12:00 前，否則全額收費。可加購參觀製墨現場 ¥1,650。",
       "phone": "+81-742-22-3319",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "體驗 09:00 起（受理至 17:00）；年中無休",
       "price": "成人 ¥3,300（連桐箱）",
+      "website": null,
       "cost": {
         "amount": 3300,
         "currency": "JPY",
@@ -971,8 +1143,12 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】奈良縣地酒專門店，約 120 款奈良酒可付費試飲（每杯 50cc，¥200 起），可一次比較不同酒藏；晚餐前試 3–4 杯即可，選 2–3 款喜歡的帶回酒店／香港。\n【實用】逢星期四休（假期照開），偶有臨時休息。16:45 出發，步行約 10 分鐘到鶴由（估算）。",
       "phone": "+81-742-26-6078",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "11:00–20:00；逢星期四休",
       "price": "試飲 50cc ¥200 起",
+      "website": null,
       "cost": {
         "amount": 1000,
         "currency": "JPY",
@@ -1002,10 +1178,14 @@ const ITINERARY = {
         "要預約"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.78（256 則評價；The Tabelog Award 2026 Bronze；日本料理 WEST 百名店 2025）https://tabelog.com/nara/A2901/A290101/29000969/\n【攻略】奈良町的日本料理名店，獲 The Tabelog Award 2026 Bronze，是今次行程最高級的一餐。季節會席以大和食材為主，請店方以奈良地酒配餐（剛在泉勇齋試過的酒藏可順便問）。\n【預約】電話 0742-26-7798；人氣高，建議 2–3 個月前（約 2026 年 11–12 月）致電，指定 17:00 晚市及一人位；Tabelog 口碑有一人午市預約例子，一人晚市要先確認。\n【實用】約 19:15 結束，步行約 10–15 分鐘到興福寺一帶看瑠璃繪（估算）。",
+      "note": "【Tabelog】3.78（256 則評價；The Tabelog Award 2026 Bronze；日本料理 WEST 百名店 2025）\n【攻略】奈良町的日本料理名店，獲 The Tabelog Award 2026 Bronze，是今次行程最高級的一餐。季節會席以大和食材為主，請店方以奈良地酒配餐（剛在泉勇齋試過的酒藏可順便問）。\n【預約】打電話；人氣高，建議 2–3 個月前（約 2026 年 11–12 月）致電，指定 17:00 晚市及一人位；Tabelog 口碑有一人午市預約例子，一人晚市要先確認。\n【實用】約 19:15 結束，步行約 10–15 分鐘到興福寺一帶看瑠璃繪（估算）。",
       "phone": "+81-742-26-7798",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "12:00–14:00、17:00–21:30；星期一休（Tabelog）",
       "price": "Tabelog 晚市預算 ¥20,000–29,999（連清酒）",
+      "website": "https://tabelog.com/nara/A2901/A290101/29000969/",
       "cost": {
         "amount": 25000,
         "currency": "JPY",
@@ -1013,8 +1193,7 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/nara/A2901/A290101/29000969/"
+      "transport": null
     },
     {
       "id": "evt_d3_10",
@@ -1037,8 +1216,12 @@ const ITINERARY = {
       "moodColor": "#6B7F7A",
       "note": "【攻略】2027 年 2/8–2/14 舉行（奈良國立博物館官網已確認日期）。參考 2026 年：春日大社、興福寺、東大寺有夜間特別參拜，琉璃色燈光迴廊，另有瑠璃繪市集和免費「夜參燈籠導賞（夜參り提灯）」（每條路線每日 1 次、約 10 人、先到先得）。不必拍照打卡，選一間寺社慢慢夜參拜已很有氣氛。\n【實用】2027 年詳細節目未公布；夜間戶外很冷，帶圍巾手套。查詢：奈良瑠璃繪（なら瑠璃絵）實行委員會。",
       "phone": "+81-742-30-6560",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "2027/2/8–2/14，約 18:00–21:00（按 2026 年）",
       "price": "入場免費；個別夜間特別參拜或收費（出發前再確認）",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -1050,10 +1233,10 @@ const ITINERARY = {
       "time": "20:48",
       "timeHint": "evening",
       "type": "transport",
-      "title": "近鐵奈良線→地鐵御堂筋線：近鐵奈良 → 梅田",
+      "title": "前往谷町四丁目（近鐵→京阪奈線直通）",
       "cityId": "nara",
-      "address": "近鐵奈良站",
-      "addressLocal": "近鉄奈良駅",
+      "address": "近鐵奈良站 1 號月台",
+      "addressLocal": "近鉄奈良駅 1番線（近鉄奈良線 快速急行・大阪難波行き）",
       "coords": [
         34.684,
         135.8263
@@ -1063,12 +1246,16 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】近鐵奈良站 1 號月台（始發），近鐵奈良線快速急行往大阪難波方向，20:48 開 → 21:24 到大阪難波；步行轉地鐵難波站御堂筋線 2 號月台往新大阪方向，21:31 開 → 21:39 到梅田（轉乘 1 次，共 51 分鐘；Yahoo! 乘換案內）。\n【下車】梅田站經地下街步行約 12 分鐘回酒店（估算）。\n【車資】IC ¥920，ICOCA 拍卡。\n【備案】JR 奈良 → 大阪約 60 分鐘。",
+      "note": "【上車】近鐵奈良站 1 號月台（始發），快速急行往大阪難波方向。\n【轉車】生駒站同站轉近鐵京阪奈線 2 號月台（往夢洲方向，直通地鐵中央線），坐到谷町四丁目不用再轉車。\n【下車】谷町四丁目站 4 號出口步行約 4 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥860，ICOCA 拍卡。\n【備案】快速急行直達大阪上本町（約 21:20 到），再轉谷町線由谷町九丁目坐 2 個站到谷町四丁目（班次待確認）。",
       "phone": null,
-      "openHours": "建議班次 20:48 → 21:39",
-      "price": "IC ¥920（ICOCA）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥860（ICOCA）",
+      "website": null,
       "cost": {
-        "amount": 920,
+        "amount": 860,
         "currency": "JPY",
         "category": "transport"
       },
@@ -1077,45 +1264,96 @@ const ITINERARY = {
       "transport": {
         "mode": "train",
         "from": "近鐵奈良",
-        "to": "梅田",
+        "to": "谷町四丁目",
         "fromEventId": null,
         "toEventId": null,
         "operator": "近畿日本鐵道／大阪地鐵",
-        "line": "近鐵奈良線快速急行（往大阪難波）→ 御堂筋線（往新大阪）",
-        "durationMin": 51,
-        "stopCount": null,
+        "line": "近鐵奈良線快速急行 → 近鐵京阪奈線（直通中央線）",
+        "durationMin": 47,
+        "stopCount": 13,
         "liveApi": null
       }
     },
     {
       "id": "evt_d3_12",
       "day": 3,
-      "time": "22:00",
+      "time": "21:50",
       "timeHint": "night",
       "type": "rest",
-      "title": "酒店大浴場",
+      "title": "天然溫泉 浪華之湯",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F 大浴場",
       "coords": [
-        34.6983,
-        135.5027
+        34.6835,
+        135.5139
       ],
       "tags": [
-        "大浴場"
+        "天然溫泉",
+        "桑拿"
       ],
       "moodColor": "#9AA8A3",
-      "note": "【攻略】走了一整天石階和夜參拜，泡個熱水浴放鬆雙腳；大浴場開到凌晨 1 點。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "大浴場（2 樓，設桑拿，住客專用）16:00–翌日 01:00、06:00–09:00",
+      "note": "【攻略】奈良一整天走得多，泡露天風呂和一人壺湯舒緩雙腳；夜鳴蕎麥麵 23:00 結束，奈良晚餐吃得飽可以略過。\n【實用】浴場內嚴禁帶食物及酒精飲品（官方），只可帶補充水分的飲品；有紋身不可入浴（官方）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
       "price": "住客免費",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "evt_d4_01",
+      "id": "trp_d4_01",
+      "day": 4,
+      "time": "08:35",
+      "timeHint": "morning",
+      "type": "transport",
+      "title": "前往東梅田（地鐵谷町線）",
+      "cityId": "osaka",
+      "address": "大阪地鐵谷町四丁目站 2 號月台",
+      "addressLocal": "Osaka Metro 谷町四丁目駅 2番線（谷町線・大日方面）／4番出口から入場",
+      "coords": [
+        34.6826,
+        135.5176
+      ],
+      "tags": [
+        "地鐵"
+      ],
+      "moodColor": "#2A7F7A",
+      "note": "【上車】由酒店步行約 4 分鐘到谷町四丁目站 4 號出口（酒店官方資料）；2 號月台，谷町線往大日方向。\n【下車】東梅田站往北新地方向出口，步行約 12 分鐘到倫敦茶室堂島本店（估算）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5 分鐘一班。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥240（ICOCA）",
+      "website": null,
+      "cost": {
+        "amount": 240,
+        "currency": "JPY",
+        "category": "transport"
+      },
+      "status": "pending",
+      "source": "ai",
+      "transport": {
+        "mode": "subway",
+        "from": "谷町四丁目",
+        "to": "東梅田",
+        "fromEventId": null,
+        "toEventId": null,
+        "operator": "大阪地鐵 Osaka Metro",
+        "line": "谷町線",
+        "durationMin": 7,
+        "stopCount": 3,
+        "liveApi": null
+      }
+    },
+    {
+      "id": "evt_d4_02",
       "day": 4,
       "time": "09:00",
       "timeHint": "morning",
@@ -1133,10 +1371,14 @@ const ITINERARY = {
         "百名店"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.69（1,264 則評價；咖啡店 WEST 百名店 2025）https://tabelog.com/osaka/A2701/A270101/27002171/\n【攻略】平日 09:00 開。今天點早餐多士套餐（¥700，連紅茶），加點招牌煮込式皇家奶茶（ロイヤルミルクティー）；明天（2/11 假期）再來吃完全預約制的英式早餐。\n【實用】店舖與西梅田站 8 號出口直結，09:50 結帳即可趕 09:56 地鐵。",
+      "note": "【Tabelog】3.69（1,264 則評價；咖啡店 WEST 百名店 2025）\n【攻略】平日 09:00 開。今天點早餐多士套餐（¥700，連紅茶），加點招牌煮込式皇家奶茶（ロイヤルミルクティー）；明天（2/11 假期）再來吃完全預約制的英式早餐。\n【實用】店舖與西梅田站 8 號出口直結，09:50 結帳即可趕 09:56 地鐵。",
       "phone": "+81-6-6347-0107",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期一至五 09:00–20:00；六日及假期 08:00–20:00（L.O. 19:00）；早餐至 11:00",
       "price": "早餐多士套餐 ¥700（連紅茶）",
+      "website": "https://tabelog.com/osaka/A2701/A270101/27002171/",
       "cost": {
         "amount": 900,
         "currency": "JPY",
@@ -1144,19 +1386,18 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27002171/"
+      "transport": null
     },
     {
-      "id": "trp_d4_02",
+      "id": "trp_d4_03",
       "day": 4,
       "time": "09:56",
       "timeHint": "morning",
       "type": "transport",
-      "title": "地鐵四橋線：西梅田 → 肥後橋",
+      "title": "前往肥後橋（地鐵四橋線）",
       "cityId": "osaka",
       "address": "大阪地鐵西梅田站",
-      "addressLocal": "Osaka Metro 西梅田駅（四つ橋線）",
+      "addressLocal": "Osaka Metro 西梅田駅（四つ橋線） 2番線",
       "coords": [
         34.6995,
         135.4957
@@ -1165,10 +1406,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【上車】倫敦茶室與西梅田站 8 號出口直結（店方資料）；四橋線 2 號月台（始發）往北加賀屋方向。\n【路線】09:56 開 → 09:58 到肥後橋（直達、2 分鐘；Yahoo! 乘換案內）。\n【下車】肥後橋站 4 號出口向西步行約 10 分鐘到大阪中之島美術館（美術館官方資料）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由堂島步行約 20 分鐘到美術館（估算）。",
+      "note": "【上車】倫敦茶室與西梅田站 8 號出口直結（店方資料）；四橋線 2 號月台（始發）往北加賀屋方向。\n【下車】肥後橋站 4 號出口向西步行約 10 分鐘到大阪中之島美術館（美術館官方資料）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由堂島步行約 20 分鐘到美術館（估算）。",
       "phone": null,
-      "openHours": "建議班次 09:56 → 09:58",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 190,
         "currency": "JPY",
@@ -1183,14 +1428,14 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "四橋線（往北加賀屋）",
+        "line": "四橋線",
         "durationMin": 2,
         "stopCount": 1,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d4_03",
+      "id": "evt_d4_04",
       "day": 4,
       "time": "10:10",
       "timeHint": "morning",
@@ -1210,8 +1455,12 @@ const ITINERARY = {
       "moodColor": "#6B7F7A",
       "note": "【攻略】2027/1/9–3/22 在 5 樓展室舉行，以近百年來創作的日本女性為主題。平日早上人較少，可慢慢看；美術館建築本身（黑色立方體）也值得留意。\n【實用】網上 etix／ART PASS 預先買票；入場至 16:30。問詢：大阪市總合 熱線（なにわコール）。",
       "phone": "+81-6-4301-7285",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "10:00–17:00（入場至 16:30）；逢星期一休",
       "price": "一般 ¥1,900（前售 ¥1,700）",
+      "website": null,
       "cost": {
         "amount": 1900,
         "currency": "JPY",
@@ -1222,15 +1471,15 @@ const ITINERARY = {
       "transport": null
     },
     {
-      "id": "trp_d4_04",
+      "id": "trp_d4_05",
       "day": 4,
       "time": "12:14",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "京阪中之島線：中之島 → 浪華橋",
+      "title": "前往浪華橋（京阪中之島線）",
       "cityId": "osaka",
       "address": "京阪中之島站",
-      "addressLocal": "京阪 中之島駅（中之島線）",
+      "addressLocal": "京阪 中之島駅（中之島線） 1番線",
       "coords": [
         34.6909,
         135.4868
@@ -1239,10 +1488,14 @@ const ITINERARY = {
         "京阪"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【上車】美術館步行約 5 分鐘到京阪中之島站；1 號月台（始發）往出町柳方向。\n【路線】12:14 開 → 12:19 到浪華橋（直達、5 分鐘；Yahoo! 乘換案內）。\n【下車】浪華橋站步行約 5 分鐘到柴藤（出口號碼待確認）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】沿中之島河邊散步約 25 分鐘（估算）。",
+      "note": "【上車】美術館步行約 5 分鐘到京阪中之島站；1 號月台（始發）往出町柳方向。\n【下車】浪華橋站步行約 5 分鐘到柴藤（出口號碼待確認）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】沿中之島河邊散步約 25 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 12:14 → 12:19",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥240（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 240,
         "currency": "JPY",
@@ -1257,14 +1510,14 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "京阪電氣鐵道",
-        "line": "京阪中之島線（往出町柳）",
+        "line": "京阪中之島線",
         "durationMin": 5,
-        "stopCount": null,
+        "stopCount": 3,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d4_05",
+      "id": "evt_d4_06",
       "day": 4,
       "time": "12:30",
       "timeHint": "afternoon",
@@ -1283,10 +1536,14 @@ const ITINERARY = {
         "可預約"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.57（465 則評價）https://tabelog.com/osaka/A2701/A270102/27000005/\n【攻略】創業約 300 年、第十五代傳人經營的大阪鰻魚老店。必吃「大阪鰻魚飯（大阪まむし）」：大阪做法將鰻魚夾在飯中間蒸焗，「菊」¥4,920 起；與 D6 有馬的現烤鰻魚可作比較。\n【注意】店方要求客人不要用香水、不要用有香味的柔順劑——當日早上不要塗精油。逢星期日、一休，可電話預約；L.O. 17:00。",
+      "note": "【Tabelog】3.57（465 則評價）\n【攻略】創業約 300 年、第十五代傳人經營的大阪鰻魚老店。必吃「大阪鰻魚飯（大阪まむし）」：大阪做法將鰻魚夾在飯中間蒸焗，「菊」¥4,920 起；與 D6 有馬的現烤鰻魚可作比較。\n【注意】店方要求客人不要用香水、不要用有香味的柔順劑——當日早上不要塗精油。逢星期日、一休，可電話預約；L.O. 17:00。",
       "phone": "+81-6-6231-4810",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "10:30–17:00 L.O.（18:00 關門）；逢星期日、一休",
       "price": "大阪鰻魚飯「菊」¥4,920（官網）；Tabelog 預算 ¥6,000–7,999",
+      "website": "https://tabelog.com/osaka/A2701/A270102/27000005/",
       "cost": {
         "amount": 4920,
         "currency": "JPY",
@@ -1294,19 +1551,18 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270102/27000005/"
+      "transport": null
     },
     {
-      "id": "trp_d4_06",
+      "id": "trp_d4_07",
       "day": 4,
       "time": "13:44",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "地鐵堺筋線：北濱 → 南森町",
+      "title": "前往南森町（地鐵堺筋線）",
       "cityId": "osaka",
       "address": "大阪地鐵北濱站",
-      "addressLocal": "Osaka Metro 北浜駅（堺筋線）",
+      "addressLocal": "Osaka Metro 北浜駅（堺筋線） 2番線",
       "coords": [
         34.6915,
         135.5076
@@ -1315,10 +1571,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】北濱站 2 號月台，堺筋線往天神橋筋六丁目方向，13:44 開 → 13:45 到南森町（直達、1 個站；Yahoo! 乘換案內）。\n【下車】南森町站 4A 出口，沿天神橋筋商店街步行約 5 分鐘到摩芙瑠。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由柴藤步行約 20 分鐘到摩芙瑠（估算）。",
+      "note": "【上車】北濱站 2 號月台，堺筋線往天神橋筋六丁目方向。\n【下車】南森町站 4A 出口，沿天神橋筋商店街步行約 5 分鐘到摩芙瑠。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由柴藤步行約 20 分鐘到摩芙瑠（估算）。",
       "phone": null,
-      "openHours": "建議班次 13:44 → 13:45",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 190,
         "currency": "JPY",
@@ -1333,14 +1593,14 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "堺筋線（往天神橋筋六丁目）",
+        "line": "堺筋線",
         "durationMin": 1,
         "stopCount": 1,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d4_07",
+      "id": "evt_d4_08",
       "day": 4,
       "time": "14:00",
       "timeHint": "afternoon",
@@ -1360,23 +1620,27 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】40 多年老店，老闆前川光永親自去歐洲入貨，出版過幾本浮雕寶石（cameo）專書。主力喬治亞時期至 1940 年代古董首飾和 cameo，可請老闆講解雕工、材質和年代分別。\n【實用】只開星期三至六 13:30–17:00（2/10 星期三正常營業）；其他日子可電話預約。",
       "phone": "+81-6-6353-3147",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期三至六 13:30–17:00",
       "price": "按貨品標價",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "trp_d4_08",
+      "id": "trp_d4_09",
       "day": 4,
       "time": "15:26",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "JR 東西線：大阪天滿宮 → 北新地",
+      "title": "前往北新地（JR 東西線）",
       "cityId": "osaka",
       "address": "JR 大阪天滿宮站",
-      "addressLocal": "JR 大阪天満宮駅（JR東西線）",
+      "addressLocal": "JR 大阪天満宮駅（JR東西線） 1番線",
       "coords": [
         34.6973,
         135.5126
@@ -1385,10 +1649,14 @@ const ITINERARY = {
         "JR"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】JR 大阪天滿宮站 1 號月台，JR 東西線區間快速往塚口方向，15:26 開 → 15:28 到北新地（直達、2 分鐘；Yahoo! 乘換案內）。\n【下車】北新地站 10 號出口，步行約 1 分鐘到 Wayanpuri。\n【車資】IC ¥150，ICOCA 拍卡。\n【備案】南森町站乘谷町線到東梅田，再步行約 8 分鐘（估算）。",
+      "note": "【上車】JR 大阪天滿宮站 1 號月台，JR 東西線區間快速往塚口方向。\n【下車】北新地站 10 號出口，步行約 1 分鐘到 Wayanpuri。\n【車資】IC ¥150，ICOCA 拍卡。\n【備案】南森町站乘谷町線到東梅田，再步行約 8 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 15:26 → 15:28",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥150（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 150,
         "currency": "JPY",
@@ -1403,14 +1671,14 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "JR 西日本",
-        "line": "JR 東西線區間快速（往塚口）",
+        "line": "JR 東西線區間快速",
         "durationMin": 2,
         "stopCount": 1,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d4_09",
+      "id": "evt_d4_10",
       "day": 4,
       "time": "15:45",
       "timeHint": "afternoon",
@@ -1430,8 +1698,12 @@ const ITINERARY = {
       "moodColor": "#9AA8A3",
       "note": "【攻略】創業 21 年的頭療專門店，先做頭皮診斷，再做毛孔清洗和頸膊護理；整個療程（包括更衣、化妝）都在私人房間。看展、逛街之後，選「頸膊放鬆集中療程（首肩コリ改善集中）」頸膊加強版最適合。\n【預約】全預約制，電話或官網預約 15:45。",
       "phone": "+81-6-6342-5999",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "平日 11:30–20:30；六 11:00–20:00；日及假期 10:00–19:00；無休",
       "price": "60 分鐘（施術 40 分鐘）¥12,000",
+      "website": null,
       "cost": {
         "amount": 12000,
         "currency": "JPY",
@@ -1442,36 +1714,9 @@ const ITINERARY = {
       "transport": null
     },
     {
-      "id": "evt_d4_10",
-      "day": 4,
-      "time": "17:15",
-      "timeHint": "evening",
-      "type": "rest",
-      "title": "酒店大浴場、休息",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
-      "coords": [
-        34.6983,
-        135.5027
-      ],
-      "tags": [
-        "大浴場"
-      ],
-      "moodColor": "#9AA8A3",
-      "note": "【攻略】頭療後頭皮很放鬆，泡浴時不用再用力洗頭；休息一會，18:20 出門步行到新梅田食道街（約 12 分鐘，估算）。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "大浴場（2 樓，設桑拿，住客專用）16:00–翌日 01:00、06:00–09:00",
-      "price": "住客免費",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
       "id": "evt_d4_11",
       "day": 4,
-      "time": "18:30",
+      "time": "17:15",
       "timeHint": "evening",
       "type": "food",
       "title": "晚餐：大阪燒 Kiji 本店（お好み焼 きじ 本店，新梅田食道街）",
@@ -1489,10 +1734,14 @@ const ITINERARY = {
         "排隊"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.66（2,201 則評價；大阪燒 百名店 2025（2018、2019、2022–2024 亦入選））https://tabelog.com/osaka/A2701/A270101/27000297/\n【攻略】1954 年開業的大阪燒老店，大阪燒百名店常客。經典豬肉大阪燒（豚玉）最穩妥，也可加點炒麵（焼きそば）；配一杯生啤，是今次行程最「大阪」的一頓平價晚餐。吧枱 7 位，一人可坐吧枱看師傅在鐵板上煎。\n【實用】不設預約、只收現金；人氣極高，假日可排 30 人以上，平日晚上也要預留排隊時間。料理 L.O. 20:30，19:30 前到較穩妥。星期日休。",
+      "note": "【Tabelog】3.66（2,201 則評價；大阪燒 百名店 2025（2018、2019、2022–2024 亦入選））\n【攻略】1954 年開業的大阪燒老店，大阪燒百名店常客。經典豬肉大阪燒（豚玉）最穩妥，也可加點炒麵（焼きそば）；配一杯生啤，是今次行程最「大阪」的一頓平價晚餐。吧枱 7 位，一人可坐吧枱看師傅在鐵板上煎。\n【實用】不設預約、只收現金；人氣極高，假日可排 30 人以上，平日晚上也要預留排隊時間。料理 L.O. 20:30。頭療後直接步行到新梅田食道街（約 10 分鐘，估算），17:15 平日傍晚排隊較短。星期日休。",
       "phone": "+81-6-6361-5804",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期一至六 11:45–21:15（料理 L.O. 20:30）；星期日休（Tabelog）",
       "price": "Tabelog 預算 ¥1,000–1,999；連生啤約 ¥2,200（估算，只收現金）",
+      "website": "https://tabelog.com/osaka/A2701/A270101/27000297/",
       "cost": {
         "amount": 2200,
         "currency": "JPY",
@@ -1500,11 +1749,134 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27000297/"
+      "transport": null
     },
     {
-      "id": "evt_d5_01",
+      "id": "trp_d4_12",
+      "day": 4,
+      "time": "18:42",
+      "timeHint": "evening",
+      "type": "transport",
+      "title": "前往谷町四丁目（地鐵谷町線）",
+      "cityId": "osaka",
+      "address": "大阪地鐵東梅田站 1 號月台",
+      "addressLocal": "Osaka Metro 東梅田駅 1番線（谷町線・喜連瓜破／八尾南方面）",
+      "coords": [
+        34.7006,
+        135.4998
+      ],
+      "tags": [
+        "地鐵"
+      ],
+      "moodColor": "#2A7F7A",
+      "note": "【上車】由新梅田食道街步行約 7 分鐘到東梅田站（估算）；1 號月台，谷町線往八尾南方向。\n【下車】谷町四丁目站 4 號出口步行約 4 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5 分鐘一班。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥240（ICOCA）",
+      "website": null,
+      "cost": {
+        "amount": 240,
+        "currency": "JPY",
+        "category": "transport"
+      },
+      "status": "pending",
+      "source": "ai",
+      "transport": {
+        "mode": "subway",
+        "from": "東梅田",
+        "to": "谷町四丁目",
+        "fromEventId": null,
+        "toEventId": null,
+        "operator": "大阪地鐵 Osaka Metro",
+        "line": "谷町線",
+        "durationMin": 7,
+        "stopCount": 3,
+        "liveApi": null
+      }
+    },
+    {
+      "id": "evt_d4_13",
+      "day": 4,
+      "time": "19:00",
+      "timeHint": "evening",
+      "type": "rest",
+      "title": "天然溫泉 浪華之湯、休息",
+      "cityId": "osaka",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F 大浴場",
+      "coords": [
+        34.6835,
+        135.5139
+      ],
+      "tags": [
+        "天然溫泉",
+        "桑拿"
+      ],
+      "moodColor": "#9AA8A3",
+      "note": "【攻略】頭療後頭皮很放鬆，泡浴時不用再用力洗頭；今晚早點休息。改動：原本頭療後先回酒店再出梅田吃晚餐，改為頭療後直接吃 Kiji 才回酒店，少走一轉。\n【實用】浴場內嚴禁帶食物及酒精飲品（官方），只可帶補充水分的飲品；有紋身不可入浴（官方）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
+      "price": "住客免費",
+      "website": null,
+      "cost": null,
+      "status": "pending",
+      "source": "ai",
+      "transport": null
+    },
+    {
+      "id": "trp_d5_01",
+      "day": 5,
+      "time": "08:37",
+      "timeHint": "morning",
+      "type": "transport",
+      "title": "前往東梅田（地鐵谷町線）",
+      "cityId": "osaka",
+      "address": "大阪地鐵谷町四丁目站 2 號月台",
+      "addressLocal": "Osaka Metro 谷町四丁目駅 2番線（谷町線・大日方面）／4番出口から入場",
+      "coords": [
+        34.6826,
+        135.5176
+      ],
+      "tags": [
+        "地鐵"
+      ],
+      "moodColor": "#2A7F7A",
+      "note": "【上車】由酒店步行約 4 分鐘到谷町四丁目站 4 號出口（酒店官方資料）；2 號月台，谷町線往大日方向。\n【下車】東梅田站步行約 12 分鐘到倫敦茶室堂島本店（估算）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥240（ICOCA）",
+      "website": null,
+      "cost": {
+        "amount": 240,
+        "currency": "JPY",
+        "category": "transport"
+      },
+      "status": "pending",
+      "source": "ai",
+      "transport": {
+        "mode": "subway",
+        "from": "谷町四丁目",
+        "to": "東梅田",
+        "fromEventId": null,
+        "toEventId": null,
+        "operator": "大阪地鐵 Osaka Metro",
+        "line": "谷町線",
+        "durationMin": 7,
+        "stopCount": 3,
+        "liveApi": null
+      }
+    },
+    {
+      "id": "evt_d5_02",
       "day": 5,
       "time": "09:00",
       "timeHint": "morning",
@@ -1523,10 +1895,14 @@ const ITINERARY = {
         "要預約"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.69（1,264 則評價；咖啡店 WEST 百名店 2025）https://tabelog.com/osaka/A2701/A270101/27002171/\n【攻略】1983 年創業的英國紅茶專門店，也是煮込式皇家奶茶（ロイヤルミルクティー）的發祥店。假期 08:00 開；09:00–11:00 有完全預約制的 English Breakfast（¥3,000），配一壺專門店紅茶慢慢享用；不想太飽可改點早餐多士套餐（¥700，連紅茶，供應至 11:00）。\n【預約】English Breakfast 只接受電話預約（10:00–20:00 受理，開店後 1 小時內不接聽）；遲到 15 分鐘自動取消。",
+      "note": "【Tabelog】3.69（1,264 則評價；咖啡店 WEST 百名店 2025）\n【攻略】1983 年創業的英國紅茶專門店，也是煮込式皇家奶茶（ロイヤルミルクティー）的發祥店。假期 08:00 開；09:00–11:00 有完全預約制的 English Breakfast（¥3,000），配一壺專門店紅茶慢慢享用；不想太飽可改點早餐多士套餐（¥700，連紅茶，供應至 11:00）。\n【預約】English Breakfast 只接受電話預約（10:00–20:00 受理，開店後 1 小時內不接聽）；遲到 15 分鐘自動取消。",
       "phone": "+81-6-6347-0107",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期一至五 09:00–20:00；六日及假期 08:00–20:00（L.O. 19:00）；早餐至 11:00",
       "price": "English Breakfast ¥3,000（完全預約制）；多士套餐 ¥700",
+      "website": "https://tabelog.com/osaka/A2701/A270101/27002171/",
       "cost": {
         "amount": 3000,
         "currency": "JPY",
@@ -1534,19 +1910,18 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27002171/"
+      "transport": null
     },
     {
-      "id": "trp_d5_02",
+      "id": "trp_d5_03",
       "day": 5,
       "time": "09:58",
       "timeHint": "morning",
       "type": "transport",
-      "title": "地鐵谷町線：東梅田 → 中崎町",
+      "title": "前往中崎町（地鐵谷町線）",
       "cityId": "osaka",
       "address": "大阪地鐵東梅田站（谷町線）",
-      "addressLocal": "Osaka Metro 東梅田駅（谷町線）",
+      "addressLocal": "Osaka Metro 東梅田駅（谷町線） 2番線",
       "coords": [
         34.7006,
         135.4998
@@ -1555,10 +1930,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】東梅田站 2 號月台，谷町線往大日方向，09:58 開 → 09:59 到中崎町（直達、1 個站；Yahoo! 乘換案內）。\n【下車】中崎町站 2 號出口，步行約 4 分鐘到物差沙龍。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由堂島直接步行約 20 分鐘（估算）。",
+      "note": "【上車】東梅田站 2 號月台，谷町線往大日方向。\n【下車】中崎町站 2 號出口，步行約 4 分鐘到物差沙龍。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由堂島直接步行約 20 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 09:58 → 09:59",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 190,
         "currency": "JPY",
@@ -1573,14 +1952,14 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往大日）",
+        "line": "谷町線",
         "durationMin": 1,
         "stopCount": 1,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d5_03",
+      "id": "evt_d5_04",
       "day": 5,
       "time": "10:15",
       "timeHint": "morning",
@@ -1601,8 +1980,12 @@ const ITINERARY = {
       "moodColor": "#9AA8A3",
       "note": "【攻略】中崎町個人經營、完全預約制的私人香薰沙龍，用日本產精油品牌「Kaorito（かおりと）」（每批精油送 GC/MS 分析）和法國藥用級精油。建議選 60 分鐘精油按摩（附碳酸乾式頭療）；店內亦有調香體驗（20ml ¥2,700 起）。可問店主想試哪幾款日本產精油。\n【預約】一人店，電話未必接聽，用網上（Square）預約最穩妥。",
       "phone": "+81-80-1498-5189",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "日及假期 09:00–21:00（完全預約制）",
       "price": "精油按摩 60 分鐘 ¥7,000（首次 ¥5,500）",
+      "website": null,
       "cost": {
         "amount": 5500,
         "currency": "JPY",
@@ -1613,15 +1996,15 @@ const ITINERARY = {
       "transport": null
     },
     {
-      "id": "trp_d5_04",
+      "id": "trp_d5_05",
       "day": 5,
       "time": "11:45",
       "timeHint": "morning",
       "type": "transport",
-      "title": "地鐵谷町線：中崎町 → 東梅田",
+      "title": "前往東梅田（地鐵谷町線）",
       "cityId": "osaka",
       "address": "大阪地鐵中崎町站",
-      "addressLocal": "Osaka Metro 中崎町駅",
+      "addressLocal": "Osaka Metro 中崎町駅 1番線",
       "coords": [
         34.7072,
         135.5056
@@ -1630,10 +2013,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】中崎町站 1 號月台，谷町線往八尾南方向，11:45 開 → 11:47 到東梅田（直達、2 分鐘；Yahoo! 乘換案內）。\n【下車】東梅田站步行約 5 分鐘到大阪站前第 3 大廈 B2 的烏冬棒（Tabelog；出口號碼待確認）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】步行約 15 分鐘（估算）。",
+      "note": "【上車】中崎町站 1 號月台，谷町線往八尾南方向。\n【下車】東梅田站步行約 5 分鐘到大阪站前第 3 大廈 B2 的烏冬棒（Tabelog；出口號碼待確認）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】步行約 15 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 11:45 → 11:47",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 190,
         "currency": "JPY",
@@ -1648,14 +2035,14 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往八尾南）",
+        "line": "谷町線",
         "durationMin": 2,
         "stopCount": 1,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d5_05",
+      "id": "evt_d5_06",
       "day": 5,
       "time": "12:00",
       "timeHint": "afternoon",
@@ -1674,10 +2061,14 @@ const ITINERARY = {
         "排隊"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.78（2,967 則評價；烏冬 WEST 百名店 2024（2017–2022 多次入選））https://tabelog.com/osaka/A2701/A270101/27003766/\n【攻略】2004 年開業的讚岐烏冬名店，堅持每朝手打。最人氣是冷天烏冬（冷天うどん）¥800，名物是什錦烏冬（ちゃんぽんうどん）¥800（店方介紹）；想專心吃麵與湯可點冷湯烏冬（ひやかけ）。店方標示對日本酒有講究，可配一杯清酒。\n【實用】不設預約，口碑排隊約 20–30 分鐘；假期只開 11:00–15:00，麵賣完即止。星期一休，另有不定休（官網每月公布），出發前看 X／官網。",
+      "note": "【Tabelog】3.78（2,967 則評價；烏冬 WEST 百名店 2024（2017–2022 多次入選））\n【攻略】2004 年開業的讚岐烏冬名店，堅持每朝手打。最人氣是冷天烏冬（冷天うどん）¥800，名物是什錦烏冬（ちゃんぽんうどん）¥800（店方介紹）；想專心吃麵與湯可點冷湯烏冬（ひやかけ）。店方標示對日本酒有講究，可配一杯清酒。\n【實用】不設預約，口碑排隊約 20–30 分鐘；假期只開 11:00–15:00，麵賣完即止。星期一休，另有不定休（官網每月公布），出發前看 X／官網。",
       "phone": "+81-6-6458-5518",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期二至五 11:00–15:00、17:30–20:00；六日及假期 11:00–15:00；星期一休、不定休（Tabelog）",
       "price": "Tabelog 預算 ¥1,000–1,999（連一杯清酒約 ¥1,800，估算）",
+      "website": "https://tabelog.com/osaka/A2701/A270101/27003766/",
       "cost": {
         "amount": 1800,
         "currency": "JPY",
@@ -1685,19 +2076,18 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27003766/"
+      "transport": null
     },
     {
-      "id": "trp_d5_06",
+      "id": "trp_d5_07",
       "day": 5,
       "time": "13:09",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "地鐵谷町線：東梅田 → 中崎町",
+      "title": "前往中崎町（地鐵谷町線）",
       "cityId": "osaka",
       "address": "大阪地鐵東梅田站",
-      "addressLocal": "東梅田駅（Osaka Metro 谷町線）",
+      "addressLocal": "東梅田駅（Osaka Metro 谷町線） 2番線",
       "coords": [
         34.7006,
         135.4998
@@ -1706,10 +2096,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】東梅田站 2 號月台，谷町線往大日方向，13:09 開 → 13:10 到中崎町（直達、1 個站；Yahoo! 乘換案內）。\n【下車】中崎町站 2 號出口旁就是 Guignol（官網）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由大阪站前第 3 大廈步行約 15 分鐘（估算）。",
+      "note": "【上車】東梅田站 2 號月台，谷町線往大日方向。\n【下車】中崎町站 2 號出口旁就是 Guignol（官網）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】由大阪站前第 3 大廈步行約 15 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 13:09 → 13:10",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 190,
         "currency": "JPY",
@@ -1724,14 +2118,14 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵",
-        "line": "谷町線（往大日）",
+        "line": "谷町線",
         "durationMin": 1,
         "stopCount": 1,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d5_07",
+      "id": "evt_d5_08",
       "day": 5,
       "time": "13:15",
       "timeHint": "afternoon",
@@ -1752,15 +2146,19 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】中崎町老屋區的小店，兼營歐洲 brocante（日常舊貨）、古董和日本作家作品。沒有名牌包，多是舊餐具、舊布、鈕扣、皮革小物這類生活舊物，價錢以日常用品為主；皮件有沒有貨要看當日。逛完可在中崎町小巷走一圈再去梅田。\n【實用】逢星期一、二休，另有臨時休息；2/11 是假期，出發前查看官網或 Instagram 確認營業。14:35 離開，步行約 20 分鐘到 Hilton Plaza West（估算），趕 15:00 香水體驗。按貨品標價。",
       "phone": "+81-6-6359-1388",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "12:00–19:00；逢星期一、二休（另有臨時休息）",
       "price": "按貨品標價",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "evt_d5_08",
+      "id": "evt_d5_09",
       "day": 5,
       "time": "15:00",
       "timeHint": "afternoon",
@@ -1781,8 +2179,12 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】1988 年西宮創立的日本香薰品牌，自設 GC-MS 分析和無菌室入樽；有自家水蒸氣蒸餾的柚子和木曾檜等日本產精油。「溫和香水調製（優しい香水作り）」體驗約 60 分鐘，由約 100 種純精油調出自己的香水（包診斷、瓶和盒）。可順便問心儀精油有沒有成分分析表。\n【預約】體驗 12:00／15:00 兩場，建議預約 15:00。",
       "phone": "+81-90-9994-8706",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "11:00–20:00；香水體驗 12:00／15:00",
       "price": "10ml ¥4,950（15ml ¥5,940）",
+      "website": null,
       "cost": {
         "amount": 4950,
         "currency": "JPY",
@@ -1793,42 +2195,15 @@ const ITINERARY = {
       "transport": null
     },
     {
-      "id": "evt_d5_09",
-      "day": 5,
-      "time": "16:15",
-      "timeHint": "afternoon",
-      "type": "rest",
-      "title": "酒店大浴場、休息",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
-      "coords": [
-        34.6983,
-        135.5027
-      ],
-      "tags": [
-        "大浴場"
-      ],
-      "moodColor": "#9AA8A3",
-      "note": "【攻略】Hilton Plaza 步行回酒店約 10 分鐘；大浴場 16:00 開，人少泡得舒服。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "大浴場（2 樓，設桑拿，住客專用）16:00–翌日 01:00、06:00–09:00",
-      "price": "住客免費",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
       "id": "trp_d5_10",
       "day": 5,
-      "time": "18:45",
-      "timeHint": "evening",
+      "time": "16:10",
+      "timeHint": "afternoon",
       "type": "transport",
-      "title": "地鐵谷町線：東梅田 → 天神橋筋六丁目",
+      "title": "前往天神橋筋六丁目（地鐵谷町線）",
       "cityId": "osaka",
-      "address": "大阪地鐵東梅田站（谷町線）",
-      "addressLocal": "Osaka Metro 東梅田駅（谷町線）",
+      "address": "大阪地鐵東梅田站 2 號月台",
+      "addressLocal": "Osaka Metro 東梅田駅 2番線（谷町線・大日方面）",
       "coords": [
         34.7006,
         135.4998
@@ -1837,10 +2212,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【上車】酒店步行約 7 分鐘到東梅田站 7 號出口；2 號月台，谷町線往大日方向。\n【路線】18:45 開 → 18:48 到天神橋筋六丁目（直達、3 分鐘；Yahoo! 乘換案內）。\n【下車】天神橋筋六丁目站步行約 3 分鐘到黑兔食堂（Tabelog 標示約 200m；出口號碼待確認）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】乘的士約 10 分鐘（估算）。",
+      "note": "【上車】由 Hilton Plaza West 步行約 5 分鐘到東梅田站（估算）；2 號月台，谷町線往大日方向。\n【下車】天神橋筋六丁目站出站，就是天神橋筋商店街北端（天六）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班；亦可由中崎町沿商店街方向步行約 15 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 18:45 → 18:48（約 5–7 分鐘一班）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 190,
         "currency": "JPY",
@@ -1855,16 +2234,49 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往大日）",
-        "durationMin": 3,
-        "stopCount": null,
+        "line": "谷町線",
+        "durationMin": 4,
+        "stopCount": 2,
         "liveApi": null
       }
     },
     {
       "id": "evt_d5_11",
       "day": 5,
-      "time": "19:00",
+      "time": "16:20",
+      "timeHint": "afternoon",
+      "type": "sight",
+      "title": "天神橋筋商店街散步（天六 → 天五）",
+      "cityId": "osaka",
+      "address": "日本大阪府大阪市北區天神橋 6 丁目（天神橋筋商店街北端）",
+      "addressLocal": "大阪府大阪市北区天神橋6丁目 天神橋筋商店街",
+      "coords": [
+        34.7095,
+        135.5117
+      ],
+      "tags": [
+        "散步",
+        "商店街",
+        "清酒"
+      ],
+      "moodColor": "#8C8378",
+      "note": "【攻略】日本最長的商店街之一（南北約 2.6 公里），晚餐前只走北段天六至天五一帶，人情味重、遊客少。可試：街頭可樂餅、玉子燒等小吃（淺嚐即止，留肚晚餐）；可買：老派乾貨、漬物、廚具小物。\n【清酒】附近有地酒專門店「稻田酒店」（見靈感池），2/11 假期是否營業待確認。\n【實用】約 17:20 走回天六一帶準備晚餐，黑兔食堂就在附近。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "商店街全日開放；各店約 10:00–20:00（各店不同）",
+      "price": "免費（小吃約 ¥200–500）",
+      "website": null,
+      "cost": null,
+      "status": "pending",
+      "source": "ai",
+      "transport": null
+    },
+    {
+      "id": "evt_d5_13",
+      "day": 5,
+      "time": "17:30",
       "timeHint": "evening",
       "type": "food",
       "title": "晚餐：黑兔食堂（食堂 黒うさぎ，創作中華居酒屋）",
@@ -1882,10 +2294,14 @@ const ITINERARY = {
         "可預約"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.68（849 則評價；居酒屋 WEST 百名店 2026、2025）https://tabelog.com/osaka/A2701/A270103/27136227/\n【攻略】以中華料理技法配清酒的人氣居酒屋，連續兩年入選居酒屋百名店。坐吧枱（10 位）點當日推介的中華小菜，請店員按菜式配清酒，價錢比北新地親民。\n【預約】官網預約（yoyaku-kurousagi.com）優先，或電話 050-5600-5707；假期晚上人多，建議 1 個月前預約。\n【實用】星期二及第 4 個星期三休，假期照常營業（2/11 星期四營業）。",
+      "note": "【Tabelog】3.68（849 則評價；居酒屋 WEST 百名店 2026、2025）\n【攻略】以中華料理技法配清酒的人氣居酒屋，連續兩年入選居酒屋百名店。坐吧枱（10 位）點當日推介的中華小菜，請店員按菜式配清酒，價錢比北新地親民。\n【預約】官網預約優先，或打電話；假期晚上人多，建議 1 個月前預約 17:30 吧枱位。\n【實用】星期二及第 4 個星期三休，假期照常營業（2/11 星期四營業）。",
       "phone": "+81-50-5600-5707",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "15:00–24:00；星期二及第 4 個星期三休，假期營業（Tabelog）",
       "price": "Tabelog 預算 ¥4,000–5,999（連清酒）",
+      "website": "https://tabelog.com/osaka/A2701/A270103/27136227/",
       "cost": {
         "amount": 5500,
         "currency": "JPY",
@@ -1893,33 +2309,36 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270103/27136227/"
+      "transport": null
     },
     {
-      "id": "trp_d5_12",
+      "id": "trp_d5_14",
       "day": 5,
-      "time": "21:01",
-      "timeHint": "night",
+      "time": "19:40",
+      "timeHint": "evening",
       "type": "transport",
-      "title": "地鐵谷町線：天神橋筋六丁目 → 東梅田",
+      "title": "前往谷町四丁目（地鐵谷町線）",
       "cityId": "osaka",
-      "address": "大阪地鐵天神橋筋六丁目站",
-      "addressLocal": "Osaka Metro 天神橋筋六丁目駅",
+      "address": "大阪地鐵天神橋筋六丁目站 1 號月台",
+      "addressLocal": "Osaka Metro 天神橋筋六丁目駅 1番線（谷町線・八尾南方面）",
       "coords": [
-        34.7103,
-        135.5108
+        34.7106,
+        135.5113
       ],
       "tags": [
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】天神橋筋六丁目站 1 號月台，谷町線往八尾南方向，21:01 開 → 21:05 到東梅田（直達、4 分鐘；Yahoo! 乘換案內）。\n【下車】東梅田站 7 號出口步行約 7 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】乘的士約 10 分鐘（估算）。",
+      "note": "【上車】由黑兔食堂步行約 5 分鐘到天神橋筋六丁目站（估算）；1 號月台，谷町線往八尾南方向。\n【下車】谷町四丁目站 4 號出口步行約 4 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班；的士回酒店約 15 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 21:01 → 21:05（約 5–7 分鐘一班）",
-      "price": "IC ¥190（ICOCA）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥240（ICOCA）",
+      "website": null,
       "cost": {
-        "amount": 190,
+        "amount": 240,
         "currency": "JPY",
         "category": "transport"
       },
@@ -1928,55 +2347,136 @@ const ITINERARY = {
       "transport": {
         "mode": "subway",
         "from": "天神橋筋六丁目",
-        "to": "東梅田",
+        "to": "谷町四丁目",
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往八尾南）",
-        "durationMin": 4,
-        "stopCount": null,
+        "line": "谷町線",
+        "durationMin": 11,
+        "stopCount": 5,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d6_01",
-      "day": 6,
-      "time": "09:00",
-      "timeHint": "morning",
-      "type": "food",
-      "title": "早餐：酒店 ENT 自助早餐",
+      "id": "evt_d5_15",
+      "day": 5,
+      "time": "20:00",
+      "timeHint": "night",
+      "type": "rest",
+      "title": "天然溫泉 浪華之湯（今晚收工）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田） 1 樓 ENT",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田 1F レストラン＆バー ENT",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F 大浴場",
       "coords": [
-        34.6983,
-        135.5027
+        34.6835,
+        135.5139
       ],
       "tags": [
-        "自助早餐"
+        "天然溫泉",
+        "桑拿"
+      ],
+      "moodColor": "#9AA8A3",
+      "note": "【攻略】晚餐後回酒店泡湯收工，今晚不再外出：內湯（生駒山天然氡溫泉）＋露天壺湯＋高溫桑拿；之後到 13 樓湯上處休息。21:30 起有免費夜鳴蕎麥麵。\n【實用】浴場內嚴禁帶食物及酒精飲品（官方），只可帶補充水分的飲品；有紋身不可入浴（官方）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
+      "price": "住客免費",
+      "website": null,
+      "cost": null,
+      "status": "pending",
+      "source": "ai",
+      "transport": null
+    },
+    {
+      "id": "evt_d6_01",
+      "day": 6,
+      "time": "08:15",
+      "timeHint": "morning",
+      "type": "food",
+      "title": "早餐：Dormy Inn 自助早餐（13 樓 HATAGO）",
+      "cityId": "osaka",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町） 13 樓",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F レストラン HATAGO",
+      "coords": [
+        34.6835,
+        135.5139
+      ],
+      "tags": [
+        "酒店早餐"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.09（7 則評價；酒店早餐，選它是為了趕 09:50 巴士）https://tabelog.com/osaka/A2701/A270101/27127004/\n【攻略】今日 09:50 巴士對號入座，酒店早餐最省時：和洋自助，有章魚燒、大阪燒及日替惣菜。午餐要吃鰻魚，早餐適量即可。\n【實用】09:30 吃完出門，步行約 15 分鐘到阪急三番街巴士站（估算）。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "06:30–10:00（最後入場 09:45）",
-      "price": "住客 ¥2,200",
+      "note": "【攻略】Dormy Inn 全線共通的和洋自助早餐，加上大阪「當地逸品」：水菜「哈哩哈哩烏冬」（はりはりうどん）和大阪燒（官方）；小鉢橫丁一口一碟，可以每樣少少試。\n【攻略】今日 09:50 巴士對號入座，在酒店吃最省時；午餐要吃鰻魚，早餐適量即可。09:10 出門。\n【實用】06:30–09:30（最後入場 09:00），只限住客；成人 ¥2,000（含稅，官方）。如訂房時未含早餐，可在前台加購（加購方法待確認）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "06:30–09:30（最後入場 09:00）",
+      "price": "成人 ¥2,000（含稅，官方）",
+      "website": null,
       "cost": {
-        "amount": 2200,
+        "amount": 2000,
         "currency": "JPY",
         "category": "food"
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27127004/"
+      "transport": null
     },
     {
       "id": "trp_d6_02",
       "day": 6,
+      "time": "09:18",
+      "timeHint": "morning",
+      "type": "transport",
+      "title": "前往東梅田（地鐵谷町線）",
+      "cityId": "osaka",
+      "address": "大阪地鐵谷町四丁目站 2 號月台",
+      "addressLocal": "Osaka Metro 谷町四丁目駅 2番線（谷町線・大日方面）／4番出口から入場",
+      "coords": [
+        34.6826,
+        135.5176
+      ],
+      "tags": [
+        "地鐵"
+      ],
+      "moodColor": "#2A7F7A",
+      "note": "【上車】由酒店步行約 4 分鐘到谷町四丁目站 4 號出口（酒店官方資料）；2 號月台，谷町線往大日方向。\n【下車】東梅田站經地下街步行約 10 分鐘到阪急三番街巴士總站（估算）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】09:10 後的谷町線約 5 分鐘一班；行李不多，可提早一班。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥240（ICOCA）",
+      "website": null,
+      "cost": {
+        "amount": 240,
+        "currency": "JPY",
+        "category": "transport"
+      },
+      "status": "pending",
+      "source": "ai",
+      "transport": {
+        "mode": "subway",
+        "from": "谷町四丁目",
+        "to": "東梅田",
+        "fromEventId": null,
+        "toEventId": null,
+        "operator": "大阪地鐵 Osaka Metro",
+        "line": "谷町線",
+        "durationMin": 7,
+        "stopCount": 3,
+        "liveApi": null
+      }
+    },
+    {
+      "id": "trp_d6_03",
+      "day": 6,
       "time": "09:50",
       "timeHint": "morning",
       "type": "transport",
-      "title": "阪急高速巴士：大阪梅田（阪急三番街）→ 有馬溫泉",
+      "title": "前往有馬溫泉（阪急高速巴士）",
       "cityId": "kobe",
       "address": "大阪梅田 阪急三番街高速巴士總站",
       "addressLocal": "大阪梅田（阪急三番街）高速バスターミナル",
@@ -1989,10 +2489,14 @@ const ITINERARY = {
         "要預約"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【上車】大阪梅田 阪急三番街高速巴士總站（阪急大阪梅田站茶屋町閘口樓下）。1–4 號站沒有固定，巴士約開車前 10 分鐘入站，按電子顯示板找有馬溫泉班次（阪急觀光巴士官方資料）。\n【班次】特急班 09:50 開 → 10:45 到有馬溫泉（約 55 分鐘，阪急觀光巴士官方時刻表）。全車對號入座，要預先買票；今次只買單程，回程改乘鐵路經神戶元町。\n【預約／付款】乘車日前一個月同日 09:00 開賣（即 2027/1/12 09:00），可經高速巴士預約網站（発車オーライネット）網上、電話 0570-089006 或窗口購買；ICOCA 不能代替訂座車票（待確認）。\n【下車】有馬溫泉巴士站，步行到鰻 大山（步行時間待確認）。\n【備案】鐵路約 72 分鐘、轉 3 次。",
+      "note": "【上車】大阪梅田 阪急三番街高速巴士總站（阪急大阪梅田站茶屋町閘口樓下）。1–4 號站沒有固定，巴士約開車前 10 分鐘入站，按電子顯示板找有馬溫泉班次（阪急觀光巴士官方資料）。\n【車票】全車對號入座，要預先買指定班次（建議 09:50 特急班，車程約 55 分鐘）；今次只買單程，回程改乘鐵路經神戶元町。\n【預約／付款】乘車日前一個月同日 09:00 開賣（即 2027/1/12 09:00），可經高速巴士預約網站（発車オーライネット）網上、電話或窗口購買；ICOCA 不能代替訂座車票（待確認）。\n【下車】有馬溫泉巴士站，步行到鰻 大山（步行時間待確認）。\n【備案】鐵路約 72 分鐘、轉 3 次。",
       "phone": "+81-570-089006",
-      "openHours": "09:50 → 10:45（梅田發 09:00／09:50／10:10…）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "全車對號入座：按已買車票的班次上車（建議 09:50 特急班）",
       "price": "成人單程 ¥1,400",
+      "website": null,
       "cost": {
         "amount": 1400,
         "currency": "JPY",
@@ -2014,7 +2518,7 @@ const ITINERARY = {
       }
     },
     {
-      "id": "evt_d6_03",
+      "id": "evt_d6_04",
       "day": 6,
       "time": "11:15",
       "timeHint": "morning",
@@ -2033,10 +2537,14 @@ const ITINERARY = {
         "可預約"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.53（34 則評價）https://tabelog.com/hyogo/A2801/A280112/28066508/\n【攻略】2023 年開業的鰻魚專門店，點餐後才開鰻現烤，口碑讚皮脆肉厚。大將一人主理，按組逐一烤製，預留約 75 分鐘。與 D4 柴藤的大阪蒸焗式鰻魚飯做法不同，可比較。\n【預約】Tabelog 標示可預約：電話 078-958-5375（受理 11:00–18:30）訂 11:15，同時確認 2/12 營業（不定休）。賣完即止。\n【備案】如休息，改在溫泉街小吃；有馬多數名店星期二、三休，選擇有限。",
+      "note": "【Tabelog】3.53（34 則評價）\n【攻略】2023 年開業的鰻魚專門店，點餐後才開鰻現烤，口碑讚皮脆肉厚。大將一人主理，按組逐一烤製，預留約 75 分鐘。與 D4 柴藤的大阪蒸焗式鰻魚飯做法不同，可比較。\n【預約】Tabelog 標示可預約：電話（受理 11:00–18:30）訂 11:15，同時確認 2/12 營業（不定休）。賣完即止。\n【備案】如休息，改在溫泉街小吃；有馬多數名店星期二、三休，選擇有限。",
       "phone": "+81-78-958-5375",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "11:00–18:00（賣完即止）；不定休（Tabelog）",
       "price": "Tabelog 午市預算 ¥5,000–5,999",
+      "website": "https://tabelog.com/hyogo/A2801/A280112/28066508/",
       "cost": {
         "amount": 5000,
         "currency": "JPY",
@@ -2044,11 +2552,10 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/hyogo/A2801/A280112/28066508/"
+      "transport": null
     },
     {
-      "id": "evt_d6_04",
+      "id": "evt_d6_05",
       "day": 6,
       "time": "12:40",
       "timeHint": "afternoon",
@@ -2068,8 +2575,12 @@ const ITINERARY = {
       "moodColor": "#9AA8A3",
       "note": "【攻略】有馬名物「金泉」：含鐵質和鹽分的茶褐色溫泉，保溫力強。泡 10–15 分鐘就起來休息，不要一次泡太久。門外有免費足湯。2026 年 3 月翻新後已重開。\n【實用】毛巾可在館內購買；今次只泡金之湯（平日 ¥650），13:30 起來，留時間逛溫泉街；想加泡銀之湯可改買兩館共通券 ¥1,200。第 2、4 個星期二休（2/12 星期五照開）。",
       "phone": "+81-78-904-0680",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "08:00–22:00（最後入場 21:30）；第 2、4 個星期二休",
       "price": "成人平日 ¥650；金銀共通券 ¥1,200",
+      "website": null,
       "cost": {
         "amount": 650,
         "currency": "JPY",
@@ -2080,7 +2591,7 @@ const ITINERARY = {
       "transport": null
     },
     {
-      "id": "evt_d6_05",
+      "id": "evt_d6_06",
       "day": 6,
       "time": "13:35",
       "timeHint": "afternoon",
@@ -2101,23 +2612,27 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】有馬唯一仍然手工製作「有馬人形筆」的老店：筆桿以彩色絲線手捲編出花紋，提筆寫字時筆尾會冒出一個小人偶頭。既可寫字作畫，也可當擺設，是溫泉街上最有本地味道的手作。可請店主示範機關，挑一支自用；人形筆 1 支（紙盒）¥3,300，2 支裝 ¥4,900，大號 2 支（木盒）¥9,000。\n【實用】2/12 星期五營業（逢星期三、四休）；14:00 前結帳，步行到神戶電鐵有馬溫泉站（估算約 5 分鐘）。",
       "phone": "+81-78-904-0761",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "10:00–16:00；逢星期三、四休",
       "price": "人形筆 1 支（紙盒）¥3,300；2 支裝 ¥4,900；大號 2 支（木盒）¥9,000",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "trp_d6_06",
+      "id": "trp_d6_07",
       "day": 6,
       "time": "14:09",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "神戶電鐵→北神線→JR：有馬溫泉 → 元町",
+      "title": "前往元町（神戶電鐵→北神線→JR）",
       "cityId": "kobe",
       "address": "神戶電鐵有馬溫泉站",
-      "addressLocal": "有馬温泉駅（神鉄有馬線）",
+      "addressLocal": "有馬温泉駅（神鉄有馬線） 1・2番線",
       "coords": [
         34.7993,
         135.2465
@@ -2126,10 +2641,14 @@ const ITINERARY = {
         "鐵路"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】有馬溫泉站 1／2 號月台（始發）往有馬口，14:09 開 → 14:13 到有馬口；轉 3 號月台往新開地，14:14 開 → 14:25 到谷上；轉神戶市營地下鐵北神線 5 號月台（始發）往西神中央，14:27 開 → 14:37 到三宮；步行約 2 分鐘到 JR 三之宮站，3 號月台往須磨，14:46 開 → 14:47 到元町（轉乘 3 次，共 38 分鐘；Yahoo! 乘換案內）。\n【下車】JR 元町站往南步行約 10 分鐘到海岸通（估算；出口待確認）。\n【車資】IC ¥870（神鐵／地下鐵 ¥720＋JR ¥150），ICOCA 拍卡。\n【備案】三宮站直接步行到海岸通約 20 分鐘（估算），或乘的士。",
+      "note": "【上車】有馬溫泉站 1／2 號月台（始發），神鐵有馬線往有馬口。\n【轉車】有馬口轉 3 號月台（往新開地）→ 谷上轉神戶市營地下鐵北神線 5 號月台（始發，往西神中央）→ 三宮下車，步行約 2 分鐘到 JR 三之宮站 3 號月台（往須磨方向），坐 1 個站到元町。共轉 3 次。\n【下車】JR 元町站往南步行約 10 分鐘到海岸通（估算；出口待確認）。\n【車資】IC ¥870（神鐵／地下鐵 ¥720＋JR ¥150），ICOCA 拍卡。\n【備案】三宮站直接步行到海岸通約 20 分鐘（估算），或乘的士。",
       "phone": null,
-      "openHours": "建議班次 14:09 → 14:47",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥870（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 870,
         "currency": "JPY",
@@ -2144,14 +2663,14 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "神戶電鐵／神戶市營地下鐵／JR 西日本",
-        "line": "神鐵有馬線（往有馬口）→ 神鐵有馬線（往新開地）→ 北神線（往西神中央）→ JR 神戶線（往須磨）",
+        "line": "神鐵有馬線 → 北神線 → JR 神戶線",
         "durationMin": 38,
-        "stopCount": null,
+        "stopCount": 9,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d6_07",
+      "id": "evt_d6_08",
       "day": 6,
       "time": "15:00",
       "timeHint": "afternoon",
@@ -2172,15 +2691,19 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】皮革職人槌井仁基 2012 年開設的工房兼店舖，店後就是工作枱，袋、銀包和小皮件全部手工製作，也接受全訂製。沒有名牌標籤，看的是皮革和車縫。可以請職人介紹皮革種類和用久後的變化，摸一摸不同的植鞣皮。參考價（官網，稅前）：三摺銀包 ¥6,500、經典二摺銀包 ¥22,500、長銀包 ¥28,000；訂製要數星期，可留下聯絡方法日後寄港。\n【實用】只在星期四至日營業（2/12 星期五照開）；隔鄰就是 Wicked。",
       "phone": "+81-78-381-5545",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "11:00–18:00；逢星期一、二、三休",
       "price": "三摺銀包 ¥6,500；二摺銀包 ¥22,500；長銀包 ¥28,000（官網，稅前）",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "evt_d6_08",
+      "id": "evt_d6_09",
       "day": 6,
       "time": "15:45",
       "timeHint": "afternoon",
@@ -2200,15 +2723,19 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】元町海岸通的古著店，主打 1940–90 年代歐洲 vintage：舊皮鞋、皮革製品、歐洲工作服和軍品。多是沒有品牌的舊貨，正好用來尋找有歲月痕跡的皮件。看中皮件時，先檢查邊油、縫線和五金，再問價。\n【實用】14:00 開門，逢星期四休（2/12 星期五照開）；以男裝為主，皮件數量要看當日貨源。按貨品標價。",
       "phone": "+81-78-351-6760",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "14:00–20:00；逢星期四休",
       "price": "按貨品標價",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "evt_d6_09",
+      "id": "evt_d6_10",
       "day": 6,
       "time": "16:20",
       "timeHint": "afternoon",
@@ -2229,23 +2756,27 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】元町商店街樓上的古道具店，名字取「雜駁」之意：不分國家、年代或品牌，舊衣、古道具、傢具和各種雜物都有。慢慢翻，或許會遇到沒有牌子、但皮質很好的舊銀包、皮袋或皮帶。小件古物價錢一般親民，帶現金較方便。\n【實用】13:00 開，逢星期三、四休（2/12 星期五照開）；16:55 離開，步行約 5 分鐘到 JR 元町站（估算）。按貨品標價。",
       "phone": "+81-90-8483-9977",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "13:00–19:00；逢星期三、四休",
       "price": "按貨品標價",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "trp_d6_10",
+      "id": "trp_d6_11",
       "day": 6,
       "time": "17:07",
       "timeHint": "evening",
       "type": "transport",
-      "title": "JR 神戶線快速→JR 東西線：元町 → 北新地",
+      "title": "前往北新地（JR 神戶線快速→JR 東西線）",
       "cityId": "kobe",
       "address": "JR 元町站",
-      "addressLocal": "元町駅（JR神戸線）",
+      "addressLocal": "元町駅（JR神戸線） 3・4番線",
       "coords": [
         34.6894,
         135.1872
@@ -2254,10 +2785,14 @@ const ITINERARY = {
         "JR"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】JR 元町站 3／4 號月台，JR 神戶線快速往米原方向，17:07 開 → 17:30 到尼崎；轉 6 號月台 JR 東西線快速往木津方向，17:31 開 → 17:43 到北新地（轉乘 1 次，共 36 分鐘；Yahoo! 乘換案內）。\n【下車】北新地站步行約 5 分鐘到雅釀（估算；出口號碼待確認）。\n【車資】IC ¥420，ICOCA 拍卡。\n【備案】JR 神戶線新快速直達大阪站，再步行約 12 分鐘（估算）。",
+      "note": "【上車】JR 元町站 3／4 號月台，JR 神戶線快速往米原方向。\n【轉車】尼崎站轉 6 號月台 JR 東西線快速（往木津方向）到北新地。\n【下車】北新地站步行約 5 分鐘到雅釀（估算；出口號碼待確認）。\n【車資】IC ¥420，ICOCA 拍卡。\n【備案】JR 神戶線新快速直達大阪站，再步行約 12 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 17:07 → 17:43",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥420（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 420,
         "currency": "JPY",
@@ -2272,14 +2807,14 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "JR 西日本",
-        "line": "JR 神戶線快速（往米原）→ JR 東西線快速（往木津）",
+        "line": "JR 神戶線快速 → JR 東西線快速",
         "durationMin": 36,
-        "stopCount": null,
+        "stopCount": 11,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d6_11",
+      "id": "evt_d6_12",
       "day": 6,
       "time": "18:00",
       "timeHint": "evening",
@@ -2298,10 +2833,14 @@ const ITINERARY = {
         "要預約"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.72（78 則評價）https://tabelog.com/osaka/A2701/A270101/27126021/\n【攻略】今次行程的日本酒配對大餐：只有 8 個吧枱位，18:00 一起開始的 10 品套餐。店方不靠調味料，以冰溫熟成、發酵及精準火候帶出食材原味（Tabelog 店方介紹）。建議選「通常日本酒配對（ペアリング）」¥29,000；想試稀有酒可升級「Premium 配對」¥40,000。\n【預約】完全預約制，Tabelog 網上或電話 050-3145-9210；晚市套餐頁列明 1–8 名可訂。取消費：72 小時前 50%、48 小時前 70%、24 小時前 100%。服裝 smart casual：今日由早上出門就穿 smart casual，不用回酒店更衣。",
+      "note": "【Tabelog】3.72（78 則評價）\n【攻略】今次行程的日本酒配對大餐：只有 8 個吧枱位，18:00 一起開始的 10 品套餐。店方不靠調味料，以冰溫熟成、發酵及精準火候帶出食材原味（Tabelog 店方介紹）。建議選「通常日本酒配對（ペアリング）」¥29,000；想試稀有酒可升級「Premium 配對」¥40,000。\n【預約】完全預約制，Tabelog 網上或打電話；晚市套餐頁列明 1–8 名可訂。取消費：72 小時前 50%、48 小時前 70%、24 小時前 100%。服裝 smart casual：今日由早上出門就穿 smart casual，不用回酒店更衣。",
       "phone": "+81-50-3145-9210",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期一至五 12:00–14:15、18:00–20:15（一起開始）、21:00–02:00；六不定休；日及假期休（Tabelog）",
       "price": "日本酒配對套餐 ¥29,000（Tabelog，稅及服務費全包）；只要料理 ¥23,500",
+      "website": "https://tabelog.com/osaka/A2701/A270101/27126021/",
       "cost": {
         "amount": 29000,
         "currency": "JPY",
@@ -2309,31 +2848,81 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27126021/"
+      "transport": null
     },
     {
-      "id": "evt_d6_12",
+      "id": "trp_d6_13",
       "day": 6,
-      "time": "20:30",
+      "time": "20:15",
       "timeHint": "evening",
-      "type": "rest",
-      "title": "酒店大浴場",
+      "type": "transport",
+      "title": "前往谷町四丁目（步行＋地鐵谷町線）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
+      "address": "北新地 雅釀門口 → 大阪地鐵東梅田站 1 號月台",
+      "addressLocal": "Osaka Metro 東梅田駅 1番線（谷町線・八尾南方面）（北新地から徒歩約8分）",
       "coords": [
-        34.6983,
-        135.5027
+        34.6994,
+        135.4977
       ],
       "tags": [
-        "大浴場"
+        "地鐵"
+      ],
+      "moodColor": "#2A7F7A",
+      "note": "【上車】由雅釀步行約 8 分鐘到東梅田站（估算）；1 號月台，谷町線往八尾南方向。\n【下車】谷町四丁目站 4 號出口步行約 4 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】北新地截的士回酒店約 15 分鐘（估算）。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥240（ICOCA）",
+      "website": null,
+      "cost": {
+        "amount": 240,
+        "currency": "JPY",
+        "category": "transport"
+      },
+      "status": "pending",
+      "source": "ai",
+      "transport": {
+        "mode": "subway",
+        "from": "北新地（步行到東梅田）",
+        "to": "谷町四丁目",
+        "fromEventId": null,
+        "toEventId": null,
+        "operator": "大阪地鐵 Osaka Metro",
+        "line": "谷町線",
+        "durationMin": 17,
+        "stopCount": 3,
+        "liveApi": null
+      }
+    },
+    {
+      "id": "evt_d6_14",
+      "day": 6,
+      "time": "20:45",
+      "timeHint": "evening",
+      "type": "rest",
+      "title": "天然溫泉 浪華之湯",
+      "cityId": "osaka",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F 大浴場",
+      "coords": [
+        34.6835,
+        135.5139
+      ],
+      "tags": [
+        "天然溫泉",
+        "桑拿"
       ],
       "moodColor": "#9AA8A3",
-      "note": "【攻略】配對套餐酒量不少，先喝水休息 30 分鐘再泡浴；大浴場開到凌晨 1 點。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "大浴場（2 樓，設桑拿，住客專用）16:00–翌日 01:00、06:00–09:00",
+      "note": "【攻略】今日已在有馬泡過金之湯，晚上只需簡單沖身或泡一會；喝過配對清酒，休息 30 分鐘再泡。\n【實用】浴場內嚴禁帶食物及酒精飲品（官方），只可帶補充水分的飲品；有紋身不可入浴（官方）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
       "price": "住客免費",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -2342,59 +2931,67 @@ const ITINERARY = {
     {
       "id": "evt_d7_01",
       "day": 7,
-      "time": "09:00",
+      "time": "08:30",
       "timeHint": "morning",
       "type": "food",
-      "title": "早餐：酒店 ENT 自助早餐",
+      "title": "早餐：Dormy Inn 自助早餐（13 樓 HATAGO）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田） 1 樓 ENT",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田 1F レストラン＆バー ENT",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町） 13 樓",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F レストラン HATAGO",
       "coords": [
-        34.6983,
-        135.5027
+        34.6835,
+        135.5139
       ],
       "tags": [
-        "自助早餐"
+        "酒店早餐"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.09（7 則評價；酒店早餐，今日試酒前墊胃）https://tabelog.com/osaka/A2701/A270101/27127004/\n【攻略】今天要試很多酒，早餐多吃一點墊胃：大阪燒、日替惣菜和沙律都有。09:40 吃完，09:45 出門步行到阪神大阪梅田站（約 10 分鐘，估算）。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "06:30–10:00（最後入場 09:45）",
-      "price": "住客 ¥2,200",
+      "note": "【攻略】Dormy Inn 全線共通的和洋自助早餐，加上大阪「當地逸品」：水菜「哈哩哈哩烏冬」（はりはりうどん）和大阪燒（官方）；小鉢橫丁一口一碟，可以每樣少少試。\n【攻略】今日要試飲多間酒藏，早餐吃飽一點墊胃（雞蛋料理、白飯、味噌湯）。09:30 出門。\n【實用】06:30–09:30（最後入場 09:00），只限住客；成人 ¥2,000（含稅，官方）。如訂房時未含早餐，可在前台加購（加購方法待確認）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "06:30–09:30（最後入場 09:00）",
+      "price": "成人 ¥2,000（含稅，官方）",
+      "website": null,
       "cost": {
-        "amount": 2200,
+        "amount": 2000,
         "currency": "JPY",
         "category": "food"
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27127004/"
+      "transport": null
     },
     {
       "id": "trp_d7_02",
       "day": 7,
-      "time": "10:00",
+      "time": "09:38",
       "timeHint": "morning",
       "type": "transport",
-      "title": "阪神本線特急：大阪梅田 → 魚崎",
-      "cityId": "kobe",
-      "address": "阪神大阪梅田站",
-      "addressLocal": "阪神 大阪梅田駅",
+      "title": "前往魚崎（谷町線→阪神本線特急）",
+      "cityId": "osaka",
+      "address": "大阪地鐵谷町四丁目站 2 號月台",
+      "addressLocal": "Osaka Metro 谷町四丁目駅 2番線（谷町線・大日方面）／4番出口から入場",
       "coords": [
-        34.7014,
-        135.4971
+        34.6826,
+        135.5176
       ],
       "tags": [
+        "地鐵",
         "阪神"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【上車】酒店步行約 10 分鐘到阪神大阪梅田站（估算）；2 號月台（始發），阪神本線特急往須磨浦公園方向。\n【路線】10:00 開 → 10:22 到魚崎（直達、22 分鐘；Yahoo! 乘換案內）。\n【下車】魚崎站向南步行約 10 分鐘到菊正宗（出口待確認）。\n【車資】IC ¥300，ICOCA 拍卡。\n【備案】下一班特急約 10 分鐘後（估算）。",
+      "note": "【上車】由酒店步行約 4 分鐘到谷町四丁目站 4 號出口（酒店官方資料）；2 號月台，谷町線往大日方向，建議坐前／中段車廂，東梅田轉阪神較近。\n【轉車】東梅田站下車，站內步行約 6 分鐘到阪神大阪梅田站 2 號月台（始發），乘阪神本線特急往須磨浦公園方向到魚崎。\n【下車】魚崎站步行到菊正宗藏開會場（按當日指示）。\n【車資】IC ¥540（地鐵 ¥240＋阪神 ¥300），ICOCA 拍卡。\n【備案】阪神特急約 10 分鐘一班；錯過就搭下一班。",
       "phone": null,
-      "openHours": "建議班次 10:00 → 10:22",
-      "price": "IC ¥300（ICOCA）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥540（ICOCA）",
+      "website": null,
       "cost": {
-        "amount": 300,
+        "amount": 540,
         "currency": "JPY",
         "category": "transport"
       },
@@ -2402,14 +2999,14 @@ const ITINERARY = {
       "source": "ai",
       "transport": {
         "mode": "train",
-        "from": "大阪梅田（阪神）",
+        "from": "谷町四丁目",
         "to": "魚崎",
         "fromEventId": null,
         "toEventId": null,
-        "operator": "阪神電氣鐵道",
-        "line": "阪神本線特急（往須磨浦公園）",
-        "durationMin": 22,
-        "stopCount": null,
+        "operator": "大阪地鐵／阪神電鐵",
+        "line": "谷町線 → 阪神本線特急",
+        "durationMin": 44,
+        "stopCount": 8,
         "liveApi": null
       }
     },
@@ -2435,8 +3032,12 @@ const ITINERARY = {
       "moodColor": "#6B7F7A",
       "note": "【攻略】菊正宗以「生酛」辛口出名。藏開日（往年 2 月星期六 10:00–15:00，免費入場）有生酛搾立新酒免費試飲、付費試飲、酒藏參觀和酒粕湯；平日記念館也有季節生原酒試飲、酒藏雪糕。記念館限定「奉献」「菊絵徳利」適合作手信。\n【注意】2027 年藏開日期未公布（很可能是 2/6 或 2/13），12 月至 1 月再確認；記念館逢星期二休。",
       "phone": "+81-78-854-1029",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "記念館 09:30–16:30（入館至 16:00）；藏開往年 10:00–15:00",
       "price": "免費入場；部分試飲收費",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -2464,8 +3065,12 @@ const ITINERARY = {
       "moodColor": "#6B7F7A",
       "note": "【攻略】灘五鄉中少數可以看到真實釀酒現場的酒藏：隔著玻璃看蒸米、製麴、醪發酵和榨酒，2 月釀造季最有看頭。入口處可免費試飲生酒；付費試飲處可比較吟釀、大吟釀。可買工房限定、按量販售的秘藏酒帶回香港。\n【實用】免費入場，10 人以下不用預約；由菊正宗步行約 7 分鐘（估算）。12:40 離開，步行約 8 分鐘到阪神魚崎站（估算）。逢星期一休（2/13 星期六照開）。",
       "phone": "+81-78-411-8339",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "10:00–17:00（免費試飲至 16:50；付費試飲 L.O. 16:15）；逢星期一休（假期照開）",
       "price": "免費入場；生酒免費試飲；付費試飲按酒款收費",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -2477,10 +3082,10 @@ const ITINERARY = {
       "time": "12:53",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "阪神本線：魚崎 → 石屋川",
+      "title": "前往石屋川（阪神本線）",
       "cityId": "kobe",
       "address": "阪神魚崎站",
-      "addressLocal": "魚崎駅（阪神本線）",
+      "addressLocal": "魚崎駅（阪神本線） 2番線",
       "coords": [
         34.7138,
         135.2686
@@ -2489,10 +3094,14 @@ const ITINERARY = {
         "阪神"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】魚崎站 2 號月台，特急往須磨浦公園方向，12:53 開 → 12:55 到御影；轉 4 號月台普通車往高速神戶，12:56 開 → 12:57 到石屋川（轉乘 1 次，共 4 分鐘；Yahoo! 乘換案內）。\n【下車】石屋川站步行約 6 分鐘到酒林（估算）。\n【車資】IC ¥160，ICOCA 拍卡。\n【備案】由浜福鶴步行約 30 分鐘到酒林，或乘的士約 10 分鐘（估算）。",
+      "note": "【上車】魚崎站 2 號月台，阪神特急往須磨浦公園方向。\n【轉車】御影站轉 4 號月台普通車（往高速神戶方向），坐 1 個站到石屋川。\n【下車】石屋川站步行約 6 分鐘到酒林（估算）。\n【車資】IC ¥160，ICOCA 拍卡。\n【備案】由浜福鶴步行約 30 分鐘到酒林，或乘的士約 10 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 12:53 → 12:57",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥160（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 160,
         "currency": "JPY",
@@ -2507,9 +3116,9 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "阪神電鐵",
-        "line": "阪神本線特急（往須磨浦公園）→ 阪神本線普通（往高速神戶）",
+        "line": "阪神本線特急 → 阪神本線普通",
         "durationMin": 4,
-        "stopCount": null,
+        "stopCount": 2,
         "liveApi": null
       }
     },
@@ -2533,10 +3142,14 @@ const ITINERARY = {
         "可預約"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.48（約 300 則評價；酒藏附設料亭，飲品評分 3.91；分數略低於 3.5，以酒藏體驗保留）https://tabelog.com/hyogo/A2801/A280106/28000407/\n【攻略】「福壽」酒藏附設的料亭，主打自家製豆腐和蕎麥麵，配藏元生原酒。推介「御影膳（みかげ膳）」¥3,500；必試自家製手舀豆腐（すくい豆腐，¥680）和酒粕雪糕（¥500）。\n【預約】電話預約 13:15（可預約一年內）；逢星期三休。由阪神石屋川站步行約 6 分鐘（估算）。",
+      "note": "【Tabelog】3.48（約 300 則評價；酒藏附設料亭，飲品評分 3.91；分數略低於 3.5，以酒藏體驗保留）\n【攻略】「福壽」酒藏附設的料亭，主打自家製豆腐和蕎麥麵，配藏元生原酒。推介「御影膳（みかげ膳）」¥3,500；必試自家製手舀豆腐（すくい豆腐，¥680）和酒粕雪糕（¥500）。\n【預約】電話預約 13:15（可預約一年內）；逢星期三休。由阪神石屋川站步行約 6 分鐘（估算）。",
       "phone": "+81-78-841-2612",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "午市 11:30–15:00（L.O. 14:30）；星期三休",
       "price": "御影膳 ¥3,500（官網）",
+      "website": "https://tabelog.com/hyogo/A2801/A280106/28000407/",
       "cost": {
         "amount": 3500,
         "currency": "JPY",
@@ -2544,8 +3157,7 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/hyogo/A2801/A280106/28000407/"
+      "transport": null
     },
     {
       "id": "evt_d7_07",
@@ -2568,8 +3180,12 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】福壽的藏元商店，有免費試飲和季節推介酒；必試藏直採生酒（純米、大吟釀生原酒）和微發泡「FUKUJU KEG DRAFT」。藏元限定酒和酒粕適合帶回香港。晚上還有居酒屋，試飲適可而止。\n【實用】16:20 前出發，沿河向南步行約 8 分鐘到阪神石屋川站。",
       "phone": "+81-78-841-1121",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "10:00–18:30（1/1–1/3 休）",
       "price": "免費試飲",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -2581,10 +3197,10 @@ const ITINERARY = {
       "time": "16:33",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "阪神本線：石屋川 → 芦屋",
+      "title": "前往芦屋（阪神本線）",
       "cityId": "kobe",
       "address": "阪神石屋川站",
-      "addressLocal": "阪神 石屋川駅",
+      "addressLocal": "阪神 石屋川駅 1番線",
       "coords": [
         34.7135,
         135.2501
@@ -2593,10 +3209,14 @@ const ITINERARY = {
         "阪神"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】石屋川站 1 號月台，普通車往大阪梅田方向，16:33 開 → 16:34 到御影；轉 1 號月台直通特急往大阪梅田，16:36 開 → 16:41 到芦屋（轉乘 1 次，共 8 分鐘；Yahoo! 乘換案內）。\n【下車】阪神芦屋站就在芦屋川上，出站即可沿河散步。\n【車資】IC ¥200，ICOCA 拍卡。\n【備案】乘普通車直達芦屋（時間較長，班次待確認）。",
+      "note": "【上車】石屋川站 1 號月台，普通車往大阪梅田方向。\n【轉車】御影站轉 1 號月台直通特急（往大阪梅田方向）到芦屋。\n【下車】阪神芦屋站就在芦屋川上，出站即可沿河散步。\n【車資】IC ¥200，ICOCA 拍卡。\n【備案】乘普通車直達芦屋（時間較長，班次待確認）。",
       "phone": null,
-      "openHours": "建議班次 16:33 → 16:41",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥200（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 200,
         "currency": "JPY",
@@ -2611,9 +3231,9 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "阪神電氣鐵道",
-        "line": "阪神本線普通（往大阪梅田）→ 阪神本線直通特急（往大阪梅田）",
+        "line": "阪神本線普通 → 阪神本線直通特急",
         "durationMin": 8,
-        "stopCount": null,
+        "stopCount": 3,
         "liveApi": null
       }
     },
@@ -2636,74 +3256,48 @@ const ITINERARY = {
         "河畔"
       ],
       "moodColor": "#6B7F7A",
-      "note": "【攻略】芦屋川是關西有名的高級住宅區河道，兩岸松林步道清靜，適合試酒後醒一醒酒。沿河堤向北慢行，再折返茶屋之町；2 月日落約 17:40，看完黃昏剛好去吃晚飯。\n【實用】免費；河邊風大，帶圍巾。17:55 步行到食堂 Kifune（阪神芦屋站約 380m）。",
+      "note": "【攻略】芦屋川是關西有名的高級住宅區河道，兩岸松林步道清靜，適合試酒後醒一醒酒。沿河堤向北慢行，再折返茶屋之町；2 月日落約 17:40，看完黃昏就去 JR 芦屋站。\n【實用】免費；河邊風大，帶圍巾。17:35 沿河向北步行約 10 分鐘到 JR 芦屋站（估算），乘 17:45 新快速。",
       "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "全日開放",
       "price": "免費",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "evt_d7_10",
+      "id": "trp_d7_10",
       "day": 7,
-      "time": "18:00",
-      "timeHint": "evening",
-      "type": "food",
-      "title": "晚餐：食堂 Kifune（食堂 きふね，芦屋居酒屋）",
-      "cityId": "kobe",
-      "address": "日本兵庫縣芦屋市茶屋之町11-5",
-      "addressLocal": "兵庫県芦屋市茶屋之町11-5 食堂 きふね",
-      "coords": [
-        34.7295,
-        135.3072
-      ],
-      "tags": [
-        "居酒屋",
-        "清酒",
-        "百名店",
-        "可預約"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【Tabelog】3.70（175 則評價；居酒屋 WEST 百名店 2026（2024、2025 亦入選））https://tabelog.com/hyogo/A2803/A280302/28058371/\n【攻略】連續三年入選居酒屋百名店的芦屋小店，店方對清酒、燒酎及葡萄酒都很講究。在吧枱點當日推介小菜，請店主按菜配清酒，順便和今天灘五鄉試過的酒作比較。\n【預約】吧枱 6 位＋枱 4 位，建議電話預約 080-1604-8597，指定 18:00 吧枱一人位。可用信用卡。\n【實用】18:00 開門，不定休，訂位時確認 2/13 營業。",
-      "phone": "+81-80-1604-8597",
-      "openHours": "18:00–翌日 01:00；不定休（Tabelog）",
-      "price": "Tabelog 預算 ¥5,000–7,999（連酒）",
-      "cost": {
-        "amount": 6500,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/hyogo/A2803/A280302/28058371/"
-    },
-    {
-      "id": "trp_d7_11",
-      "day": 7,
-      "time": "20:10",
+      "time": "17:45",
       "timeHint": "evening",
       "type": "transport",
-      "title": "阪神本線直通特急：芦屋 → 大阪梅田",
-      "cityId": "kobe",
-      "address": "阪神芦屋站",
-      "addressLocal": "阪神 芦屋駅",
+      "title": "前往天滿橋（JR 神戶線新快速→谷町線）",
+      "cityId": "osaka",
+      "address": "JR 芦屋站 1 號月台",
+      "addressLocal": "JR 芦屋駅 1番線（JR神戸線 新快速・長浜行き）",
       "coords": [
-        34.7279,
-        135.3038
+        34.7339,
+        135.3069
       ],
       "tags": [
-        "阪神"
+        "JR",
+        "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】阪神芦屋站 1 號月台，直通特急往大阪梅田方向，20:10 開 → 20:30 到大阪梅田（直達、20 分鐘；Yahoo! 乘換案內）。\n【下車】阪神大阪梅田站步行約 10 分鐘回酒店（估算）。\n【車資】IC ¥300，ICOCA 拍卡。\n【備案】JR 芦屋站乘 JR 神戶線到大阪（JR 芦屋站在阪神芦屋站以北，步行時間待確認）。",
+      "note": "【上車】芦屋川散步後向北步行約 10 分鐘到 JR 芦屋站（估算）；1 號月台，JR 神戶線新快速往長濱方向。\n【轉車】JR 大阪站下車，步行約 6 分鐘到東梅田站 1 號月台，谷町線往八尾南方向坐 2 個站到天滿橋。\n【下車】天滿橋站直通京阪 City Mall，到地庫 2 樓 Frest 超市內的魚喜。\n【車資】IC ¥510（JR ¥320＋地鐵 ¥190），ICOCA 拍卡。\n【備案】阪神芦屋站直通特急到大阪梅田（約 20 分鐘，IC ¥300），再轉谷町線。",
       "phone": null,
-      "openHours": "建議班次 20:10 → 20:30",
-      "price": "IC ¥300（ICOCA）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥510（ICOCA）",
+      "website": null,
       "cost": {
-        "amount": 300,
+        "amount": 510,
         "currency": "JPY",
         "category": "transport"
       },
@@ -2711,40 +3305,115 @@ const ITINERARY = {
       "source": "ai",
       "transport": {
         "mode": "train",
-        "from": "芦屋（阪神）",
-        "to": "大阪梅田（阪神）",
+        "from": "JR 芦屋",
+        "to": "天滿橋",
         "fromEventId": null,
         "toEventId": null,
-        "operator": "阪神電氣鐵道",
-        "line": "阪神本線直通特急（往大阪梅田）",
-        "durationMin": 20,
-        "stopCount": null,
+        "operator": "JR 西日本／大阪地鐵",
+        "line": "JR 神戶線新快速 → 谷町線",
+        "durationMin": 31,
+        "stopCount": 4,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d7_12",
+      "id": "evt_d7_11",
       "day": 7,
-      "time": "20:45",
+      "time": "18:20",
       "timeHint": "evening",
-      "type": "rest",
-      "title": "酒店大浴場",
+      "type": "shop",
+      "title": "天滿橋 魚喜（京阪 City Mall 地庫 2 樓，鮮魚壽司專門）：宵夜採購",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
+      "address": "日本大阪府大阪市中央區天滿橋京町1-1 京阪 City Mall 地庫 2 樓 Frest 天滿橋店內",
+      "addressLocal": "大阪府大阪市中央区天満橋京町1-1 京阪シティモール B2F フレスト天満橋店内 魚喜",
       "coords": [
-        34.6983,
-        135.5027
+        34.6904,
+        135.5171
       ],
       "tags": [
-        "大浴場"
+        "刺身",
+        "壽司",
+        "超市"
+      ],
+      "moodColor": "#8C8378",
+      "note": "【攻略】魚喜是大阪老牌鮮魚專門店，在天滿橋 Frest 超市內設刺身及壽司專櫃，選擇比樓下 KOHYO 多；買一盒刺身（鯛、鰤、吞拿魚等當季魚）或握壽司，配今日在灘五鄉買的酒。\n【實用】星期六營業至 21:00（平日至 22:00；魚喜官方）。減價時間未公布，傍晚後較大機會有減價貼紙（待確認）。刺身要保冷劑。\n【下車後】由天滿橋步行約 12 分鐘回酒店（估算），或谷町線坐 1 個站到谷町四丁目。",
+      "phone": "+81-6-6966-6385",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "10:00–22:00（六、日、假期至 21:00）",
+      "price": "刺身或壽司約 ¥1,500–2,500（估算）",
+      "website": null,
+      "cost": null,
+      "status": "pending",
+      "source": "ai",
+      "transport": null
+    },
+    {
+      "id": "evt_d7_12",
+      "day": 7,
+      "time": "19:00",
+      "timeHint": "evening",
+      "type": "rest",
+      "title": "天然溫泉 浪華之湯",
+      "cityId": "osaka",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F 大浴場",
+      "coords": [
+        34.6835,
+        135.5139
+      ],
+      "tags": [
+        "天然溫泉",
+        "桑拿"
       ],
       "moodColor": "#9AA8A3",
-      "note": "【攻略】試了一天酒，先喝水再泡浴，不要泡太久；大浴場開到凌晨 1 點。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "大浴場（2 樓，設桑拿，住客專用）16:00–翌日 01:00、06:00–09:00",
+      "note": "【攻略】今日試飲多，先休息、多喝水才泡；刺身先放房間雪櫃。泡完再吃宵夜。\n【實用】浴場內嚴禁帶食物及酒精飲品（官方），只可帶補充水分的飲品；有紋身不可入浴（官方）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
       "price": "住客免費",
+      "website": null,
       "cost": null,
+      "status": "pending",
+      "source": "ai",
+      "transport": null
+    },
+    {
+      "id": "evt_d7_13",
+      "day": 7,
+      "time": "20:00",
+      "timeHint": "evening",
+      "type": "food",
+      "title": "超市宵夜：魚喜刺身＋今日灘五鄉買的酒（在房間）",
+      "cityId": "osaka",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町） 客房",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
+      "coords": [
+        34.6835,
+        135.5139
+      ],
+      "tags": [
+        "超市宵夜",
+        "刺身",
+        "清酒"
+      ],
+      "moodColor": "#A0785A",
+      "note": "【攻略】中午已在酒林吃了正式的酒藏料理，晚餐改為輕鬆宵夜：魚喜刺身配今日買的浜福鶴工房限定酒、菊正宗藏開新酒或福壽，一邊比較一邊吃，像在福岡的晚上。想加一枝當地酒，可到谷町四丁目的 Stand Utsutsuyo（スタンド うつつよ）買自家釀濁酒（星期六 16:00–22:30，可外賣瓶裝，官方），或在樓下 KOHYO 補小菜。\n【改動】原本的芦屋「食堂 Kifune」移到靈感池（INS），想吃正式晚餐可改回 18:00 訂位。\n【實用】休息室可否自帶酒水未確認；大浴場禁止酒精，建議在房間吃。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "—",
+      "price": "刺身＋小菜約 ¥2,500（估算；酒已在酒藏買）",
+      "website": null,
+      "cost": {
+        "amount": 2500,
+        "currency": "JPY",
+        "category": "food"
+      },
       "status": "pending",
       "source": "ai",
       "transport": null
@@ -2755,56 +3424,64 @@ const ITINERARY = {
       "time": "08:00",
       "timeHint": "morning",
       "type": "food",
-      "title": "早餐：純喫茶 Sunshine（サンシャイン，大阪站前第 3 大廈）",
+      "title": "早餐：麵包店 Boulangerie & cafe gout（ブーランジュリー&カフェ グウ）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區梅田1-1-3 大阪站前第 3 大廈 B2",
-      "addressLocal": "大阪府大阪市北区梅田1-1-3 大阪駅前第3ビル B2F サンシャイン",
+      "address": "日本大阪府大阪市中央區內本町1-1-10 Rinsan 大廈 1 樓",
+      "addressLocal": "大阪府大阪市中央区内本町1-1-10 リンサンビル 1F ブーランジュリー&カフェ グウ",
       "coords": [
-        34.6984,
-        135.4999
+        34.6835,
+        135.516
       ],
       "tags": [
-        "老喫茶"
+        "麵包百名店",
+        "PayPay"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.57（424 則評價；喫茶店 百名店 2022（遷址前舊店））https://tabelog.com/osaka/A2701/A270101/27149249/\n【保留早開始】四天會古董市 07:00 開，好貨早上被買走；早內 午市只有 11:30 一場可預約。\n【攻略】週末 08:00 開，開門即到可避開人潮。D3 吃過熱香餅的話，今天可試其他早餐，配自家烘焙咖啡。\n【實用】店舖距東梅田站約 220m，08:50 結帳即可趕 09:01 谷町線。",
-      "phone": "+81-6-6313-6797",
-      "openHours": "星期一至五 07:30–19:45；六日及假期 08:00–18:30（L.O. 18:00）",
-      "price": "Tabelog 預算 ¥1,000–1,999",
+      "note": "【Tabelog】3.72（1,082 則評價；パン WEST 百名店 2026）\n【攻略】星期日 07:30 照開，早餐套餐（每日麵包 3 款＋沙律＋小菜＋飲品）¥600 起；選第一天沒吃過的麵包。\n【實用】不收信用卡，可用 PayPay 或現金。08:55 出發去谷町四丁目站。",
+      "phone": "+81-6-6585-0833",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "07:30–20:00（三、四休；Tabelog）",
+      "price": "早餐套餐 ¥600 起（Tabelog 食評）",
+      "website": "https://tabelog.com/osaka/A2701/A270104/27075014/",
       "cost": {
-        "amount": 1200,
+        "amount": 700,
         "currency": "JPY",
         "category": "food"
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27149249/"
+      "transport": null
     },
     {
       "id": "trp_d8_02",
       "day": 8,
-      "time": "09:01",
+      "time": "09:04",
       "timeHint": "morning",
       "type": "transport",
-      "title": "地鐵谷町線：東梅田 → 四天王寺前夕陽丘",
+      "title": "前往四天王寺前夕陽丘（地鐵谷町線）",
       "cityId": "osaka",
-      "address": "大阪地鐵東梅田站（谷町線）",
-      "addressLocal": "Osaka Metro 東梅田駅（谷町線）",
+      "address": "大阪地鐵谷町四丁目站 1 號月台",
+      "addressLocal": "Osaka Metro 谷町四丁目駅 1番線（谷町線・八尾南方面）／4番出口から入場",
       "coords": [
-        34.7006,
-        135.4998
+        34.6826,
+        135.5176
       ],
       "tags": [
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【保留早開始】四天會古董市 07:00 開，好貨早上被買走；早內 午市只有 11:30 一場可預約。\n【路線】東梅田站 1 號月台，谷町線往八尾南方向，09:01 開 → 09:14 到四天王寺前夕陽丘（直達、13 分鐘；Yahoo! 乘換案內）。\n【下車】四天王寺前夕陽丘站 4 號出口（第三方資料），向南步行約 5 分鐘到四天王寺（四天王寺官方資料）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班。",
+      "note": "【上車】由 gout 步行約 3 分鐘到谷町四丁目站 4 號出口（估算）；1 號月台，谷町線往八尾南方向。\n【下車】四天王寺前夕陽丘站 4 號出口步行約 5 分鐘到四天王寺（估算）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班。",
       "phone": null,
-      "openHours": "建議班次 09:01 → 09:14",
-      "price": "IC ¥240（ICOCA）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
-        "amount": 240,
+        "amount": 190,
         "currency": "JPY",
         "category": "transport"
       },
@@ -2812,14 +3489,14 @@ const ITINERARY = {
       "source": "ai",
       "transport": {
         "mode": "subway",
-        "from": "東梅田",
+        "from": "谷町四丁目",
         "to": "四天王寺前夕陽丘",
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往八尾南）",
-        "durationMin": 13,
-        "stopCount": null,
+        "line": "谷町線",
+        "durationMin": 5,
+        "stopCount": 3,
         "liveApi": null
       }
     },
@@ -2845,8 +3522,12 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【保留早開始】四天會古董市 07:00 開，好貨早上被買走；早內 午市只有 11:30 一場可預約。\n【攻略】每月第 2 個星期日在四天王寺境內舉行，約 100 檔古董和古道具，是今次行程找古皮具、古首飾的最好機會。先快速逛一圈記下心儀攤檔，午飯後再回來逛第二圈議價。\n【實用】入場免費；很多攤檔只收現金，帶足夠現金和小環保袋；雨天照開。",
       "phone": "+81-6-6771-0066",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "每月第 2 個星期日 07:00–16:00（雨天照開）",
       "price": "免費入場（多數攤檔只收現金）",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -2872,10 +3553,14 @@ const ITINERARY = {
         "可預約"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.68（497 則評價；蕎麥 WEST 百名店 2025、2024）https://tabelog.com/osaka/A2701/A270203/27049805/\n【攻略】Tabelog蕎麥百名店（2024、2025），店主出身名店「土山人」。午市只有 11:30 一起開始的「午市蕎麥膳（お昼の蕎麦膳）」（¥5,200）接受預約；單點人氣是柚子香鴨汁蒸籠（¥1,800）。\n【預約】電話預約 11:30 蕎麥膳；不預約要排隊。逢星期三休。",
+      "note": "【Tabelog】3.68（497 則評價；蕎麥 WEST 百名店 2025、2024）\n【攻略】Tabelog蕎麥百名店（2024、2025），店主出身名店「土山人」。午市只有 11:30 一起開始的「午市蕎麥膳（お昼の蕎麦膳）」（¥5,200）接受預約；單點人氣是柚子香鴨汁蒸籠（¥1,800）。\n【預約】電話預約 11:30 蕎麥膳；不預約要排隊。逢星期三休。",
       "phone": "+81-6-6773-2858",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期一二四五 11:30–15:00（L.O.）；六日 11:30–15:00、17:00–20:30（L.O.）；星期三休",
       "price": "午市蕎麥膳 ¥5,200（Tabelog店方資料）",
+      "website": "https://tabelog.com/osaka/A2701/A270203/27049805/",
       "cost": {
         "amount": 5200,
         "currency": "JPY",
@@ -2883,8 +3568,7 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270203/27049805/"
+      "transport": null
     },
     {
       "id": "evt_d8_05",
@@ -2907,8 +3591,12 @@ const ITINERARY = {
       "moodColor": "#8C8378",
       "note": "【攻略】回到早上記下的心儀攤檔，下午檔主較願意議價。可說「可以便宜一點嗎？（少し安くなりますか）」。14:10 前走回四天王寺前夕陽丘站。",
       "phone": "+81-6-6771-0066",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "07:00–16:00",
       "price": "免費入場",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -2920,10 +3608,10 @@ const ITINERARY = {
       "time": "14:20",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "地鐵谷町線：四天王寺前夕陽丘 → 天神橋筋六丁目",
+      "title": "前往天神橋筋六丁目（地鐵谷町線）",
       "cityId": "osaka",
       "address": "大阪地鐵四天王寺前夕陽丘站",
-      "addressLocal": "Osaka Metro 四天王寺前夕陽ヶ丘駅",
+      "addressLocal": "Osaka Metro 四天王寺前夕陽ヶ丘駅 2番線",
       "coords": [
         34.6588,
         135.5142
@@ -2932,10 +3620,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】四天王寺前夕陽丘站 2 號月台，谷町線往大日方向，14:20 開 → 14:36 到天神橋筋六丁目（直達、16 分鐘；Yahoo! 乘換案內）。\n【下車】天神橋筋六丁目站 5 號出口向北步行約 10 分鐘到浪花之湯。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班。",
+      "note": "【上車】四天王寺前夕陽丘站 2 號月台，谷町線往大日方向。\n【下車】天神橋筋六丁目站 5 號出口向北步行約 10 分鐘到浪花之湯。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班。",
       "phone": null,
-      "openHours": "建議班次 14:20 → 14:36",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥240（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 240,
         "currency": "JPY",
@@ -2950,9 +3642,9 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往大日）",
+        "line": "谷町線",
         "durationMin": 16,
-        "stopCount": null,
+        "stopCount": 8,
         "liveApi": null
       }
     },
@@ -2977,8 +3669,12 @@ const ITINERARY = {
       "moodColor": "#9AA8A3",
       "note": "【攻略】大樓天台的天然溫泉，露天區有源泉湯、壺湯、岩風呂、寢湯，逛完古董市泡個露天浴最舒服。\n【實用】毛巾可租／買；週末人多，下午 3 點左右較好。16:05 離開，步行約 10 分鐘回天神橋筋六丁目站。A 案：如白雪「藏祭（蔵まつり）」確定在 2/14，可改去伊丹（見靈感）。",
       "phone": "+81-6-6882-4126",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "平日 10:00–翌日 01:00；週末及假期 08:00–翌日 01:00（最後入場 24:00）",
       "price": "週末成人 ¥1,000",
+      "website": null,
       "cost": {
         "amount": 1000,
         "currency": "JPY",
@@ -2994,10 +3690,10 @@ const ITINERARY = {
       "time": "16:19",
       "timeHint": "afternoon",
       "type": "transport",
-      "title": "地鐵谷町線：天神橋筋六丁目 → 谷町六丁目",
+      "title": "前往谷町六丁目（地鐵谷町線）",
       "cityId": "osaka",
       "address": "大阪地鐵天神橋筋六丁目站",
-      "addressLocal": "Osaka Metro 天神橋筋六丁目駅",
+      "addressLocal": "Osaka Metro 天神橋筋六丁目駅 1番線",
       "coords": [
         34.7103,
         135.5108
@@ -3006,10 +3702,14 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】天神橋筋六丁目站 1 號月台，谷町線往八尾南方向，16:19 開 → 16:32 到谷町六丁目（直達、13 分鐘；Yahoo! 乘換案內）。\n【下車】谷町六丁目站步行約 2 分鐘到燗之美穗（約 130m；出口號碼待確認）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班。",
+      "note": "【上車】天神橋筋六丁目站 1 號月台，谷町線往八尾南方向。\n【下車】谷町六丁目站步行約 2 分鐘到燗之美穗（約 130m；出口號碼待確認）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】谷町線約 5–7 分鐘一班。",
       "phone": null,
-      "openHours": "建議班次 16:19 → 16:32",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
       "price": "IC ¥240（ICOCA）",
+      "website": null,
       "cost": {
         "amount": 240,
         "currency": "JPY",
@@ -3024,9 +3724,9 @@ const ITINERARY = {
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往八尾南）",
+        "line": "谷町線",
         "durationMin": 13,
-        "stopCount": null,
+        "stopCount": 6,
         "liveApi": null
       }
     },
@@ -3051,10 +3751,14 @@ const ITINERARY = {
         "Bib Gourmand"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.43（120 則評價；米芝蓮 Bib Gourmand；分數未到 3.5，以燙酒專門吧枱、女店主保留）https://tabelog.com/osaka/A2701/A270204/27117661/\n【攻略】女店主中村美穗由大阪名酒舖「山中酒店（山中酒の店）」自立，2020 年由博勞町搬到谷町六丁目古民家；米芝蓮 Bib Gourmand（2022–2025）。常備 60–70 款適合燙熱的西日本清酒，說出口味請店員挑選即可。必吃三款前菜（¥600）、招牌炙燒鴨里脊（たたき）；店主推介生原酒熱燗配芝士。一人女客比例高，最後一晚的清酒總結。\n【預約】只有 11 個吧枱位，開門後經常滿座，建議電話預約星期日 16:45（星期日 15:00 開）。\n【注意】地址已搬遷（舊博勞町地址不再適用）；2027 年 2 月休息日要看店主 blog。",
+      "note": "【Tabelog】3.43（120 則評價；米芝蓮 Bib Gourmand；分數未到 3.5，以燙酒專門吧枱、女店主保留）\n【攻略】女店主中村美穗由大阪名酒舖「山中酒店（山中酒の店）」自立，2020 年由博勞町搬到谷町六丁目古民家；米芝蓮 Bib Gourmand（2022–2025）。常備 60–70 款適合燙熱的西日本清酒，說出口味請店員挑選即可。必吃三款前菜（¥600）、招牌炙燒鴨里脊（たたき）；店主推介生原酒熱燗配芝士。一人女客比例高，最後一晚的清酒總結。\n【預約】只有 11 個吧枱位，開門後經常滿座，建議電話預約星期日 16:45（星期日 15:00 開）。\n【注意】地址已搬遷（舊博勞町地址不再適用）；2027 年 2 月休息日要看店主 blog。",
       "phone": "+81-6-7222-2510",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "星期一至六 16:00–22:00；日 15:00–22:00（Tabelog）；休息日以 blog 為準",
       "price": "Tabelog 預算 ¥6,000–7,999（連燙酒）",
+      "website": "https://tabelog.com/osaka/A2701/A270204/27117661/",
       "cost": {
         "amount": 7000,
         "currency": "JPY",
@@ -3062,19 +3766,18 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270204/27117661/"
+      "transport": null
     },
     {
       "id": "trp_d8_10",
       "day": 8,
-      "time": "18:54",
+      "time": "19:00",
       "timeHint": "evening",
       "type": "transport",
-      "title": "地鐵谷町線：谷町六丁目 → 東梅田",
+      "title": "前往谷町四丁目（地鐵谷町線）",
       "cityId": "osaka",
-      "address": "大阪地鐵谷町六丁目站",
-      "addressLocal": "Osaka Metro 谷町六丁目駅（谷町線）",
+      "address": "大阪地鐵谷町六丁目站 2 號月台",
+      "addressLocal": "Osaka Metro 谷町六丁目駅 2番線（谷町線・大日方面）",
       "coords": [
         34.6761,
         135.5157
@@ -3083,12 +3786,16 @@ const ITINERARY = {
         "地鐵"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【路線】谷町六丁目站 2 號月台，谷町線往大日方向，18:54 開 → 19:02 到東梅田（直達、8 分鐘；Yahoo! 乘換案內）。\n【下車】東梅田站 7 號出口步行約 7 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥240，ICOCA 拍卡。\n【備案】乘的士約 15 分鐘（估算）。",
+      "note": "【上車】由燗之美穗步行到谷町六丁目站（約 5 分鐘，估算）；2 號月台，谷町線往大日方向。\n【下車】谷町四丁目站 4 號出口步行約 4 分鐘回酒店（酒店官方資料）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】天氣好可步行回酒店約 15 分鐘（估算）。",
       "phone": null,
-      "openHours": "建議班次 18:54 → 19:02（約 5–7 分鐘一班）",
-      "price": "IC ¥240（ICOCA）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥190（ICOCA）",
+      "website": null,
       "cost": {
-        "amount": 240,
+        "amount": 190,
         "currency": "JPY",
         "category": "transport"
       },
@@ -3097,13 +3804,13 @@ const ITINERARY = {
       "transport": {
         "mode": "subway",
         "from": "谷町六丁目",
-        "to": "東梅田",
+        "to": "谷町四丁目",
         "fromEventId": null,
         "toEventId": null,
         "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線（往大日）",
-        "durationMin": 8,
-        "stopCount": null,
+        "line": "谷町線",
+        "durationMin": 1,
+        "stopCount": 1,
         "liveApi": null
       }
     },
@@ -3113,22 +3820,27 @@ const ITINERARY = {
       "time": "19:15",
       "timeHint": "evening",
       "type": "rest",
-      "title": "酒店大浴場",
+      "title": "天然溫泉 浪華之湯（最後一晚）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F 大浴場",
       "coords": [
-        34.6983,
-        135.5027
+        34.6835,
+        135.5139
       ],
       "tags": [
-        "大浴場"
+        "天然溫泉",
+        "桑拿"
       ],
       "moodColor": "#9AA8A3",
-      "note": "【攻略】最後一晚，先整理清酒和行李，再泡浴；明早 08:00 還有朝湯。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "大浴場（2 樓，設桑拿，住客專用）16:00–翌日 01:00、06:00–09:00",
+      "note": "【攻略】最後一晚，桑拿＋冷水池＋外氣浴來兩輪；之後在房間把清酒用防震包裝好、量行李重量。\n【實用】浴場內嚴禁帶食物及酒精飲品（官方），只可帶補充水分的飲品；有紋身不可入浴（官方）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
       "price": "住客免費",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -3140,22 +3852,27 @@ const ITINERARY = {
       "time": "08:00",
       "timeHint": "morning",
       "type": "rest",
-      "title": "最後一次朝湯",
+      "title": "最後一次朝湯（浪華之湯）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F 大浴場",
       "coords": [
-        34.6983,
-        135.5027
+        34.6835,
+        135.5139
       ],
       "tags": [
-        "大浴場"
+        "天然溫泉",
+        "朝湯"
       ],
       "moodColor": "#9AA8A3",
-      "note": "【保留早開始】回程日：大浴場 09:00 關、11:00 退房、11:50 巴士，所以朝湯排 08:00–08:45。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "大浴場朝湯 06:00–09:00",
+      "note": "【攻略】朝湯開到 10:00；泡完喝免費乳酸菌飲品（05:00–10:00，官方）。\n【實用】浴場內嚴禁帶食物及酒精飲品（官方），只可帶補充水分的飲品；有紋身不可入浴（官方）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "大浴場「浪華之湯」（13 樓，男女分開）15:00–翌日 10:00；桑拿 01:00–05:00 暫停（官方）",
       "price": "住客免費",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -3164,111 +3881,173 @@ const ITINERARY = {
     {
       "id": "evt_d9_02",
       "day": 9,
-      "time": "09:00",
+      "time": "08:40",
       "timeHint": "morning",
       "type": "food",
-      "title": "早餐：酒店 ENT 自助早餐",
+      "title": "早餐：Dormy Inn 自助早餐（13 樓 HATAGO）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田） 1 樓 ENT",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田 1F レストラン＆バー ENT",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町） 13 樓",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町 13F レストラン HATAGO",
       "coords": [
-        34.6983,
-        135.5027
+        34.6835,
+        135.5139
       ],
       "tags": [
-        "自助早餐"
+        "酒店早餐"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.09（7 則評價；酒店早餐，回程日最省時）https://tabelog.com/osaka/A2701/A270101/27127004/\n【攻略】最後一頓大阪早餐，記得試章魚燒和季節 smoothie；09:50 前吃完。",
-      "phone": "+81-6-6360-2200",
-      "openHours": "06:30–10:00（最後入場 09:45）",
-      "price": "住客 ¥2,200",
+      "note": "【攻略】Dormy Inn 全線共通的和洋自助早餐，加上大阪「當地逸品」：水菜「哈哩哈哩烏冬」（はりはりうどん）和大阪燒（官方）；小鉢橫丁一口一碟，可以每樣少少試。\n【攻略】最後一頓，試大阪燒和哈哩哈哩烏冬；注意 09:00 最後入場。\n【實用】06:30–09:30（最後入場 09:00），只限住客；成人 ¥2,000（含稅，官方）。如訂房時未含早餐，可在前台加購（加購方法待確認）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "06:30–09:30（最後入場 09:00）",
+      "price": "成人 ¥2,000（含稅，官方）",
+      "website": null,
       "cost": {
-        "amount": 2200,
+        "amount": 2000,
         "currency": "JPY",
         "category": "food"
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2701/A270101/27127004/"
+      "transport": null
     },
     {
       "id": "evt_d9_03",
       "day": 9,
-      "time": "10:00",
-      "timeHint": "morning",
-      "type": "shop",
-      "title": "阪神梅田本店 地庫 1 樓 最後買酒",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市北區梅田1-13-13 阪神梅田本店 B1",
-      "addressLocal": "大阪府大阪市北区梅田1-13-13 阪神梅田本店 B1F リカーワールド",
-      "coords": [
-        34.7012,
-        135.4986
-      ],
-      "tags": [
-        "清酒"
-      ],
-      "moodColor": "#8C8378",
-      "note": "【攻略】10:00 開門即入，40 分鐘內買完；要求防震包裝。退稅要帶護照，離境時在機場海關辦理。",
-      "phone": "+81-6-6345-1201",
-      "openHours": "10:00–20:00",
-      "price": "按貨品標價",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "id": "evt_d9_04",
-      "day": 9,
-      "time": "11:00",
+      "time": "09:45",
       "timeHint": "morning",
       "type": "hotel",
-      "title": "退房（寄存行李）",
+      "title": "退房（Dormy Inn 大阪谷町）",
       "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎1-2-7（Hotel Elcient 大阪梅田）",
-      "addressLocal": "〒530-0057 大阪府大阪市北区曽根崎1-2-7 ホテル エルシエント大阪梅田",
+      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町）",
+      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
       "coords": [
-        34.6983,
-        135.5027
+        34.6835,
+        135.5139
       ],
       "tags": [
         "退房"
       ],
       "moodColor": "#3A3A3A",
-      "note": "【實用】退房前檢查清酒包裝及行李重量（回程建議加購 32kg）。11:30 前出發，步行到阪急三番街利木津巴士 UM1 站約 15 分鐘（估算），行李重可乘的士。",
-      "phone": "+81-6-6360-2200",
+      "note": "【攻略】比 11:00 退房時間早一點走，留時間在上本町最後買酒。退房前檢查清酒包裝及行李重量（回程建議加購 32kg）。行李重可請前台叫的士直接到近鐵上本町（約 2 km，車資估算約 ¥1,000）。",
+      "phone": "+81-6-6945-5489",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "Check-out 11:00",
       "price": "不適用",
+      "website": "https://dormy-hotels.com/dormyinn/hotels/osakatanimachi/",
       "cost": null,
       "status": "pending",
       "source": "ai",
       "transport": null
     },
     {
-      "id": "trp_d9_05",
+      "id": "trp_d9_04",
       "day": 9,
-      "time": "11:50",
+      "time": "10:01",
       "timeHint": "morning",
       "type": "transport",
-      "title": "機場利木津巴士：阪急三番街（UM1）→ 關西機場第 1 航廈",
+      "title": "前往谷町九丁目（地鐵谷町線）",
       "cityId": "osaka",
-      "address": "大阪站前 阪急三番街巴士站",
-      "addressLocal": "阪急三番街（大阪駅前）リムジンバスのりば",
+      "address": "大阪地鐵谷町四丁目站 1 號月台",
+      "addressLocal": "Osaka Metro 谷町四丁目駅 1番線（谷町線・八尾南方面）／4番出口（エレベーター位置は駅で確認）",
       "coords": [
-        34.7047,
-        135.4991
+        34.6826,
+        135.5176
+      ],
+      "tags": [
+        "地鐵"
+      ],
+      "moodColor": "#2A7F7A",
+      "note": "【上車】由酒店步行約 4 分鐘到谷町四丁目站 4 號出口（酒店官方資料），帶行李可找升降機出入口（位置待確認）；1 號月台，谷町線往八尾南方向。\n【下車】經地下通道到近鐵上本町／近鐵百貨（估算 5 分鐘）。\n【車資】IC ¥190，ICOCA 拍卡。\n【備案】的士由酒店到近鐵上本町約 10 分鐘（估算）。",
+      "phone": null,
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "班次頻密，到站搭下一班即可",
+      "price": "IC ¥190（ICOCA）",
+      "website": null,
+      "cost": {
+        "amount": 190,
+        "currency": "JPY",
+        "category": "transport"
+      },
+      "status": "pending",
+      "source": "ai",
+      "transport": {
+        "mode": "subway",
+        "from": "谷町四丁目",
+        "to": "谷町九丁目",
+        "fromEventId": null,
+        "toEventId": null,
+        "operator": "大阪地鐵 Osaka Metro",
+        "line": "谷町線",
+        "durationMin": 3,
+        "stopCount": 2,
+        "liveApi": null
+      }
+    },
+    {
+      "id": "evt_d9_05",
+      "day": 9,
+      "time": "10:15",
+      "timeHint": "morning",
+      "type": "shop",
+      "title": "近鐵百貨上本町店 地庫 1 樓 和洋酒賣場：最後買酒",
+      "cityId": "osaka",
+      "address": "日本大阪府大阪市天王寺區上本町6-1-55 近鐵百貨上本町店 地庫 1 樓",
+      "addressLocal": "大阪府大阪市天王寺区上本町6-1-55 近鉄百貨店上本町店 B1F 和洋酒売場",
+      "coords": [
+        34.6659,
+        135.5195
+      ],
+      "tags": [
+        "清酒",
+        "百貨地庫"
+      ],
+      "moodColor": "#8C8378",
+      "note": "【攻略】10:00 開門，用約 1 小時補買奈良、大阪地酒（賣場不時有試飲推廣，官方資料）；要求防震包裝（緩衝材で包んでください）。退稅要帶護照，離境時在機場海關辦理。\n【實用】行李可寄放在大阪上本町站的投幣儲物櫃（大型櫃位置及空位待確認）。11:30 前到 2 樓巴士總站。",
+      "phone": "+81-6-6775-1111",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "10:00–20:00",
+      "price": "按貨品標價",
+      "website": null,
+      "cost": null,
+      "status": "pending",
+      "source": "ai",
+      "transport": null
+    },
+    {
+      "id": "trp_d9_06",
+      "day": 9,
+      "time": "11:40",
+      "timeHint": "morning",
+      "type": "transport",
+      "title": "前往關西機場第 1 航廈（利木津巴士）",
+      "cityId": "osaka",
+      "address": "近鐵上本町 2 樓巴士總站（UH1）",
+      "addressLocal": "近鉄上本町（2階バスターミナル）UH1 のりば（関西空港行き）",
+      "coords": [
+        34.6659,
+        135.5195
       ],
       "tags": [
         "機場巴士"
       ],
       "moodColor": "#2A7F7A",
-      "note": "【上車】阪急三番街利木津巴士 UM1 站（關西機場線 2026-01-27 起由舊新阪急酒店遷到阪急三番街；阪急觀光巴士官方資料）。先在售票機買票，或用信用卡感應付款；ICOCA 能否使用待確認。\n【班次】11:50 開 → 12:50 到第 1 航廈（約 60 分鐘）；如早到可乘 11:40（12:40 到），遲到可乘 12:00（13:00 到）（2026-01-27 版官方時刻表）。不用預約，先到先上，大件行李交司機放車底。\n【下車】第 1 航廈 4 樓國際線出發大堂前下車，直接辦理登機。\n【備案】JR 大阪站 1 號月台 11:53 關空快速往關西機場，12:59 到，IC ¥1,180（Yahoo! 乘換案內）。",
+      "note": "【上車】近鐵上本町 2 樓巴士總站 UH1 乘車處，先在售票機買票（只售單程票）。\n【班次】約 30 分鐘一班，車程約 50 分鐘；建議約 11:40 前到站，早到可搭早一班。不設預約，先到先上，大件行李交司機放車底。\n【下車】第 1 航廈國際線出發層下車，直接辦理登機。\n【備案】谷町九丁目 → 天王寺（谷町線）轉 JR 特急 HARUKA 或關空快速到關西機場（班次待確認）。",
       "phone": null,
-      "openHours": "阪急三番街開出 11:30、11:40、11:50、12:00…（2026-01-27 版官方時刻表）",
-      "price": "成人 ¥1,800（售票機買票，或信用卡感應付款）",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
+      "openHours": "約 30 分鐘一班，先到先上，到站搭下一班即可",
+      "price": "成人 ¥1,800（官方）",
+      "website": null,
       "cost": {
         "amount": 1800,
         "currency": "JPY",
@@ -3278,19 +4057,19 @@ const ITINERARY = {
       "source": "ai",
       "transport": {
         "mode": "bus",
-        "from": "大阪站前（阪急三番街）",
+        "from": "近鐵上本町",
         "to": "關西機場第 1 航廈",
         "fromEventId": null,
         "toEventId": null,
-        "operator": "阪急觀光巴士／關西空港交通",
-        "line": "大阪站前（梅田）線",
-        "durationMin": 60,
-        "stopCount": null,
+        "operator": "關西空港交通／近鐵巴士",
+        "line": "近鐵上本町／心齋橋線",
+        "durationMin": 51,
+        "stopCount": 1,
         "liveApi": null
       }
     },
     {
-      "id": "evt_d9_06",
+      "id": "evt_d9_07",
       "day": 9,
       "time": "13:45",
       "timeHint": "afternoon",
@@ -3308,10 +4087,14 @@ const ITINERARY = {
         "禁區"
       ],
       "moodColor": "#A0785A",
-      "note": "【Tabelog】3.02（1 則評價；關西機場禁區選擇有限，評分樣本極少，僅作方便之選）https://tabelog.com/osaka/A2705/A270503/27158190/\n【攻略】出境後的和食 food court（約 280 座位），有和牛、海鮮及季節食材定食，燒物、炸物、刺身一次吃到。Tabelog 評分樣本極少，只作方便之選；真正的美食已在前八天完成。\n【實用】辦完退稅（海關確認）及出境後再去吃；可用信用卡。",
+      "note": "【Tabelog】3.02（1 則評價；關西機場禁區選擇有限，評分樣本極少，僅作方便之選）\n【攻略】出境後的和食 food court（約 280 座位），有和牛、海鮮及季節食材定食，燒物、炸物、刺身一次吃到。Tabelog 評分樣本極少，只作方便之選；真正的美食已在前八天完成。\n【實用】辦完退稅（海關確認）及出境後再去吃；可用信用卡。",
       "phone": "+81-72-455-2500",
+      "whatsapp": null,
+      "line": null,
+      "messenger": null,
       "openHours": "06:30–24:55（按航班調整）",
       "price": "定食按餐牌（約 ¥1,500，估算）",
+      "website": "https://tabelog.com/osaka/A2705/A270503/27158190/",
       "cost": {
         "amount": 1500,
         "currency": "JPY",
@@ -3319,11 +4102,10 @@ const ITINERARY = {
       },
       "status": "pending",
       "source": "ai",
-      "transport": null,
-      "website": "https://tabelog.com/osaka/A2705/A270503/27158190/"
+      "transport": null
     },
     {
-      "id": "evt_d9_07",
+      "id": "evt_d9_08",
       "day": 9,
       "time": "15:15",
       "timeHint": "afternoon",
@@ -3340,10 +4122,14 @@ const ITINERARY = {
         "航班"
       ],
       "moodColor": "#3A3A3A",
-      "note": "【登機流程】12:50 巴士到第 1 航廈 4 樓國際線出發大堂 → HX 櫃位辦理登機及寄艙（櫃位截止時間以確認信為準）→ 海關確認退稅（帶護照及免稅單據）→ 保安檢查及出境審查 → 禁區午餐 → 按登機證時間到閘口。\n【航班】HK Express（HX）15:15 起飛（航班號待訂票後確認）。回程建議加購 32kg 寄艙（約 HK$430）。\n【實用】HK Express 客服用 WhatsApp +852 3951 7229（每日 08:00–20:00）。",
+      "note": "【登機流程】12:31 巴士到第 1 航廈 4 樓國際線出發大堂 → HX 櫃位辦理登機及寄艙（櫃位截止時間以確認信為準）→ 海關確認退稅（帶護照及免稅單據）→ 保安檢查及出境審查 → 禁區午餐 → 按登機證時間到閘口。\n【航班】HK Express（HX）15:15 起飛（航班號待訂票後確認）。回程建議加購 32kg 寄艙（約 HK$430）。\n【實用】HK Express 客服可用 WhatsApp 聯絡（每日 08:00–20:00；用上方「聯絡」icon）。",
       "phone": "+852 3951 7229",
+      "whatsapp": "+85239517229",
+      "line": null,
+      "messenger": null,
       "openHours": "15:15 起飛（登機閘口截止時間以登機證為準）",
       "price": "機票 HK$2,450（Google Flights 2026-10-18 報價）",
+      "website": null,
       "cost": null,
       "status": "pending",
       "source": "ai",
@@ -3356,23 +4142,27 @@ const ITINERARY = {
 const INSPIRATIONS = [
   {
     "id": "ins_001",
-    "title": "阪急 Oasis 廚房市場（阪急オアシス，LUCUA B2）",
-    "tag": "TIRED",
-    "note": "2/7 太累不想站著吃串炸時的備案：高級超市熟食及清酒，可回房晚酌；營業至 23:00。",
+    "title": "串炸松葉 總本店（串かつ 松葉 総本店，新梅田食道街）",
+    "tag": "FOOD",
+    "note": "原本 2/7 第一晚晚餐；酒店改到谷町後，第一晚改為上本町刺身宵夜，不再專程去梅田。可改在 2/10 頭療後（Kiji 隔鄰同一條食道街）或 2/11 中崎町一帶時順道吃。\n【Tabelog】3.49（約 1,460 則評價；立食串炸老字號（分數略低於 3.5，以名店身分保留））\n【攻略】新梅田食道街代表性的老字號立食串炸店，昭和風味濃厚，椰菜任吃。先點若雞、豬肉、蓮藕等經典串，再試口碑推介的巨型大蝦串；醬汁共用，切勿二度蘸醬。配一杯生啤或熱清酒，第一晚輕鬆收結。\n【實用】全店站立（約 70 位），不設預約，一人最自然；可用信用卡及 IC 卡；2025 年 4 月起全店禁煙。星期日及假期營業至 21:30。",
     "type": "food",
     "cityId": "osaka",
-    "address": "日本大阪府大阪市北區梅田3-1-3 LUCUA 大阪 地庫 2 樓",
-    "addressLocal": "大阪府大阪市北区梅田3-1-3 ルクア大阪 B2F 阪急オアシス キッチン＆マーケット",
+    "address": "日本大阪府大阪市北區角田町9-20 新梅田食道街 1 樓",
+    "addressLocal": "大阪府大阪市北区角田町9-20 新梅田食道街1F 串かつ専門店 松葉 総本店",
     "coords": [
-      34.7033,
-      135.4962
+      34.7035,
+      135.4977
     ],
-    "nearEventId": "evt_d1_04",
+    "nearEventId": "evt_d1_06",
+    "phone": "+81-6-6312-6615",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
+    "openHours": "星期一至六 11:00–22:00；日及假期 11:00–21:30（Tabelog）",
+    "price": "Tabelog 預算 ¥1,000–1,999；連一兩杯酒約 ¥2,500（估算）",
+    "website": "https://tabelog.com/osaka/A2701/A270101/27001927/",
     "status": "wishlist",
-    "source": "ai",
-    "phone": "+81-6-6454-8116",
-    "openHours": "11:00–23:00",
-    "price": "熟食＋清酒約 ¥2,500（估算）"
+    "source": "ai"
   },
   {
     "id": "ins_002",
@@ -3388,11 +4178,15 @@ const INSPIRATIONS = [
       135.4988
     ],
     "nearEventId": "evt_d2_05",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-6-6211-7829",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "11:30–21:00（L.O. 閉店前 30 分鐘）",
-    "price": "雞肉蛋包飯約 ¥1,180（第三方資料）"
+    "price": "雞肉蛋包飯約 ¥1,180（第三方資料）",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_003",
@@ -3408,11 +4202,15 @@ const INSPIRATIONS = [
       135.5157
     ],
     "nearEventId": "evt_d2_09",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-6-7222-2510",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "星期一至六 16:00–22:00；日 15:00–22:00",
-    "price": "Tabelog 預算 ¥6,000–7,999"
+    "price": "Tabelog 預算 ¥6,000–7,999",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_004",
@@ -3428,11 +4226,15 @@ const INSPIRATIONS = [
       135.8383
     ],
     "nearEventId": "evt_d3_09",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-50-5542-8600",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "瑠璃繪期間開到 18:00（其餘時間以官網為準）",
-    "price": "名品展一般 ¥700"
+    "price": "名品展一般 ¥700",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_005",
@@ -3448,11 +4250,15 @@ const INSPIRATIONS = [
       135.8434
     ],
     "nearEventId": "evt_d3_05",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-742-27-2718",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "10:30–16:30（L.O. 16:00）",
-    "price": "萬葉粥 ¥1,200"
+    "price": "萬葉粥 ¥1,200",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_006",
@@ -3468,11 +4274,15 @@ const INSPIRATIONS = [
       135.8461
     ],
     "nearEventId": "evt_d3_09",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-742-22-7788",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "祈禱受付 09:00–16:00",
-    "price": "小祈禱初穗料 ¥5,000 起"
+    "price": "小祈禱初穗料 ¥5,000 起",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_007",
@@ -3487,18 +4297,22 @@ const INSPIRATIONS = [
       34.7978,
       135.2512
     ],
-    "nearEventId": "evt_d6_03",
-    "status": "wishlist",
-    "source": "ai",
+    "nearEventId": "evt_d6_04",
     "phone": "+81-78-904-2291",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "10:00–22:00（最後入館 21:00）",
-    "price": "平日成人 ¥2,750（另加入湯稅 ¥75）"
+    "price": "平日成人 ¥2,750（另加入湯稅 ¥75）",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_008",
     "title": "馳走屋純平（馳走や純平，北新地）",
     "tag": "FOOD",
-    "note": "2/12 雅釀訂不到或想省錢時的備案：Tabelog 3.62、居酒屋 WEST 百名店 2026；吧枱 7 位，河豚、甲魚及地酒；單點另收 ¥1,100 前菜費，可吸加熱煙。https://tabelog.com/osaka/A2701/A270101/27014760/",
+    "note": "2/12 雅釀訂不到或想省錢時的備案：Tabelog 3.62、居酒屋 WEST 百名店 2026；吧枱 7 位，河豚、甲魚及地酒；單點另收 ¥1,100 前菜費，可吸加熱煙。",
     "type": "food",
     "cityId": "osaka",
     "address": "日本大阪府大阪市北區曾根崎新地1-5-25 5 樓",
@@ -3507,12 +4321,16 @@ const INSPIRATIONS = [
       34.6979,
       135.4977
     ],
-    "nearEventId": "evt_d6_11",
-    "status": "wishlist",
-    "source": "ai",
+    "nearEventId": "evt_d6_12",
     "phone": "+81-6-6341-5228",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "星期一至六 17:30–23:00；星期日休，假期不定（Tabelog）",
-    "price": "Tabelog 預算 ¥8,000–14,999"
+    "price": "Tabelog 預算 ¥8,000–14,999",
+    "website": "https://tabelog.com/osaka/A2701/A270101/27014760/",
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_009",
@@ -3527,12 +4345,16 @@ const INSPIRATIONS = [
       34.6917,
       135.4922
     ],
-    "nearEventId": "evt_d4_03",
-    "status": "wishlist",
-    "source": "ai",
+    "nearEventId": "evt_d4_04",
     "phone": "+81-6-6447-4680",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "10:00–17:00；星期五至 20:00",
-    "price": "一般 ¥1,800（夜間 ¥1,600）"
+    "price": "一般 ¥1,800（夜間 ¥1,600）",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_010",
@@ -3547,18 +4369,22 @@ const INSPIRATIONS = [
       34.7105,
       135.4983
     ],
-    "nearEventId": "evt_d5_03",
-    "status": "wishlist",
-    "source": "ai",
+    "nearEventId": "evt_d5_04",
     "phone": "+81-6-6147-4996",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "11:00–24:00；不定休",
-    "price": "乾式頭療 75 分鐘 ¥8,000"
+    "price": "乾式頭療 75 分鐘 ¥8,000",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_011",
     "title": "梅田 釜竹烏冬（梅田 釜たけうどん，新梅田食道街）",
     "tag": "FOOD",
-    "note": "2/11 烏冬棒排隊太長時的備案：Tabelog 3.77、烏冬 WEST 百名店 2024；不設預約、只收現金，星期二休（2/11 星期四營業）。https://tabelog.com/osaka/A2701/A270101/27052204/",
+    "note": "2/11 烏冬棒排隊太長時的備案：Tabelog 3.77、烏冬 WEST 百名店 2024；不設預約、只收現金，星期二休（2/11 星期四營業）。",
     "type": "food",
     "cityId": "osaka",
     "address": "日本大阪府大阪市北區角田町9-25 新梅田食道街 1 樓",
@@ -3567,12 +4393,16 @@ const INSPIRATIONS = [
       34.7039,
       135.4978
     ],
-    "nearEventId": "evt_d5_05",
-    "status": "wishlist",
-    "source": "ai",
+    "nearEventId": "evt_d5_06",
     "phone": "+81-6-6363-7746",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "11:00–14:30；星期二休（Tabelog）",
-    "price": "Tabelog 預算 ～¥1,999"
+    "price": "Tabelog 預算 ～¥1,999",
+    "website": "https://tabelog.com/osaka/A2701/A270101/27052204/",
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_012",
@@ -3588,11 +4418,15 @@ const INSPIRATIONS = [
       135.4846
     ],
     "nearEventId": "evt_d7_03",
-    "status": "wishlist",
-    "source": "ai",
     "phone": null,
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "約 09:00/10:00–15:00（官方未寫時間）",
-    "price": "免費入場"
+    "price": "免費入場",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_013",
@@ -3608,11 +4442,15 @@ const INSPIRATIONS = [
       135.3358
     ],
     "nearEventId": "evt_d7_03",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-798-32-2727",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "往年 10:00–15:00（2027 待公布）",
-    "price": "免費入場；試飲另收費"
+    "price": "免費入場；試飲另收費",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_014",
@@ -3628,11 +4466,15 @@ const INSPIRATIONS = [
       135.4172
     ],
     "nearEventId": "evt_d8_07",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-72-773-0524",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "往年 10:00–16:00（2027 待公布）；長壽藏商店 10:00–19:00，星期二休",
-    "price": "免費入場"
+    "price": "免費入場",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_015",
@@ -3648,17 +4490,21 @@ const INSPIRATIONS = [
       135.8546
     ],
     "nearEventId": "evt_d8_07",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-742-30-6560",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "約 18:00–21:00（按 2026 年）",
-    "price": "免費"
+    "price": "免費",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_016",
     "title": "日本料理 岡田（おか田，奈良）",
     "tag": "FOOD",
-    "note": "2/9 玄訂不到時的午市備案：Tabelog 3.82；官網自稱米芝蓮一星，完全預約制，一人可訂，TableCheck 網上預約。午市套餐 ¥8,000／¥12,000；星期日及假期休。https://tabelog.com/nara/A2901/A290101/29011807/",
+    "note": "2/9 玄訂不到時的午市備案：Tabelog 3.82；官網自稱米芝蓮一星，完全預約制，一人可訂，TableCheck 網上預約。午市套餐 ¥8,000／¥12,000；星期日及假期休。",
     "type": "food",
     "cityId": "nara",
     "address": "日本奈良縣奈良市今御門町26-2 Nori 大廈 1 樓",
@@ -3668,11 +4514,15 @@ const INSPIRATIONS = [
       135.8303
     ],
     "nearEventId": "evt_d3_05",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-742-93-8119",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "11:30–14:00、18:00–22:00；星期日及假期休",
-    "price": "午市套餐 ¥8,000／¥12,000（Tabelog）"
+    "price": "午市套餐 ¥8,000／¥12,000（Tabelog）",
+    "website": "https://tabelog.com/nara/A2901/A290101/29011807/",
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_017",
@@ -3687,12 +4537,16 @@ const INSPIRATIONS = [
       34.6967,
       135.1886
     ],
-    "nearEventId": "evt_d6_07",
-    "status": "wishlist",
-    "source": "ai",
+    "nearEventId": "evt_d6_08",
     "phone": "+81-78-251-6003",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "星期一、三、五、六 10:00–17:00；四 10:00–16:30；日及假期 10:00–16:45；逢星期二休",
-    "price": "卡片套 ¥2,420；免縫名片套 ¥2,200；手掌小袋 ¥2,750"
+    "price": "卡片套 ¥2,420；免縫名片套 ¥2,200；手掌小袋 ¥2,750",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_018",
@@ -3707,12 +4561,16 @@ const INSPIRATIONS = [
       34.6928,
       135.1881
     ],
-    "nearEventId": "evt_d6_07",
-    "status": "wishlist",
-    "source": "ai",
+    "nearEventId": "evt_d6_08",
     "phone": "+81-78-333-0312",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "11:30–19:30；逢星期三休",
-    "price": "按訂製內容報價"
+    "price": "按訂製內容報價",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_019",
@@ -3727,18 +4585,22 @@ const INSPIRATIONS = [
       34.6716,
       135.515
     ],
-    "nearEventId": "evt_d5_07",
-    "status": "wishlist",
-    "source": "ai",
+    "nearEventId": "evt_d5_08",
     "phone": "+81-6-6764-0711",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "星期四至六 13:00–18:00（不定期長休）",
-    "price": "按貨品標價"
+    "price": "按貨品標價",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_020",
     "title": "奈良豐澤酒造 酒藏參觀（奈良豊澤酒造，帶解）",
     "tag": "TIME",
-    "note": "想正式參觀奈良酒藏時的備案：2 月逢星期三、六 10:30 或 15:30 開始，完全預約制，致電 0742-61-7636，1–40 人，¥500（附手信）。與奈良日（2/9 星期二）日期不合，而且在帶解，離奈良町較遠，所以只列備案。",
+    "note": "想正式參觀奈良酒藏時的備案：2 月逢星期三、六 10:30 或 15:30 開始，完全預約制，致電預約，1–40 人，¥500（附手信）。與奈良日（2/9 星期二）日期不合，而且在帶解，離奈良町較遠，所以只列備案。",
     "type": "sight",
     "cityId": "nara",
     "address": "日本奈良縣奈良市今市町405",
@@ -3748,11 +4610,15 @@ const INSPIRATIONS = [
       135.816
     ],
     "nearEventId": "evt_d3_06",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-742-61-7636",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "酒藏參觀：2 月逢星期三、六 10:30／15:30（須預約）",
-    "price": "參觀 ¥500（附手信）"
+    "price": "參觀 ¥500（附手信）",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
   },
   {
     "id": "ins_021",
@@ -3768,11 +4634,207 @@ const INSPIRATIONS = [
       135.2617
     ],
     "nearEventId": "evt_d7_04",
-    "status": "wishlist",
-    "source": "ai",
     "phone": "+81-78-822-8907",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
     "openHours": "09:30–16:30（入館至 16:00）；年末年始休",
-    "price": "免費入館；高級酒試飲收費"
+    "price": "免費入館；高級酒試飲收費",
+    "website": null,
+    "status": "wishlist",
+    "source": "ai"
+  },
+  {
+    "id": "ins_022",
+    "title": "食堂 Kifune（食堂 きふね，芦屋居酒屋）",
+    "tag": "FOOD",
+    "note": "原本 2/13 晚餐；v5 改為灘五鄉酒配魚喜刺身的房間宵夜。想吃正式晚餐可改回：17:35 散步後步行到店，18:00 入座，飯後由阪神芦屋站乘直通特急到大阪梅田再轉谷町線（約 50 分鐘，估算）。\n【Tabelog】3.70（175 則評價；居酒屋 WEST 百名店 2026（2024、2025 亦入選））\n【攻略】連續三年入選居酒屋百名店的芦屋小店，店方對清酒、燒酎及葡萄酒都很講究。在吧枱點當日推介小菜，請店主按菜配清酒，順便和今天灘五鄉試過的酒作比較。\n【預約】吧枱 6 位＋枱 4 位，建議電話預約，指定 18:00 吧枱一人位。可用信用卡。\n【實用】18:00 開門，不定休，訂位時確認 2/13 營業。",
+    "type": "food",
+    "cityId": "osaka",
+    "address": "日本兵庫縣芦屋市茶屋之町11-5",
+    "addressLocal": "兵庫県芦屋市茶屋之町11-5 食堂 きふね",
+    "coords": [
+      34.7295,
+      135.3072
+    ],
+    "nearEventId": "evt_d7_13",
+    "phone": "+81-80-1604-8597",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
+    "openHours": "18:00–翌日 01:00；不定休（Tabelog）",
+    "price": "Tabelog 預算 ¥5,000–7,999（連酒）",
+    "website": "https://tabelog.com/hyogo/A2803/A280302/28058371/",
+    "status": "wishlist",
+    "source": "ai"
+  },
+  {
+    "id": "ins_023",
+    "title": "稻田酒店（天神橋筋六丁目，地酒專門店＋角打ち）",
+    "tag": "SHOP",
+    "note": "【攻略】最接近住吉酒販風格的一間：全國地酒及燒酎專門酒屋，有季節限定及稀有銘柄，店內設立飲試酒區（角打ち），配關東煮和每日手作小菜（官方）。官網例子：福井「一本義 辛爽系 無濾過 吟釀」一升瓶 ¥4,400（含稅）。可在 2/11 黑兔食堂晚餐前提早 30 分鐘到，先在立飲區喝一兩杯再買酒。\n【實用】店舖 11:00–21:30、立飲區 14:00–21:00；假期營業時店舖至 20:30、立飲區至 20:00；星期日休，假期不定休（2/11 是否營業待確認，官方）。店舖可用現金、信用卡、PayPay，立飲區只收現金。天神橋筋六丁目站步行約 3 分鐘（官方）。",
+    "type": "shop",
+    "cityId": "osaka",
+    "address": "日本大阪府大阪市北區浪花町6-4",
+    "addressLocal": "大阪府大阪市北区浪花町6-4 稲田酒店",
+    "coords": [
+      34.7076,
+      135.5097
+    ],
+    "nearEventId": "evt_d5_13",
+    "phone": "+81-6-6371-0636",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
+    "openHours": "店舖 11:00–21:30／立飲區 14:00–21:00；日休、假期不定休",
+    "price": "立飲區每杯價錢待確認；一升瓶 ¥4,400 例（官方）",
+    "website": "https://osaka-saketen.jp/",
+    "status": "wishlist",
+    "source": "ai"
+  },
+  {
+    "id": "ins_024",
+    "title": "山中酒之店 Eki Marché 大阪店（山中酒の店，JR 大阪站，自助試飲機）",
+    "tag": "SHOP",
+    "note": "【攻略】大阪地酒專門老店「山中酒之店」的梅田分店：自助式日本酒試飲機常設 54 款，可外賣、可堂飲（官方）。試了喜歡再買，就像住吉酒販的試飲台。2/10 頭療後或 2/11 LIBRA 之後最順路。\n【實用】11:00–23:00（L.O. 22:00），JR 大阪站 1 樓櫻橋口附近（Eki Marché 大阪 官方）。每杯價錢待確認（本店試飲幣 ¥350／60ml 作參考）。",
+    "type": "shop",
+    "cityId": "osaka",
+    "address": "日本大阪府大阪市北區梅田3-1-1 JR 大阪站 Eki Marché 大阪",
+    "addressLocal": "大阪府大阪市北区梅田3-1-1 JR大阪駅 エキマルシェ大阪 山中酒の店",
+    "coords": [
+      34.7019,
+      135.4963
+    ],
+    "nearEventId": "evt_d4_10",
+    "phone": "+81-6-6348-3955",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
+    "openHours": "11:00–23:00（L.O. 22:00）",
+    "price": "試飲每杯待確認",
+    "website": "https://osaka.ekimaru.com/shopguide/detail/55",
+    "status": "wishlist",
+    "source": "ai"
+  },
+  {
+    "id": "ins_025",
+    "title": "山中酒之店 本店（大國町，千款地酒＋試飲室）",
+    "tag": "SHOP",
+    "note": "【攻略】1970 年創業的地酒專門店，常備 1,000 款以上地酒；2 樓試飲室用專用代幣（每個 ¥350，一杯 60ml）自助試飲，50 款以上開瓶可試，另有 24 款量販（一合瓶 ¥110，可帶走）；3 樓全層是日本酒雪櫃（官方）。另有收費「酒與小菜配對試飲」：3 款酒＋3 款小菜 ¥2,000，星期二至五 14:00–17:00，要 5 日前電話預約（官方）。\n【實用】星期一至五 10:00–19:00，六及假期 10:00–18:00，星期日休（官方）。大國町站 2 號出口步行約 6 分鐘（官方）。由酒店經堺筋本町／難波轉車約 25 分鐘（估算），適合半日空檔專程去。",
+    "type": "shop",
+    "cityId": "osaka",
+    "address": "日本大阪府大阪市浪速區敷津西1-10-19",
+    "addressLocal": "大阪府大阪市浪速区敷津西1-10-19 山中酒の店",
+    "coords": [
+      34.6588,
+      135.4935
+    ],
+    "nearEventId": "evt_d2_05",
+    "phone": "+81-6-6631-3959",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
+    "openHours": "一至五 10:00–19:00；六及假期 10:00–18:00；日休",
+    "price": "試飲代幣 ¥350／60ml；配對試飲 ¥2,000（官方）",
+    "website": "https://yamanaka-sake.jp/",
+    "status": "wishlist",
+    "source": "ai"
+  },
+  {
+    "id": "ins_026",
+    "title": "Stand Utsutsuyo（スタンド うつつよ，谷町四丁目，自家濁酒醸造所）",
+    "tag": "SOLO",
+    "note": "【攻略】米芝蓮必比登日本酒料理店 Utsutsuyo（日本酒餐昧 うつつよ）的立飲店，店內附設大阪市內首間濁酒醸造所（大阪どぶろく醸造所）；自家濁酒每杯 ¥800，3 款 70ml 套裝 ¥2,200，另有每月飲比套裝 45ml×3 ¥980 起，濁酒可買瓶裝外賣（官方）。由酒店步行約 5 分鐘，適合沒有晚餐安排的晚上，或買一枝回房配超市刺身。\n【實用】星期一至五 17:00–22:30，六及假期 16:00–22:30；星期日、假期的星期一休；不設預約（官方）。谷町四丁目站 6 號出口步行約 5 分鐘。",
+    "type": "food",
+    "cityId": "osaka",
+    "address": "日本大阪府大阪市中央區鎗屋町1-1-12",
+    "addressLocal": "大阪府大阪市中央区鎗屋町1-1-12 スタンド うつつよ",
+    "coords": [
+      34.683,
+      135.5157
+    ],
+    "nearEventId": "evt_d7_13",
+    "phone": "+81-6-7777-5412",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
+    "openHours": "一至五 17:00–22:30；六及假期 16:00–22:30；日休",
+    "price": "濁酒每杯 ¥800；3 款套裝 ¥2,200（官方）",
+    "website": "https://www.ututuyo.jp/stand.html",
+    "status": "wishlist",
+    "source": "ai"
+  },
+  {
+    "id": "ins_027",
+    "title": "KOHYO 內本町店（酒店樓下超市）",
+    "tag": "TIRED",
+    "note": "【攻略】酒店隔鄰，步行約 1 分鐘；以鮮魚見稱的關西超市，晚上可買刺身、壽司盒、關東煮和清酒，回房做簡單宵夜。減價貼紙時間官方未公布，一般傍晚後較多（待確認）。\n【實用】07:00–23:00，不定休（官方）。",
+    "type": "shop",
+    "cityId": "osaka",
+    "address": "日本大阪府大阪市中央區內本町2-2-10",
+    "addressLocal": "大阪府大阪市中央区内本町2-2-10 KOHYO内本町店",
+    "coords": [
+      34.6833,
+      135.5138
+    ],
+    "nearEventId": "evt_d8_11",
+    "phone": "+81-6-6944-5040",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
+    "openHours": "07:00–23:00",
+    "price": "刺身拼盤約 ¥800–1,500（估算）",
+    "website": "https://www.daiei.co.jp/stores/4473/",
+    "status": "wishlist",
+    "source": "ai"
+  },
+  {
+    "id": "ins_028",
+    "title": "Life 堺筋本町店（營業至午夜的超市）",
+    "tag": "TIME",
+    "note": "【攻略】KOHYO 23:00 關門後的後備：營業到 00:00，有食品及酒類（官方）。減價時間未公布（待確認）。\n【實用】09:00–翌日 00:00；堺筋本町站 3、6 號出口向南步行約 3 分鐘（官方）；由酒店步行約 11 分鐘（估算）。不接受 PiTaPa。",
+    "type": "shop",
+    "cityId": "osaka",
+    "address": "日本大阪府大阪市中央區久太郎町1-7-5",
+    "addressLocal": "大阪府大阪市中央区久太郎町1-7-5 ライフ堺筋本町店",
+    "coords": [
+      34.6807,
+      135.5076
+    ],
+    "nearEventId": "evt_d8_11",
+    "phone": "+81-6-6261-1801",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
+    "openHours": "09:00–翌日 00:00",
+    "price": "按貨品標價",
+    "website": "https://store.lifecorp.jp/detail/west408/",
+    "status": "wishlist",
+    "source": "ai"
+  },
+  {
+    "id": "ins_029",
+    "title": "日本酒原價酒藏 谷町四丁目店（日本酒原価酒蔵）",
+    "tag": "SOLO",
+    "note": "【攻略】谷町四丁目站步行 1 分鐘，50 款以上日本酒以原價供應，有新政、九平次、鳳凰美田、寫樂等（官方）；每月有指定銘柄日（例如第一、第四個星期四「十四代之日」）。2/10 頭療後早回酒店的晚上，想再喝一杯可以來。連鎖居酒屋，Tabelog 分數未查（待確認）。\n【實用】平日 15:00–23:30，六日及假期 12:00–23:30，不定休；全席禁煙（官方）。",
+    "type": "food",
+    "cityId": "osaka",
+    "address": "日本大阪府大阪市中央區谷町4-4-15 谷4 Plaza 1 樓",
+    "addressLocal": "大阪府大阪市中央区谷町4-4-15 谷4プラザ1F 日本酒原価酒蔵 谷町4丁目店",
+    "coords": [
+      34.6806,
+      135.5175
+    ],
+    "nearEventId": "evt_d4_13",
+    "phone": "+81-50-5487-1817",
+    "whatsapp": null,
+    "line": null,
+    "messenger": null,
+    "openHours": "平日 15:00–23:30；六日及假期 12:00–23:30",
+    "price": "原價日本酒（每杯價錢按銘柄）",
+    "website": "https://kejv400.gorp.jp/",
+    "status": "wishlist",
+    "source": "ai"
   }
 ];
 
@@ -3781,8 +4843,9 @@ const DAILY_EXTRAS = {
   "1": {
     "shopping": [
       "Visit Japan Web 入境 QR code",
-      "ICOCA／信用卡拍卡",
-      "串炸店可用 IC 卡"
+      "利木津巴士車票（售票機可用信用卡）",
+      "近鐵百貨地庫：刺身要保冷劑",
+      "ICOCA／信用卡拍卡"
     ]
   },
   "2": {
@@ -3812,7 +4875,8 @@ const DAILY_EXTRAS = {
     "shopping": [
       "日本產精油",
       "自調香水 10ml",
-      "Guignol 歐洲舊貨（生活小物）"
+      "Guignol 歐洲舊貨（生活小物）",
+      "天神橋筋商店街小吃（少量，留肚晚餐）"
     ]
   },
   "6": {
@@ -3828,18 +4892,19 @@ const DAILY_EXTRAS = {
       "藏開限定新酒",
       "浜福鶴工房限定秘藏酒",
       "酒粕",
-      "現金（藏開攤位多數只收現金）"
+      "現金（藏開攤位多數只收現金）",
+      "今晚宵夜用的酒（浜福鶴／菊正宗／福壽）"
     ]
   },
   "8": {
     "shopping": [
       "四天會古皮具／古首飾（現金）",
-      "清酒防震包裝（明早阪神 B1 最後補買）"
+      "清酒防震包裝（明早近鐵百貨上本町 B1 最後補買）"
     ]
   },
   "9": {
     "shopping": [
-      "清酒防震包裝",
+      "近鐵百貨上本町 B1 最後買酒（防震包裝）",
       "回程 32kg 行李",
       "機場退稅確認"
     ]
@@ -3857,17 +4922,17 @@ const BUDGET = {
     "other"
   ],
   "estimates": {
-    "total": 312900,
+    "total": 299165,
     "currency": "JPY",
     "byCategory": {
-      "hotel": 130330,
-      "food": 137120,
-      "transport": 12850,
+      "hotel": 119725,
+      "food": 132220,
+      "transport": 14620,
       "ticket": 15100,
       "shop": 0,
       "other": 17500
     },
-    "note": "日圓為日本當地估算：酒店＝Elcient 8 晚約 ¥127,330＋宿泊稅約 ¥3,000；交通＝各段 IC／巴士車資（Yahoo! 乘換案內、官方時刻表）；門票＝體驗及入場費（含皮革手作 ¥3,300）；其他＝香薰按摩、頭療；購物（皮件、清酒）未估。機票 HK$5,223（去 HK$2,773＋回 HK$2,450）＋行李約 HK$740 另計（港幣）。"
+    "note": "日圓為日本當地估算：酒店＝Dormy Inn 大阪谷町 8 晚 ¥118,125（樂天，素泊，含稅，2026-10-19 查價）＋宿泊稅約 ¥1,600（每晚約 ¥200 估算，現場支付）；早餐＝3 次 Dormy 自助早餐 ¥2,000（官方）＋附近喫茶／麵包店；交通＝各段 IC／巴士車資；門票＝體驗及入場費（含皮革手作 ¥3,300）；其他＝香薰按摩、頭療；購物（皮件、清酒）未估。機票 HK$5,223（去 HK$2,773＋回 HK$2,450）＋行李約 HK$740 另計（港幣）。"
   },
   "expenses": []
 };
