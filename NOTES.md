@@ -150,7 +150,7 @@ Body:
 - `CITIES`：多城市陣列
 - `TRIP_INFO`：航班、住宿、簽證、緊急聯絡
 - `ITINERARY`：扁平 timeline（所有行程點）
-- `INSPIRATIONS`：Plan B 池（UI 依 `nearEventId`→行程 `day` 分日；無／無效 id →「未分日」）
+- `INSPIRATIONS`：Plan B 池（跟頂部日期選擇器，依 `nearEventId`→行程 `day` 只顯示當日；無／無效 id →「未分日」；列表不重複標日期）
 - `DAILY_EXTRAS`：每日購物清單
 - `BUDGET`：預算
 - `PHRASE_DATA`：常用短語
