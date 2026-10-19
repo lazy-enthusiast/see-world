@@ -520,16 +520,6 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
 }
 .inspire-near i { font-size: 0.65rem; }
 
-/* 靈感池：依日／未分日標題 */
-.inspire-day-label {
-  padding: 0 0 10px 0;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--text-sub);
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-
 /* 高亮閃爍 */
 .inspire-card.highlight {
   animation: highlightPulse 1.2s ease-out 2;
@@ -2080,26 +2070,20 @@ function renderInspirationPage() {
   if (currentInspScope === 'unassigned') {
     filtered = filtered.filter(ins => getInspirationDayNum(ins) === null);
   } else {
-    // 與 renderTimeline(dayKey) 相同：只顯示所選日期的項目
+    // 與 renderTimeline(dayKey) 相同：只顯示所選日期的項目（日期只靠頂部選擇器，不重複標示）
     filtered = filtered.filter(ins => getInspirationDayNum(ins) === dayNum);
   }
-
-  const dayLabel = currentInspScope === 'unassigned'
-    ? '未分日（無對應行程）'
-    : `Day ${day.dayNum} · ${day.display}${day.weekday}`;
 
   if (filtered.length === 0) {
     const emptyMsg = currentInspScope === 'unassigned'
       ? '沒有未分日的備案'
       : '本日無備案';
     container.innerHTML =
-      `<div class="inspire-day-label">${dayLabel}</div>` +
       `<div style="text-align:center; padding:50px; color:var(--text-sub);">${emptyMsg}</div>`;
     return;
   }
 
-  container.innerHTML = `<div class="inspire-day-label">${dayLabel}</div>` +
-    filtered.map(inspirationCardHtml).join('');
+  container.innerHTML = filtered.map(inspirationCardHtml).join('');
 }
 
 function filterInspiration(tag) {
