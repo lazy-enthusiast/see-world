@@ -1892,8 +1892,9 @@ function selectDay(dayKey, chipEl) {
   if (chipEl) chipEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   renderTimeline(dayKey);
   renderShopping(dayKey);
+  // 靈感池與行程／購物一樣：跟頂部日期選擇器走（不限是否正開著該 tab）
+  renderInspirationPage();
   if (document.getElementById('page-weather').classList.contains('active')) fetchWeather();
-  if (document.getElementById('page-inspiration').classList.contains('active')) renderInspirationPage();
 }
 
 const TRANSPORT_ICONS = {
@@ -2031,7 +2032,9 @@ let currentInspScope = 'day';
 function getInspirationDayNum(ins) {
   if (!ins || !ins.nearEventId) return null;
   const nearItem = ITINERARY.items.find(it => it.id === ins.nearEventId);
-  return nearItem && typeof nearItem.day === 'number' ? nearItem.day : null;
+  if (!nearItem || nearItem.day == null) return null;
+  const n = Number(nearItem.day);
+  return Number.isFinite(n) ? n : null;
 }
 
 function inspirationCardHtml(ins) {
@@ -2040,21 +2043,24 @@ function inspirationCardHtml(ins) {
   if (ins.nearEventId) {
     const nearItem = ITINERARY.items.find(it => it.id === ins.nearEventId);
     if (nearItem) {
-      nearLine = `<div class="inspire-near"><i class="fa-solid fa-location-dot"></i> 靠近：${nearItem.title}</div>`;
+      const nearTitle = timelineDisplayTitle(nearItem.title) || nearItem.title;
+      nearLine = `<div class="inspire-near"><i class="fa-solid fa-location-dot"></i> 靠近：${nearTitle}</div>`;
     }
   }
   return `
       <div class="inspire-card" id="insp-${ins.id}" data-tag="${ins.tag}" onclick='openModal(${safeData})'>
         <div class="inspire-badge">${ins.tag}</div>
-        <h3 class="inspire-title">${ins.title}</h3>
+        <h3 class="inspire-title">${timelineDisplayTitle(ins.title) || ins.title}</h3>
         <p class="inspire-note">${ins.note || ''}</p>
         ${nearLine}
       </div>`;
 }
 
 function renderInspirationPage() {
-  const filterBar = document.querySelector('.filter-bar-container');
-  // Tag chips + trailing「未分日」scope chip (combines with tag filter)
+  const filterBar = document.querySelector('#page-inspiration .filter-bar-container');
+  if (!filterBar) return;
+
+  // Tag chips + trailing「未分日」(無 nearEventId)；預設跟頂部日期，與正式行程同一套日子
   filterBar.innerHTML =
     INSPIRATION_TAGS.map(t =>
       `<span class="filter-chip ${t.key === currentInspFilter ? 'active' : ''}" onclick="filterInspiration('${t.key}')">${t.label}</span>`
@@ -2062,27 +2068,33 @@ function renderInspirationPage() {
     `<span class="filter-chip ${currentInspScope === 'unassigned' ? 'active' : ''}" onclick="filterInspirationScope('unassigned')">未分日</span>`;
 
   const container = document.getElementById('inspiration-container');
+  if (!container || !dayMeta[currentDay]) return;
 
   let filtered = currentInspFilter === 'all'
     ? INSPIRATIONS.slice()
     : INSPIRATIONS.filter(ins => ins.tag === currentInspFilter);
 
+  const day = dayMeta[currentDay];
+  const dayNum = Number(day.dayNum);
+
   if (currentInspScope === 'unassigned') {
     filtered = filtered.filter(ins => getInspirationDayNum(ins) === null);
   } else {
-    const dayNum = dayMeta[currentDay].dayNum;
+    // 與 renderTimeline(dayKey) 相同：只顯示所選日期的項目
     filtered = filtered.filter(ins => getInspirationDayNum(ins) === dayNum);
   }
 
-  const day = dayMeta[currentDay];
   const dayLabel = currentInspScope === 'unassigned'
-    ? '未分日'
+    ? '未分日（無對應行程）'
     : `Day ${day.dayNum} · ${day.display}${day.weekday}`;
 
   if (filtered.length === 0) {
+    const emptyMsg = currentInspScope === 'unassigned'
+      ? '沒有未分日的備案'
+      : '本日無備案';
     container.innerHTML =
       `<div class="inspire-day-label">${dayLabel}</div>` +
-      "<div style='text-align:center; padding:30px; color:var(--text-sub);'>無符合的備案</div>";
+      `<div style="text-align:center; padding:50px; color:var(--text-sub);">${emptyMsg}</div>`;
     return;
   }
 
