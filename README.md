@@ -5,7 +5,7 @@
 ## 這是什麼
 
 - **App**：顯示行程（單一 HTML 檔 + `config.js`）
-- **規劃**：由 Grok Bot 負責（研究、查機票、產出 `config.js`）
+- **規劃**：由 Grok Bot 負責（研究、查機票、產出 `config.js`）。讀 `preferences.md`（長期偏好）和 `trips/<city>-<YYYY-MM>.md`（只記這一趟）；衝突時單趟備註為準
 - **部署**：Grok Bot 呼叫 Cloudflare Worker，自動寫入 GitHub
 
 ## 怎麼用
@@ -20,7 +20,8 @@
 see-world/
 ├── index.html      # App 主體（含渲染邏輯）
 ├── config.js       # 客製化行程資料（App 讀這個）
-├── preferences.md  # 旅遊偏好（Grok Bot 讀這個）
+├── preferences.md  # 長期旅遊偏好（所有旅程；Grok Bot 讀這個）
+├── trips/          # 單趟備註 trips/<city>-<YYYY-MM>.md（衝突時覆蓋 preferences.md）
 ├── SCHEMA.md       # 給人／Bot 的結構說明
 ├── schema.json     # Worker 驗證用的機器契約（以此為準）
 ├── NOTES.md        # pipeline 備忘（勿寫入真實 secret）
@@ -39,7 +40,8 @@ see-world/
 - **`SCHEMA.md`**：`config.js` 的結構說明與 LLM 規則
 - **`schema.json`**：Worker 驗證契約
 - **`NOTES.md`**：pipeline 的運作方式、從哪裡開始
-- **`preferences.md`**：旅遊偏好
+- **`preferences.md`**：長期旅遊偏好（所有旅程）
+- **`trips/README.md`**：單趟備註命名與優先順序（例 `trips/osaka-2027-02.md` 覆蓋該趟的長期偏好）
 
 ## 技術架構
 

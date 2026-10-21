@@ -5,8 +5,15 @@
 | 角色 | 依循 |
 |------|------|
 | **Worker 驗證** | 以 `schema.json` 為準（機器契約） |
-| **LLM 生成** | 本文件 + `schema.json`（語意與規則以本文件為準） |
-| **前端渲染** | 本文件的「App 支援矩陣」＋下方 UI 行為規範 |
+| **LLM 生成** | 本文件 + `schema.json`，並讀兩份規劃檔（見下） |
+| **前端渲染** | 本文件的「App 支援矩陣」＋下方 UI 行為規範。App **不**顯示 `trips/` |
+
+規劃時讀兩份檔：
+
+- `preferences.md`：Dav 的長期偏好（所有旅程，角色不變）
+- `trips/<city>-<YYYY-MM>.md`：只記這一趟的決定與調整（例 `trips/osaka-2027-02.md`；規則見 `trips/README.md`）
+
+兩份都要讀。**這一趟若有衝突，`trips/` 覆蓋 `preferences.md`**，而且只對該趟有效。
 
 修改契約時：**先改 `schema.json`，再同步本文件**，避免兩邊漂移。
 
@@ -491,3 +498,4 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 - v1.12 — 2026-10-19 — 用餐「聯絡」合併電話＋傳訊；「App」列依 host 顯示跳轉目標；Grok research 聯絡欄位勿塞 note
 - v1.13 — 2026-10-19 — 靈感池依 `nearEventId`→`day` 分日；無／無效 id →「未分日」
 - v1.14 — 2026-10-19 — 靈感池跟日期選擇器；去掉列表內重複日期標題
+- v1.15 — Oct 21, 2026 — 規劃讀 `preferences.md`＋`trips/<city>-<YYYY-MM>.md`；單趟備註覆蓋長期偏好
