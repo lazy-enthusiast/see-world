@@ -32,7 +32,7 @@ see-world/
     └── config/     # config.js 的歷史版本
 ```
 
-每趟旅行只換 `config.js`。實時到站用 `transport.liveApi`（僅公開站碼）；API key 只在 Cloudflare（`see-world-transit`），見 `worker/README.md` 與 `SCHEMA.md`。  
+每趟旅行只換 `config.js`。交通 modal 不顯示實時到站（到站後現場等）。`see-world-transit` 仍在 Cloudflare，殼不再呼叫，見 `worker/README.md`。  
 部署用的 `/deploy` 仍在另一個 Worker：`see-world-worker`（勿用本目錄 `wrangler deploy` 蓋掉它）。
 
 ## 相關文件

@@ -114,17 +114,6 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .budget-expense { padding: 10px 0; border-bottom: 1px solid var(--border); }
 .budget-expense:last-child { border-bottom: none; }
 
-/* Live transit arrivals (modal) — visibility base; spacing in transport section */
-.live-transit-box { display: none; }
-.live-transit-box.visible { display: block; }
-.live-transit-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.live-transit-status { font-size: 0.75rem; color: var(--text-sub); }
-.live-arrival-row { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; border-bottom: 1px solid var(--border); }
-.live-arrival-row:last-child { border-bottom: none; }
-.live-arrival-time { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 3em; }
-.live-arrival-dest { flex: 1; color: var(--text-main); }
-.live-arrival-meta { font-size: 0.8rem; color: var(--text-sub); white-space: nowrap; }
-
 /* Transport: one quiet line, no left accent, no duplicate title/route */
 .timeline-item.is-transport { padding-bottom: 4px; }
 .timeline-item.is-transport::before {
@@ -471,11 +460,6 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .tx-meta .tx-meta-sub { color: var(--text-sub); font-size: 0.85rem; margin-top: 2px; }
 .modal-note-box.is-compact { padding: 12px 14px; margin: 10px 0; font-size: 0.88rem; line-height: 1.55; }
 .modal-body.is-transport { padding-top: 0; }
-.live-transit-box { margin: 12px 0 0 0; padding: 12px; border: 1px solid var(--border); background: var(--bg-body); display: none; }
-.live-transit-box.visible { display: block; }
-.live-arrival-row { padding: 6px 0; font-size: 0.9rem; }
-.live-arrival-row.is-next { font-weight: 600; }
-.live-arrival-wait { font-size: 0.8rem; color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 /* Nav & Sidebar */
 nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--bg-card); opacity: 0.98; display: flex; justify-content: space-around; padding: 12px 0 calc(12px + var(--safe-bottom)) 0; border-top: 1px solid var(--border); z-index: 100; backdrop-filter: blur(10px); }
@@ -651,13 +635,6 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
   <div class="tx-ride" id="tx-ride">
     <div class="tx-ride-main" id="tx-ride-main"></div>
   </div>
-  <div id="live-transit-box" class="live-transit-box">
-    <div class="live-transit-head">
-      <span class="modal-label" style="margin:0;">上車點下一班</span>
-      <span id="live-transit-status" class="live-transit-status"></span>
-    </div>
-    <div id="live-transit-list"></div>
-  </div>
   <div class="tx-meta" id="tx-meta"></div>
 </div>
 <div class="modal-label" id="modal-note-label">備註</div>
@@ -669,10 +646,6 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// Transit Worker（殼固定；key 在 Cloudflare，不進 config.js）
-const TRANSIT_WORKER_URL = 'https://see-world-transit.davchan-clp.workers.dev/transit';
-let liveTransitTimer = null;
-
 // 1. 🎨 應用主題
 function applyTheme() {
   const root = document.documentElement;
@@ -1176,7 +1149,7 @@ function hostMatches(host, domain) {
 
 /**
  * Detect review/booking app from URL host (primary).
- * Returns { id, hint } for the「App」row subtitle.
+ * Returns { id, hint } for the「APP/網站」row subtitle.
  */
 function detectAppDestination(raw) {
   const host = websiteHost(raw);
@@ -1303,7 +1276,7 @@ function websiteRowHtml(data) {
   if (!raw) return '';
   const dest = detectAppDestination(raw);
   return `<div class="modal-field">
-    <div class="modal-label">App</div>
+    <div class="modal-label">APP/網站</div>
     <div class="modal-website-row">
       <button type="button" class="modal-website-link" onclick="openWebsiteUrl('${escapeAttr(raw)}')">${escapeHtml(dest.hint)}</button>
       <button type="button" class="tx-map-btn" title="${escapeAttr(dest.hint)}" aria-label="${escapeAttr(dest.hint)}" onclick="openWebsiteUrl('${escapeAttr(raw)}')"><i class="fa-solid fa-arrow-up-right-from-square"></i></button>
@@ -1311,7 +1284,7 @@ function websiteRowHtml(data) {
   </div>`;
 }
 
-/** 「聯絡」＋「App」同列兩欄（僅兩者皆有時）；缺一則回傳單欄 */
+/** 「聯絡」＋「APP/網站」同列兩欄（僅兩者皆有時）；缺一則回傳單欄 */
 function contactAppPairHtml(data) {
   const contact = contactRowHtml(data);
   const app = websiteRowHtml(data);
@@ -1397,27 +1370,6 @@ function extractPlatform(text) {
     }
   }
   return null;
-}
-
-function minutesUntilHHMM(hhmm) {
-  if (!hhmm || !/^\d{1,2}:\d{2}$/.test(String(hhmm).trim())) return null;
-  const [h, m] = String(hhmm).trim().split(':').map(Number);
-  const now = new Date();
-  const target = new Date(now);
-  target.setHours(h, m, 0, 0);
-  let diff = Math.round((target - now) / 60000);
-  if (diff < -90) {
-    target.setDate(target.getDate() + 1);
-    diff = Math.round((target - now) / 60000);
-  }
-  return diff;
-}
-
-function formatWaitLabel(mins) {
-  if (mins == null) return '';
-  if (mins <= 0) return '即將到站';
-  if (mins === 1) return '約再等 1 分';
-  return `約再等 ${mins} 分`;
 }
 
 /**
@@ -1724,7 +1676,6 @@ function openModal(data) {
   }
 
   fillModalActions(data, layout);
-  startLiveTransit(data);
 
   document.getElementById('detail-modal').classList.add('open');
 
@@ -1758,96 +1709,10 @@ function openModal(data) {
 }
 
 function closeModal() {
-  stopLiveTransit();
   document.getElementById('detail-modal').classList.remove('open');
   document.querySelector('.modal-content').style.transform = '';
 }
 
-function stopLiveTransit() {
-  if (liveTransitTimer) {
-    clearInterval(liveTransitTimer);
-    liveTransitTimer = null;
-  }
-  const box = document.getElementById('live-transit-box');
-  if (box) box.classList.remove('visible');
-}
-
-function startLiveTransit(data) {
-  stopLiveTransit();
-  const box = document.getElementById('live-transit-box');
-  const list = document.getElementById('live-transit-list');
-  const status = document.getElementById('live-transit-status');
-  if (!box || !list || !status) return;
-
-  if (!data || data.type !== 'transport') {
-    box.classList.remove('visible');
-    return;
-  }
-
-  const live = data.transport && data.transport.liveApi;
-  // Always surface「下一班還多久」for transport; never pin a fixed timetable train
-  box.classList.add('visible');
-  if (!live || !live.provider || !live.stopId) {
-    status.innerText = '';
-    list.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">暫無實時到站——到站後依現場下一班搭乘即可，不必硬卡某一班。</div>`;
-    return;
-  }
-
-  const refreshSec = Math.max(15, Number(live.refreshSec) || 60);
-  const load = () => fetchLiveTransit(live, list, status);
-  load();
-  liveTransitTimer = setInterval(load, refreshSec * 1000);
-}
-
-async function fetchLiveTransit(live, listEl, statusEl) {
-  statusEl.innerText = '更新中…';
-  listEl.innerHTML = '';
-  try {
-    const q = new URLSearchParams({
-      provider: live.provider,
-      stopId: live.stopId
-    });
-    if (live.lineId) q.set('lineId', live.lineId);
-    if (live.direction) q.set('direction', live.direction);
-
-    const res = await fetch(`${TRANSIT_WORKER_URL}?${q.toString()}`, { cache: 'no-store' });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.ok) {
-      const detail = data.detail || data.error || `HTTP ${res.status}`;
-      statusEl.innerText = '無法取得';
-      listEl.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">${detail}</div>`;
-      return;
-    }
-
-    const arrivals = Array.isArray(data.arrivals) ? data.arrivals : [];
-    const updated = data.updatedAt
-      ? new Date(data.updatedAt).toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit', hour12: false })
-      : '';
-    statusEl.innerText = updated ? `${data.provider} · ${updated}` : (data.provider || '');
-
-    if (arrivals.length === 0) {
-      listEl.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">目前無即將到站資料</div>`;
-      return;
-    }
-
-    listEl.innerHTML = arrivals.map((a, i) => {
-      const waitMins = minutesUntilHHMM(a.time);
-      const waitLabel = formatWaitLabel(waitMins);
-      const meta = [
-        a.platform ? `月台 ${a.platform}` : null,
-        a.delayMin != null && a.delayMin > 0 ? `延誤 ${a.delayMin} 分` : null
-      ].filter(Boolean).join(' · ');
-      return `<div class="live-arrival-row${i === 0 ? ' is-next' : ''}">
-        <span class="live-arrival-time">${a.time || '--:--'}</span>
-        <span class="live-arrival-dest">${a.dest || '—'}${meta ? `<span class="live-arrival-meta" style="margin-left:6px;">${meta}</span>` : ''}</span>
-        <span class="live-arrival-wait">${waitLabel}</span>
-      </div>`;
-    }).join('');
-  } catch (e) {
-    statusEl.innerText = '離線';
-    listEl.innerHTML = `<div style="color:var(--text-sub); font-size:0.85rem;">網路錯誤，稍後再試</div>`;
-  }
-}
 document.getElementById('detail-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
 function initSwipeClose() {
