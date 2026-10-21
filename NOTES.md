@@ -12,6 +12,7 @@
 
 - **App 殼**：顯示行程（`index.html` + PWA）；跨旅行重用
 - **每趟只換**：`config.js`（主題、行程、公開的 `liveApi` 站碼）
+- **規劃兩份檔**：`preferences.md`（長期、所有旅程）＋ `trips/<city>-<YYYY-MM>.md`（只記這一趟；衝突時以單趟備註為準）
 - **Grok Bot**：規劃行程、查機票、產出 config.js
 - **Worker**：部署寫入 GitHub；另代理 `/transit` 實時到站（key 存在 Secrets）
 - **GitHub**：儲存 config.js，自動部署到 GitHub Pages
@@ -112,8 +113,8 @@ App 內常數：`TRANSIT_WORKER_URL` → `https://see-world-transit.davchan-clp.
 ### 我（PM）要做的事
 
 1. **開 Grok Bot 對話**
-2. **給它 preferences.md 和 SCHEMA.md**
-3. **告訴它這次的任務**（目的地、天數、出發日）
+2. **給它 `preferences.md`、這一趟的 `trips/<city>-<YYYY-MM>.md`（若已有），以及 `SCHEMA.md`**
+3. **告訴它這次的任務**（目的地、天數、出發日）。單趟備註與長期偏好衝突時，以單趟備註為準
 4. **它出 proposal → 我給意見 → 它修改**
 5. **我滿意後，它產出 config.js**
 6. **它呼叫 Worker 部署**
@@ -132,6 +133,16 @@ Body:
   "message": "auto: update config.js for Osaka"
 }
 ```
+
+**允許的 `path`（其餘一律拒絕，含 `trips/../x` 這類穿越）：**
+
+| path | Worker 行為 |
+|------|-------------|
+| `config.js` | 舊檔歸檔到 `versions/config/`，新檔開頭加 `// buildTime:` |
+| `preferences.md` | 直接覆蓋（不歸檔、不加 buildTime） |
+| `trips/<name>.md` | 符合 `^trips/[a-z0-9-]+\.md$`（例 `trips/osaka-2027-02.md`）才接受；直接覆蓋，不歸檔、不加 buildTime、不跑 schema 驗證 |
+
+App 不讀 `trips/`。命名與優先順序見 `trips/README.md`。
 
 **回傳**：`{ ok: true, path, commit, url }`
 
@@ -174,6 +185,8 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 - 檔名範例：`kyoto-26-09-27-1430.js`
 
 **preferences.md 不存版本**（直接覆蓋）。
+
+**`trips/<city>-<YYYY-MM>.md` 也不存版本**（直接覆蓋，不加 `// buildTime:`，不跑 `schema.json` 驗證）。只記該趟決定；與 `preferences.md` 衝突時，規劃該趟以單趟備註為準。
 
 ---
 
@@ -230,6 +243,7 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 | 2026-10-18 | 實時到站：key 只在 Worker；config 只帶 provider+stopId；殼跨旅行重用 | 公開 repo + 只換 config.js |
 | 2026-10-18 | Transit 用獨立 Worker `see-world-transit`，不蓋掉 deploy | 避免 wrangler 覆蓋 `/deploy` |
 | 2026-10-19 | 交通列收合；modal「前往」+ 上車小字、車程不重複起訖 | 密度高但不吵（PR #8／#9） |
+| 2026-10-21 | 規劃改兩份檔：`preferences.md` 長期偏好；`trips/<city>-<YYYY-MM>.md` 只記該趟，衝突時單趟覆蓋長期。Deploy Worker 允許該路徑並直接覆蓋 | App 仍只顯示 `config.js`；單趟決定不寫進所有旅程的偏好 |
 
 ---
 
@@ -239,7 +253,8 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 |------|------|
 | `schema.json` | **機器契約**：Worker 驗證以此為準 |
 | `SCHEMA.md` | **人類／Bot 說明**：欄位語意、LLM 規則、UI 行為；須與 `schema.json` 同步 |
-| `preferences.md` | 旅遊偏好（最高優先參考） |
+| `preferences.md` | 長期旅遊偏好（所有旅程）。與單趟備註衝突時，**該趟以 `trips/` 為準** |
+| `trips/<city>-<YYYY-MM>.md` | 只記這一趟的決定與調整。例：`trips/osaka-2027-02.md`。見 `trips/README.md` |
 
 ---
 
@@ -251,9 +266,9 @@ versions/config/{slug}-{YY-MM-DD-HHMM}.js
 2. 打開 Cloudflare dashboard 確認 Worker 還活著
 3. 打開 Grok Bot 對話，確認 secret 還在（密碼管理器）
 4. 確認 GitHub PAT 未過期（2026-12-26）
-5. 看 `preferences.md` 和 `SCHEMA.md` 有沒有要更新的
+5. 看 `preferences.md`、`trips/` 和 `SCHEMA.md` 有沒有要更新的
 6. **然後，開始規劃下一趟旅行**
 
 ---
 
-*最後更新：2026-10-19*
+*最後更新：Oct 21, 2026*
