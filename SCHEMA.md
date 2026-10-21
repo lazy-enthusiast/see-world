@@ -166,7 +166,7 @@ const ITINERARY = {
       messenger: null,          // m.me 帳號或 URL（查不到填 null）
       openHours: null,
       price: null,
-      website: null,            // 評論 App／官網 URL（用餐 modal「App」＋跳轉提示）；勿寫進 note
+      website: null,            // 評論 App／官網 URL（modal「APP/網站」＋名稱）；勿寫進 note
       cost: { amount: 0, currency: "JPY", category: "other" },
       status: "confirmed",      // confirmed | pending | wishlist
       source: "user"            // user | ai | ai-edited
@@ -203,9 +203,11 @@ const ITINERARY = {
 - 不知道就填 `null`；App 有正整數才顯示「搭 N 站」
 - LLM 應查乘換案內／官方，勿瞎猜
 
-### `transport.liveApi`（實時到站；可為 `null`）
+### `transport.liveApi`（保留欄位；App 不再顯示）
 
-**禁止**在 config 寫任何 `apiKey`／`token`／帶 key 的 URL。Key 只存在 Cloudflare Worker Secrets；App 殼跨旅行重用，每趟只換公開識別碼。
+交通 modal **不**預留「下一班」區塊，也**不**呼叫到站 API。到站後現場等。請把 `liveApi` 填 `null`，不必為了畫面查 `stopId`。
+
+欄位仍留在契約裡，舊 config 不用改格式。**禁止**在 config 寫任何 `apiKey`／`token`／帶 key 的 URL。
 
 ```js
 liveApi: {
@@ -239,7 +241,7 @@ const TRANSIT_CONFIG = {
 - **`from` / `to`（字串）為必填**
 - **`fromEventId` / `toEventId`（id）為可選**
 - LLM 生成時，id 欄位一律 `null`
-- **`liveApi`**：沒有真實站碼就填 `null`；有把握才填白名單內的 `provider` + `stopId`
+- **`liveApi`**：一律填 `null`。App 不顯示下一班、不接實時到站
 
 ### `type` 允許值
 
@@ -412,10 +414,10 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 
 | 版面 | `type` | 顯示重點 |
 |------|--------|----------|
-| **交通** | `transport` | `前往{to}`；上車站（地圖 icon）→ 目的地；車程／站數；**上車點下一班**（live 候車，不硬定班次）；票價／營運商。時間只在時間線，modal 不顯示建議出發。備註一律展開 |
+| **交通** | `transport` | `前往{to}`；上車站（地圖 icon）→ 目的地；車程／站數；票價／營運商。不顯示下一班、不接實時 API（到站後現場等）。時間只在時間線。備註一律展開 |
 | **航班／閘口** | `arrival`、`departure` | **地址**（優先 `addressLocal`）＋地圖；**聯絡**（撥號＋WhatsApp／LINE／Messenger icon）；備註展開。時間在時間線。無預算欄 |
-| **用餐** | `food` | **地址**（優先 `addressLocal`）；**預算**欄；**開放時間**欄；**聯絡**＋**App**同列兩欄（`website`：依 host 顯示 Tabelog／OpenRice／host 等）；備註展開並列推薦菜；底部可「搜尋預約信」 |
-| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**（優先 `addressLocal`）；可選開放時間；**聯絡**（有 `website` 時與 **App** 同列兩欄）；`hotel` 可有的士卡＋Gmail |
+| **用餐** | `food` | **地址**（優先 `addressLocal`）；**預算**欄；**開放時間**欄；**聯絡**＋**APP/網站**同列兩欄（`website`：依 host 顯示 Tabelog／OpenRice／host 等）；備註展開並列推薦菜；底部可「搜尋預約信」 |
+| **到訪** | `sight`、`shop`、`hotel`、`rest`、`note` | **地址**（優先 `addressLocal`）；可選開放時間；**聯絡**（有 `website` 時與 **APP/網站** 同列兩欄）；`hotel` 可有的士卡＋Gmail |
 
 時間線上的交通列**不**再顯示右側地圖 icon（地圖改在 modal 上車點）。
 
@@ -424,10 +426,8 @@ App 依 `type` 選版面（不是四個獨立 modal）：
 1. 類型標籤 = `mode`；標題 = **`前往{to}`**
 2. 上車站下方小字：**優先月台**（從 `note`／`address` 擷取「N 號月台」）＋清理後的 `line`（**去掉**「往××」等方向字）；無月台才只顯示線路名／上車點
 3. 車程只寫 `durationMin`／`stopCount`，不重複起訖站
-4. **永遠**顯示「上車點下一班」區塊：有 `liveApi` → Worker `/transit` 列表（強調還有多久）；無 live → 提示到站後搭下一班、不必硬卡班次。**不要**在 modal 寫死建議出發時間（`time` 只給時間線）
+4. **不要**在 modal 寫下一班、候車倒數或實時到站。到站後現場等。`time` 只給時間線
 5. 備註：**略過【路線】／【交通】**；剝除 Yahoo!／官方時刻表字樣；保留【上車】【下車】【車資】【備案】。**一律展開**（不摺疊）
-
-實時到站：`liveApi` 非 `null` 時打 **`see-world-transit`**：`GET /transit?provider=&stopId=…`；modal 開啟時依 `refreshSec` 輪詢。
 
 #### 聯絡欄位（景點／店家／餐廳）
 
@@ -445,7 +445,7 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 
 - `price`／`cost` → UI「預算」
 - `openHours` → UI「開放時間」
-- `website` → UI 標題固定「**App**」；下方短文依 **URL host** 顯示 App 名或 host（例：`tabelog.com`→「Tabelog」；`openrice.com`→「OpenRice」；其他已知評論／訂位站類似；一般官網→ host；無法解析→「開啟網頁」）。與「聯絡」同列兩欄。點擊：Tabelog 優先 deep link／Intent，OpenRice 盡量走 App／https，其餘開網頁。**URL 只放 `website`，勿寫進 `note`**
+- `website` → UI 標題固定「**APP/網站**」；下方短文依 **URL host** 顯示 App 名或 host（例：`tabelog.com`→「Tabelog」；`openrice.com`→「OpenRice」；其他已知評論／訂位站類似；一般官網→ host；無法解析→「開啟網頁」）。與「聯絡」同列兩欄。點擊：Tabelog 優先 deep link／Intent，OpenRice 盡量走 App／https，其餘開網頁。**URL 只放 `website`，勿寫進 `note`**
 - `note`：**精簡**——列**推薦菜目**與必要實用提示即可；**不要**把評論站 URL、電話、WhatsApp／LINE／Messenger、長評分檔塞進 `note`
 
 給 LLM：`line`（交通線路）可寫「谷町線」或含月台；方向放 note。店家 `line`（LINE 帳號）與交通 `transport.line` 是不同欄位。
@@ -467,7 +467,7 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 11. **交通的 `from` / `to` 必填字串；`fromEventId` / `toEventId` 一律 `null`**
 12. **`INSPIRATIONS.nearEventId`**：有明確靠近的行程就填該 item 的 `id`（必須已存在於 `ITINERARY.items`）；沒有就填 `null`——**這是「附近備案」按鈕的依據，有就填，勿一律留空**
 13. **金額一律用數字**，`price` 字串只用於純顯示
-14. **`liveApi` 預設 `null`**；僅在查到真實 `stopId` 時填寫；`provider` 必須在白名單
+14. **`liveApi` 一律 `null`**。App 不顯示下一班、不接實時到站；不必查 `stopId`
 15. **禁止**輸出 `apiKey`、`token`、`secret`、或把 key 拼進 URL／`endpoint`
 16. **不要**再填自由字串 `endpoint`（已廢止）；改用 `provider` + `stopId`
 17. **每個 `transport` 必須含 `stopCount` 鍵**（不可省略）：查得到填整數（下一站 = `1`）；查不到填 `null`，禁止亂填或省略欄位
@@ -477,7 +477,7 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 21. **`food`**：務必填 `price`（或 `cost`）與 `openHours`（查不到填 `null`）；`note` 只列推薦菜／精簡實用提示
 22. **`addressLocal`**：景點／店家／酒店／上車站盡量填**當地語詳細地址**（給 Google Maps）；`address` 可放 Latin／英文。App 導航優先 `addressLocal`
 23. **`title`**：時間軸會剝掉括號當地語（如 `（マヅラ喫茶店）`）；日文店名可放括號內供 modal 顯示，或乾脆只寫中文／英文主標題、日文詳址放 `addressLocal`
-24. **`website`**：餐廳優先填當地評論／訂位 App URL（日本 → Tabelog；香港 → OpenRice；其餘依目的地常見站）或官網；查不到填 `null`。**禁止**把評論站／官網連結寫進 `note`——URL 只放 `website`（UI 顯示「App」＋ App 名或 host）
+24. **`website`**：餐廳優先填當地評論／訂位 App URL（日本 → Tabelog；香港 → OpenRice；其餘依目的地常見站）或官網；查不到填 `null`。**禁止**把評論站／官網連結寫進 `note`——URL 只放 `website`（UI 標題「APP/網站」，下方顯示 App 名或 host）
 
 ---
 
@@ -499,3 +499,4 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 - v1.13 — 2026-10-19 — 靈感池依 `nearEventId`→`day` 分日；無／無效 id →「未分日」
 - v1.14 — 2026-10-19 — 靈感池跟日期選擇器；去掉列表內重複日期標題
 - v1.15 — Oct 21, 2026 — 規劃讀 `preferences.md`＋`trips/<city>-<YYYY-MM>.md`；單趟備註覆蓋長期偏好
+- v1.16 — Oct 21, 2026 — 交通 modal 不顯示下一班、不接實時到站；`website` 標題改「APP/網站」

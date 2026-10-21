@@ -7,7 +7,7 @@ App 殼跨旅行重用：API key **只**存在 Cloudflare Secrets，不進 `conf
 | `see-world-worker` | `https://see-world-worker.davchan-clp.workers.dev` | Grok `/deploy`（勿用本目錄蓋掉） |
 | `see-world-transit` | `https://see-world-transit.davchan-clp.workers.dev` | **到站** `/transit`（本目錄部署） |
 
-App 的 `TRANSIT_WORKER_URL` 指向 `see-world-transit`。
+App 交通 modal **不再**呼叫 `/transit`（不預留下一班）。本 Worker 仍可獨立存在，但殼目前不讀它。
 
 ## 部署
 
