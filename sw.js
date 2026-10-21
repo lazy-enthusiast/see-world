@@ -5,7 +5,7 @@
 // - CACHE_NAME        → 自动带版本，不需要手动改
 // ============================================================
 
-const CACHE_VERSION = 'v2'; // 只有「改 sw.js 本身逻辑」时才需要动这里
+const CACHE_VERSION = 'v3'; // 只有「改 sw.js 本身逻辑」时才需要动这里
 const CACHE_NAME = `trip-app-${CACHE_VERSION}`;
 
 const CORE_ASSETS = [
@@ -50,8 +50,8 @@ self.addEventListener('fetch', (event) => {
   // 只處理同源請求（外部的 API、CDN 讓瀏覽器自己處理）
   if (url.origin !== self.location.origin) return;
 
-  // 1. config.js → network-first
-  if (url.pathname.endsWith('/config.js')) {
+  // 1. config.js 與 App 殼 → network-first（避免手機一直顯示舊 modal）
+  if (url.pathname.endsWith('/config.js') || url.pathname.endsWith('/index.html') || url.pathname.endsWith('/')) {
     event.respondWith(networkFirst(req));
     return;
   }
