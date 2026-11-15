@@ -26,7 +26,7 @@
 | `THEME_CONFIG` | 主題配色與字體 | ❌ | ✅ |
 | `CONFIG` | 旅程 meta（日期、旅伴、貨幣） | ❌ | ✅ |
 | `DESTINATION` | 主要目的地 / 起點 | ❌ | ✅ |
-| `CITIES` | 多城市列表 | ✅（單城可留空陣列） | ✅（卡片城市標籤／色條） |
+| `CITIES` | 多城市列表（`days`＝當日主城／天氣） | ✅（單城可留空陣列） | ✅（卡片城市標籤／色條；天氣按日） |
 | `TRIP_INFO` | 航班、住宿、簽證、緊急聯絡 | ✅ | ✅ |
 | `ITINERARY` | 扁平 timeline（核心） | ❌ | ✅（含 `status` 徽章） |
 | `INSPIRATIONS` | Plan B 池（替代方案） | ✅ | ✅ |
@@ -103,14 +103,24 @@ const CITIES = [
     lat: 34.6937,
     lon: 135.5023,
     timezone: "Asia/Tokyo",
-    days: [1],
+    days: [1, 2, 5],            // 該日主要據點（天氣用）
     color: "#E8A33D"
+  },
+  {
+    id: "kyoto",
+    name: "京都 Kyoto",
+    lat: 35.0116,
+    lon: 135.7681,
+    timezone: "Asia/Tokyo",
+    days: [3, 4],               // 一日遊／該日主城
+    color: "#9AA8A3"
   }
 ];
 ```
 
 - `DESTINATION` 代表**主要 / 起點**。
 - `CITIES` 可為空陣列（單城旅行）。
+- `CITIES[].days`：**該日主要據點**（天氣欄依此城的 `lat`／`lon`／`name` 顯示）。**每日只屬一城**——同一天不要同時出現在兩個城市的 `days` 裡；無主城時天氣退回 `DESTINATION`。
 
 ### slug 規則
 
