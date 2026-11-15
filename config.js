@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T15:00:55.590Z
+// buildTime: 2026-11-15T15:09:21.312Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1030,7 +1030,6 @@ if (typeof window !== 'undefined') window.addEventListener('load', function () {
       button('爸爸：不吃蝦蟹',ko?'아버지는 새우와 게를 먹지 않습니다. 국물·소스에도 들어 있나요?':'父は海老・蟹を食べません。だし・ソースにも入っていますか？');
       button('媽媽：不吃牛',ko?'어머니는 소고기를 먹지 않습니다. 육수·소스에도 들어 있나요?':'母は牛肉を食べません。だし・ソースにも入っていますか？');
     }
-    if(data.transport) button('船時與回港提醒','日本：船時17:00前到碼頭。釜山：船時16:00前到碼頭。\n當地換算待船方核實；司機卡的當地截止時間填妥後才可使用。');
   };
 });
 
@@ -1063,4 +1062,36 @@ if (typeof window !== 'undefined') window.addEventListener('load', function () {
     });
   };
   window.renderTimeline(typeof currentDay === 'string' ? currentDay : 'day1');
+});
+
+// Driver-facing cards contain only destination, address and one access request.
+for (const [id,pair] of Object.entries(SHORE_CARDS)) {
+  const lines=pair[0].split('\n');
+  let concise=lines.slice(0,2).map(x=>x.split('。')[0]).join('\n');
+  if (id==='evt_d1_to_fukuya') concise+='\nホテル入口側で降ろしてください。';
+  else if(id.startsWith('evt_d4')) concise+='\n입구 가까이에 내려 주세요.';
+  else concise+='\n入口の近くで降ろしてください。';
+  pair[0]=concise;pair[1]='';
+}
+const SHORE_BACKUP_COPY = {
+ins_d1_rain:'雨天先遊水族館；13:00後視天氣到切子工場。仙巌園可刪。',
+ins_d1_tired:'保留仙巌園近入口庭園；刪切子或縮短水族館，約走30分鐘休5分鐘。',
+ins_d1_k3:'ふくや酒店側電梯不能使用時，改黒かつ亭／黒べぇ，選普通椅座。',
+ins_d1_traffic:'先請仙巌園受付代叫的士；交通延誤便刪水族館，直接回海洋港。',
+ins_d2_rain:'縮短公園散步，改美術館公共回廊；咖啡先確認禁煙。',
+ins_d2_drop_ruri:'瑠璃庵當天不能看製作便略過，保留午餐及午後眼鏡橋。',
+ins_d2_pave:'家人接受自助餐後才選Pavé；酒店正門下車，乘電梯上2F。',
+ins_d3_ohori:'友泉亭路線或座椅不適合時，改大濠Royal Garden Cafe湖景桌椅，不繞湖。',
+ins_d3_tired:'刪冷泉町散步，保留博多町家及織實演。',
+ins_d3_tight:'時間不足便留在町家區，不再跨區；預留回港叫車時間。',
+ins_d4_rain:'纜車停駛或大雨時，改松島站附近室內觀景及酒店午餐。',
+ins_d4_b4:'在對岸遇停駛：請站方與包車司機協調接回，不走吊橋或公園坡路。',
+ins_d4_tired:'刪對岸遠端及較長散步，保留近站海景、酒店午餐。',
+ins_d4_photo:'近站海邊平路拍纜車過海；露台按現場票務標示進入。'
+};
+for (const e of INSPIRATIONS) if(SHORE_BACKUP_COPY[e.id]) e.note=SHORE_BACKUP_COPY[e.id];
+if(typeof window!=='undefined') window.addEventListener('load',function(){
+ const original=window.inspirationCardHtml;
+ window.inspirationCardHtml=function(ins){return original(ins).replace(/<p class="inspire-note">[\s\S]*?<\/p>/,'<p class="inspire-note">點開查看備案</p>');};
+ if(typeof window.renderInspirationPage==='function') window.renderInspirationPage();
 });
