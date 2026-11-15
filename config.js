@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T15:50:16.986Z
+// buildTime: 2026-11-15T16:02:55.910Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1060,6 +1060,7 @@ if (typeof window !== 'undefined') window.addEventListener('load', function () {
       if (time && SHORE_FIRST_LEGS.includes(item.id)) time.textContent='放行後';
       if (time && /_return$/.test(item.id)) time.textContent=item.id==='evt_d4_return'?'船時15:00出發｜16:00前到':'船時17:00前到';
    if (time && item.id==='evt_d4_to_base') time.textContent='船時13:45出發';
+   if (time && ['evt_d1_return','evt_d2_return'].includes(item.id)) time.textContent='JST候補'+item.time+'出發｜船時17:00前到';
     });
   };
   window.renderTimeline(typeof currentDay === 'string' ? currentDay : 'day1');
@@ -1201,3 +1202,66 @@ const SHORE_APPROVED_DELTA = (() => {
  lunch.time='12:00';lunch.timeHint='morning';lunch.tags=['午餐','當地KST','未訂位'];
  lunch.note='12:00午餐，預留60–75分鐘用餐。松島本店1F，包車近門合法落客。禁煙標示待核；點餐確認不辣、湯底無牛及蝦蟹。';
 }
+
+
+// t289: approved afternoon-only travel-data delta; retain Busan's final lunch override.
+(() => {
+ const find=id=>ITINERARY.items.find(e=>e.id===id);
+ const set=(id,o)=>Object.assign(find(id),o);
+ const card=(id,text)=>{SHORE_CARDS[id]=[text,''];};
+ const toPark=evt({
+   id:'evt_d1_to_waterfront',day:1,time:'13:50',timeHint:'afternoon',type:'transport',
+   title:'前往本港海濱公園',cityId:'kagoshima',tags:['當地JST候補','逐段叫車'],
+   address:'Waterfront Park, Honkoshinmachi',addressLocal:'鹿児島市本港新町 ウォーターフロントパーク',
+   transport:taxi('黒豚ふくや本店','本港海濱公園',''),
+   note:'午餐約65分鐘後另叫的士。往鄰接縣營停車場側合法上下客處；不把車開入海濱步道。候車及車程待當日配車核對，表列時段為遊覽排程，非實測車程。'
+ });
+ toPark.transport.fromEventId='evt_d1_fukuya';toPark.transport.toEventId='evt_d1_waterfront';
+ const park=evt({
+   id:'evt_d1_waterfront',day:1,time:'14:30',timeHint:'afternoon',type:'sight',
+   title:'本港海濱公園（ウォーターフロントパーク）',cityId:'kagoshima',tags:['當地JST候補','海濱散策'],
+   address:'Waterfront Park, Honkoshinmachi',addressLocal:'鹿児島市本港新町 ウォーターフロントパーク',
+   note:'在海邊硬鋪路看櫻島、錦江灣與船隻；走約30分鐘休5分鐘。拍照：以港口船隻作前景拍櫻島，不為構圖走遠。由鄰接縣營停車場側進出；大雨或體力不足便縮短。'
+ });
+ const ix=ITINERARY.items.findIndex(e=>e.id==='evt_d1_return');
+ ITINERARY.items.splice(ix,0,toPark,park);
+ card('evt_d1_to_waterfront','行き先：ウォーターフロントパーク\n住所：鹿児島市本港新町\n隣接する県営駐車場側の合法的な場所で降ろしてください。');
+ set('evt_d1_return',{
+   time:'15:15',timeHint:'afternoon',tags:['當地JST候補','船時17:00到碼頭'],
+   note:'海濱散策後另叫的士，從本港海濱公園返回マリンポートかごしま。先聯絡配車核候車及車程，船時17:00前到碼頭；本地15:15只是候補排序時刻，對鐘後按回港餘量提前離開。',
+   transport:{...find('evt_d1_return').transport,from:'本港海濱公園',fromEventId:'evt_d1_waterfront',durationMin:null}
+ });
+ const wharfAddress='長崎県長崎市出島町1-1-109';
+ set('evt_d2_to_museum',{
+   title:'前往出島ワーフ',address:'Dejima Wharf',addressLocal:wharfAddress,
+   note:'眼鏡橋後另叫的士，往出島ワーフ鄰近縣營停車場側合法上下客處，不駛入海濱步道。候車及車程待配車核對；14:10為當地候補出發時段。',
+   transport:{...find('evt_d2_to_museum').transport,from:'眼鏡橋',to:'出島ワーフ',fromEventId:'evt_d2_megane',toEventId:'evt_d2_museum',durationMin:null}
+ });
+ card('evt_d2_to_museum','行き先：出島ワーフ\n住所：長崎市出島町1-1-109\n近隣の県営駐車場側の合法的な場所で降ろしてください。');
+ set('evt_d2_museum',{
+   title:'出島ワーフ海港景',address:'Dejima Wharf',addressLocal:wharfAddress,
+   openHours:null,price:null,website:null,tags:['當地JST候補','海旁散策'],
+   note:'眼鏡橋後在海旁看港景，不重走早上水之庭園。走約30分鐘休5分鐘；2F公共平台有椅，電梯在面海中央樓梯右側，不走樓梯。拍照：海港船隻、木平台與海面，不需買咖啡。'
+ });
+ set('evt_d2_return',{
+   time:'15:35',timeHint:'afternoon',tags:['當地JST候補','船時17:00到碼頭'],
+   note:'出島ワーフ遊覽後另叫的士返松が枝，船時17:00前到碼頭；候車及車程先向司機核對。本地15:35只是候補排序時刻，對鐘後若餘量不足先縮短海旁停留。',
+   transport:{...find('evt_d2_return').transport,from:'出島ワーフ',fromEventId:'evt_d2_museum',durationMin:null}
+ });
+ for(const e of INSPIRATIONS){
+   if(e.id==='ins_d2_rain'){
+     Object.assign(e,{title:'出島ワーフ縮短海旁線',address:'Dejima Wharf',addressLocal:wharfAddress,website:null,nearEventId:'evt_d2_museum',note:'雨勢小時縮短海旁散策，按現場電梯指示到2F公共平台；大雨不勉強戶外，先保留午餐並按船時17:00回松が枝。'});
+   }
+   if(e.id==='ins_d2_drop_ruri')e.title='眼鏡橋與出島海港景';
+   if(e.id==='ins_d2_pave')e.price='Nov自助餐¥3,300／成人；未訂位。';
+   if(e.id==='ins_d1_tired')e.note='保留仙巌園近入口庭園，刪切子或縮短午後海濱散策；約走30分鐘休5分鐘。';
+   if(e.id==='ins_d1_traffic')e.note='請仙巌園受付代叫的士；延誤便刪切子或縮短午後本港海濱，船時17:00前回海洋港。';
+ }
+ for(const g of PHRASE_DATA){
+   g.items=g.items.filter(x=>!Object.values(x).some(v=>typeof v==='string'&&/水族館|水族馆|Aquarium|美術館|美术馆|nagasaki.museum|N1 咖啡條件/i.test(v)));
+   if(g.category==='長崎司機')g.items.push({term_primary:'出島ワーフへ。出島町1-1-109、近隣の県営駐車場側で降ろしてください。',term_secondary:'出島海港景；鄰近縣營停車場側合法下客。',term_pronounce:'出島ワーフ'});
+ }
+ // Update only two-port fallback descriptions; no restaurant or visual changes.
+ const k=PHRASE_DATA.find(g=>g.category==='鹿兒島司機');
+ if(k)k.items.push({term_primary:'ウォーターフロントパークへ。本港新町、隣接する県営駐車場側で降ろしてください。',term_secondary:'本港海濱公園，鄰接縣營停車場側。',term_pronounce:'本港海濱'});
+})();
