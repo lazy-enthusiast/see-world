@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T17:39:34.543Z
+// buildTime: 2026-11-15T18:22:47.554Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -6,7 +6,7 @@
 // 舊大阪 config 仍在 versions/config/；本檔不要當可照表執行。
 // 行程以核准 v2 為準；預約句以 Nov 15, 2026 官方複核為準。
 // 船時與 JST／KST 的差未核。午餐電郵已由本人寄出，不是已訂位。
-// 座標不填景點 pin。天氣頁只代表鹿兒島這一點。
+// 座標不填景點 pin。天氣依當日城市（鹿兒島／長崎／福岡／釜山）取 CITIES 座標與時區；不改行程標題，不把 DESTINATION.name 當天氣城市。
 // ============================================================
 
 const THEME_CONFIG = {
@@ -1325,3 +1325,116 @@ const SHORE_APPROVED_DELTA = (() => {
  const g=PHRASE_DATA.find(x=>x.category==='鹿兒島司機');
  if(g){g.items=g.items.filter(x=>!/黒かつ亭|黒べぇ|ウォーターフロントパーク/.test(x.term_primary||''));g.items.push({term_primary:'城山展望台駐車場へ。鹿児島市城山町です。',term_secondary:'展望台側停車場下車，不走山腳登山步道。',term_pronounce:'城山展望台'},{term_primary:'仙巌園内の御膳所 桜華亭へ。吉野町9700-1です。',term_secondary:'園內2F午餐備案，用電梯。',term_pronounce:'桜華亭備案'});}
 })();
+
+
+// t311 weather: use each day's CITIES lat/lon/timezone and city name.
+// Do not change CONFIG.ui titles or persist DESTINATION.name as a city.
+if (typeof window !== 'undefined') window.addEventListener('load', function () {
+  const origFetchWeather = window.fetchWeather;
+  const origRenderWeather = window.renderWeatherModule;
+  const origSelectDay = window.selectDay;
+  const origSwitchMainPage = window.switchMainPage;
+  if (typeof origFetchWeather !== 'function' || typeof origRenderWeather !== 'function' || typeof origSelectDay !== 'function' || typeof origSwitchMainPage !== 'function') return;
+  let weatherReqId = 0;
+  let weatherCacheKey = null;
+  let weatherInFlightKey = null;
+  let weatherQueue = Promise.resolve();
+
+  function weatherCity(dayKey) {
+    const n = parseInt(String(dayKey || '').replace(/\D/g, ''), 10);
+    if (!n || !Array.isArray(CITIES)) return null;
+    for (let i = 0; i < CITIES.length; i++) {
+      const c = CITIES[i];
+      if (c && Array.isArray(c.days) && c.days.indexOf(n) !== -1) return c;
+    }
+    return null;
+  }
+  function weatherKey(dayKey, city) {
+    if (!city) return '';
+    return String(dayKey) + ':' + city.id + ':' + city.lat + ',' + city.lon + ':' + city.timezone;
+  }
+  function restoreTripTitle() {
+    if (CONFIG && CONFIG.ui && CONFIG.ui.browserTitle) document.title = CONFIG.ui.browserTitle;
+    const el = document.getElementById('app-title');
+    if (el && CONFIG && CONFIG.ui && CONFIG.ui.headerTitle) el.innerHTML = CONFIG.ui.headerTitle;
+  }
+  function clearWeatherLabel() {
+    const page = document.getElementById('page-weather');
+    if (!page || !page.classList.contains('active')) return;
+    const container = document.getElementById('weather-content');
+    if (container) container.innerHTML = "<div style='text-align:center; padding:30px;'>載入天氣</div>";
+  }
+  function bustWeather(dayKey) {
+    const key = weatherKey(dayKey, weatherCity(dayKey));
+    if (weatherCacheKey !== key) {
+      weatherCacheKey = null;
+      weatherInFlightKey = null;
+      if (typeof weatherCache !== 'undefined') weatherCache = null;
+      try { localStorage.removeItem('weatherLastFetch'); } catch (e) {}
+      clearWeatherLabel();
+    }
+  }
+
+  window.fetchWeather = function () {
+    const dayKey = currentDay;
+    const city = weatherCity(dayKey);
+    const myId = ++weatherReqId;
+    const pendingKey = weatherKey(dayKey, city);
+    weatherInFlightKey = pendingKey;
+    weatherQueue = weatherQueue.then(function () {
+      return (async function () {
+        if (myId !== weatherReqId) return;
+        if (typeof currentDay !== 'undefined' && currentDay !== dayKey) return;
+        if (!city) {
+          await origFetchWeather();
+          return;
+        }
+        const saved = { lat: DESTINATION.lat, lon: DESTINATION.lon, timezone: DESTINATION.timezone, name: DESTINATION.name };
+        DESTINATION.lat = city.lat;
+        DESTINATION.lon = city.lon;
+        DESTINATION.timezone = city.timezone;
+        try {
+          await origFetchWeather();
+        } finally {
+          DESTINATION.lat = saved.lat;
+          DESTINATION.lon = saved.lon;
+          DESTINATION.timezone = saved.timezone;
+          DESTINATION.name = saved.name;
+        }
+        if (myId !== weatherReqId) return;
+        if (typeof currentDay !== 'undefined' && currentDay !== dayKey) return;
+        weatherCacheKey = pendingKey;
+      })();
+    }).catch(function () {});
+    return weatherQueue;
+  };
+
+  window.renderWeatherModule = function () {
+    const city = weatherCity(currentDay);
+    const key = weatherKey(currentDay, city);
+    if (!city || (weatherCacheKey !== key && weatherInFlightKey !== key)) {
+      if (city && weatherInFlightKey !== key) window.fetchWeather();
+      return;
+    }
+    const savedName = DESTINATION.name;
+    DESTINATION.name = city.name;
+    try {
+      origRenderWeather();
+    } finally {
+      DESTINATION.name = savedName;
+      restoreTripTitle();
+    }
+  };
+
+  window.selectDay = function (dayKey, chipEl) {
+    bustWeather(dayKey);
+    return origSelectDay(dayKey, chipEl);
+  };
+
+  window.switchMainPage = function (pageId, navEl) {
+    if (pageId === 'weather') bustWeather(currentDay);
+    return origSwitchMainPage(pageId, navEl);
+  };
+
+  restoreTripTitle();
+});
