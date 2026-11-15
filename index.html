@@ -155,6 +155,29 @@ main { flex: 1; overflow-y: hidden; position: relative; }
   font-size: 0.65rem;
   width: 2.6em;
 }
+.card-time.is-label {
+  width: auto;
+  max-width: 11.5rem;
+  white-space: normal;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-main);
+  font-weight: 700;
+}
+.card-transport .card-time.is-label { flex-shrink: 1; }
+.planning-notice {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+.planning-notice[hidden] { display: none; }
 .card-transport .transport-summary {
   flex: 1;
   min-width: 0;
@@ -272,7 +295,7 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .phrase-card:active { transform: scale(0.97); opacity: 0.9; }
 .phrase-primary { font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; color: var(--text-main); font-family: var(--font-heading); }
 .phrase-secondary { font-size: 0.8rem; color: var(--text-sub); }
-.phrase-pronounce { font-size: 0.6rem; color: var(--text-sub); opacity: 0.6; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.phrase-pronounce { font-size: 0.6rem; color: var(--text-sub); opacity: 1; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
 /* Modal & Overlay */
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; justify-content: center; align-items: end; backdrop-filter: blur(5px); cursor: pointer; }
@@ -575,6 +598,7 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
 <div class="phrase-content"><div id="overlay-jp" class="phrase-big"></div><div id="overlay-zh" class="phrase-sub"></div></div>
 <div class="close-phrase">關閉</div>
 </div>
+<div id="planning-notice" class="planning-notice" hidden></div>
 <div class="date-selector-container"><div class="date-selector" id="date-selector"></div></div>
 <main>
 <div id="page-itinerary" class="page active"><div class="timeline-container" id="timeline-container"></div></div>
@@ -723,6 +747,7 @@ function init() {
   document.getElementById('lbl-curr-target').innerText = DESTINATION.currencyLabel;
   document.getElementById('lbl-curr-base').innerText = DESTINATION.baseCurrency;
 
+  renderPlanningNotice();
   renderDateSelector();
   selectDay('day1');
   switchMainPage('itinerary', document.querySelector('.nav-item.active'));
@@ -737,6 +762,21 @@ function init() {
   setInterval(updateHomeClock, 1000);
   updateHomeClock();
   checkForUpdate();
+}
+
+function renderPlanningNotice() {
+  const el = document.getElementById('planning-notice');
+  if (!el) return;
+  const text = CONFIG.ui && CONFIG.ui.planningNotice ? String(CONFIG.ui.planningNotice).trim() : '';
+  el.hidden = !text;
+  el.textContent = text;
+}
+
+function visibleClock(item) {
+  const label = item && item.timeLabel != null ? String(item.timeLabel).trim() : '';
+  if (label) return label;
+  if (item && item.time) return String(item.time);
+  return '彈性';
 }
 
 function updateHomeClock() {
@@ -1857,7 +1897,7 @@ function renderTimeline(dayKey) {
       el.innerHTML = `
         <div class="card card-transport" onclick='openModal(${safeData})' title="${escapeAttr(item.title)}">
           <div class="transport-icon"><i class="fa-solid ${icon}"></i></div>
-          <span class="card-time">${item.time || '彈性'}</span>
+          <span class="card-time${visibleClock(item).length > 5 ? ' is-label' : ''}">${escapeHtml(visibleClock(item))}</span>
           <span class="transport-summary">${summary}</span>
           ${dur ? `<span class="transport-dur">${dur}</span>` : ''}
         </div>`;
@@ -1889,7 +1929,7 @@ function renderTimeline(dayKey) {
     el.innerHTML = `
       <div class="card" style="${colorStyle}" onclick='openModal(${safeData})'>
         ${navBtn}
-        <span class="card-time">${item.time || '彈性'}</span>
+        <span class="card-time${visibleClock(item).length > 5 ? ' is-label' : ''}">${escapeHtml(visibleClock(item))}</span>
         <div class="card-meta-row">${metaBits}</div>
         <h3 class="card-title">${escapeHtml(cardTitle)}</h3>
         <div class="tags">${tags}</div>

@@ -66,7 +66,8 @@ const CONFIG = {
     browserTitle: "Kyoto Solo Trip",
     headerTitle: "KYOTO <span>SOLO</span>",
     homeTimezone: "Asia/Hong_Kong",
-    homeTimeLabel: "HKG"
+    homeTimeLabel: "HKG",
+    planningNotice: null       // 可選。有字串時，時間軸上方常駐這句；空或省略則不顯示
   },
   startDate: "2026-05-15",     // ISO 8601
   duration: 5,                  // 天數
@@ -149,7 +150,8 @@ const ITINERARY = {
     {
       id: "evt_a1b2c3d4",
       day: 1,
-      time: "15:10",            // "HH:MM" 或 null
+      time: "15:10",            // "HH:MM" 或 null。排序用；不一定是可照行的出發時刻
+      timeLabel: null,          // 可選。有字串時，時間軸顯示這句，不顯示 time／「彈性」
       timeHint: null,           // morning | afternoon | evening | night | null
       type: "arrival",          // 見下方 type 表
       title: "抵達關西機場",
