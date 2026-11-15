@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T15:14:27.060Z
+// buildTime: 2026-11-15T15:17:27.059Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1092,7 +1092,7 @@ ins_d4_photo:'近站海邊平路拍纜車過海；露台按現場票務標示進
 for (const e of INSPIRATIONS) if(SHORE_BACKUP_COPY[e.id]) e.note=SHORE_BACKUP_COPY[e.id];
 if(typeof window!=='undefined') window.addEventListener('load',function(){
  const original=window.inspirationCardHtml;
- window.inspirationCardHtml=function(ins){return original(ins).replace(/<p class="inspire-note">[\s\S]*?<\/p>/,'<p class="inspire-note">點開查看備案</p>');};
+ window.inspirationCardHtml=function(ins){return original(ins).replace(/<p class="inspire-note">[\s\S]*?<\/p>/,'');};
  if(typeof window.renderInspirationPage==='function') window.renderInspirationPage();
 });
 
