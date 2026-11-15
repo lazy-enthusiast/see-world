@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T18:22:47.554Z
+// buildTime: 2026-11-15T18:58:00.117Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1327,114 +1327,47 @@ const SHORE_APPROVED_DELTA = (() => {
 })();
 
 
-// t311 weather: use each day's CITIES lat/lon/timezone and city name.
-// Do not change CONFIG.ui titles or persist DESTINATION.name as a city.
-if (typeof window !== 'undefined') window.addEventListener('load', function () {
-  const origFetchWeather = window.fetchWeather;
-  const origRenderWeather = window.renderWeatherModule;
-  const origSelectDay = window.selectDay;
-  const origSwitchMainPage = window.switchMainPage;
-  if (typeof origFetchWeather !== 'function' || typeof origRenderWeather !== 'function' || typeof origSelectDay !== 'function' || typeof origSwitchMainPage !== 'function') return;
-  let weatherReqId = 0;
-  let weatherCacheKey = null;
-  let weatherInFlightKey = null;
-  let weatherQueue = Promise.resolve();
 
-  function weatherCity(dayKey) {
-    const n = parseInt(String(dayKey || '').replace(/\D/g, ''), 10);
-    if (!n || !Array.isArray(CITIES)) return null;
-    for (let i = 0; i < CITIES.length; i++) {
-      const c = CITIES[i];
-      if (c && Array.isArray(c.days) && c.days.indexOf(n) !== -1) return c;
-    }
-    return null;
-  }
-  function weatherKey(dayKey, city) {
-    if (!city) return '';
-    return String(dayKey) + ':' + city.id + ':' + city.lat + ',' + city.lon + ':' + city.timezone;
-  }
-  function restoreTripTitle() {
-    if (CONFIG && CONFIG.ui && CONFIG.ui.browserTitle) document.title = CONFIG.ui.browserTitle;
-    const el = document.getElementById('app-title');
-    if (el && CONFIG && CONFIG.ui && CONFIG.ui.headerTitle) el.innerHTML = CONFIG.ui.headerTitle;
-  }
-  function clearWeatherLabel() {
-    const page = document.getElementById('page-weather');
-    if (!page || !page.classList.contains('active')) return;
-    const container = document.getElementById('weather-content');
-    if (container) container.innerHTML = "<div style='text-align:center; padding:30px;'>載入天氣</div>";
-  }
-  function bustWeather(dayKey) {
-    const key = weatherKey(dayKey, weatherCity(dayKey));
-    if (weatherCacheKey !== key) {
-      weatherCacheKey = null;
-      weatherInFlightKey = null;
-      if (typeof weatherCache !== 'undefined') weatherCache = null;
-      try { localStorage.removeItem('weatherLastFetch'); } catch (e) {}
-      clearWeatherLabel();
-    }
-  }
-
-  window.fetchWeather = function () {
-    const dayKey = currentDay;
-    const city = weatherCity(dayKey);
-    const myId = ++weatherReqId;
-    const pendingKey = weatherKey(dayKey, city);
-    weatherInFlightKey = pendingKey;
-    weatherQueue = weatherQueue.then(function () {
-      return (async function () {
-        if (myId !== weatherReqId) return;
-        if (typeof currentDay !== 'undefined' && currentDay !== dayKey) return;
-        if (!city) {
-          await origFetchWeather();
-          return;
-        }
-        const saved = { lat: DESTINATION.lat, lon: DESTINATION.lon, timezone: DESTINATION.timezone, name: DESTINATION.name };
-        DESTINATION.lat = city.lat;
-        DESTINATION.lon = city.lon;
-        DESTINATION.timezone = city.timezone;
-        try {
-          await origFetchWeather();
-        } finally {
-          DESTINATION.lat = saved.lat;
-          DESTINATION.lon = saved.lon;
-          DESTINATION.timezone = saved.timezone;
-          DESTINATION.name = saved.name;
-        }
-        if (myId !== weatherReqId) return;
-        if (typeof currentDay !== 'undefined' && currentDay !== dayKey) return;
-        weatherCacheKey = pendingKey;
-      })();
-    }).catch(function () {});
-    return weatherQueue;
-  };
-
-  window.renderWeatherModule = function () {
-    const city = weatherCity(currentDay);
-    const key = weatherKey(currentDay, city);
-    if (!city || (weatherCacheKey !== key && weatherInFlightKey !== key)) {
-      if (city && weatherInFlightKey !== key) window.fetchWeather();
-      return;
-    }
-    const savedName = DESTINATION.name;
-    DESTINATION.name = city.name;
-    try {
-      origRenderWeather();
-    } finally {
-      DESTINATION.name = savedName;
-      restoreTripTitle();
-    }
-  };
-
-  window.selectDay = function (dayKey, chipEl) {
-    bustWeather(dayKey);
-    return origSelectDay(dayKey, chipEl);
-  };
-
-  window.switchMainPage = function (pageId, navEl) {
-    if (pageId === 'weather') bustWeather(currentDay);
-    return origSwitchMainPage(pageId, navEl);
-  };
-
-  restoreTripTitle();
-});
+// t313: approved data delta; contracts_t313 native daily-city weather replaces t311.
+(function () {
+ const get=id=>ITINERARY.items.find(x=>x.id===id);
+ const set=(id,o)=>{const e=get(id);if(!e)throw new Error('Missing existing id '+id);Object.assign(e,o);};
+ const backup=(id,o)=>{const e=INSPIRATIONS.find(x=>x.id===id);if(!e)throw new Error('Missing backup '+id);Object.assign(e,o);};
+ const card=(id,text,zh='')=>{SHORE_CARDS[id]=[text,zh];};
+ DESTINATION.name='鹿兒島';
+ set('evt_d1_garden',{note:'09:45–12:30為庭園、尚古集成館、切子及茶寮的共同時段，不加御殿。庭園近入口短區與精選展示分組看，連續接近、站看及步行合計約30分鐘便休5分鐘；不要求全園走完。切子約11:30–11:50屬本時段內子項，不另加上午。拍庭園框櫻島與錦江灣。'});
+ set('evt_d1_tenmonkan',{type:'shop',note:'午餐後只在真有購物需要時逛有蓋拱廊15–20分鐘；算入接近及站看，不為填空散步。延誤先刪，14:45轉車候補不延後；再縮城山，不壓縮園區與午餐。'});
+ set('evt_d2_park',{note:'放行便可前往；09:00是當地JST排序候補，不是要求等到才離船。水之庭園硬鋪通道看港口與水景20–25分鐘，長椅休5分鐘；接近及站看合計約30分鐘便休，不走上坡。'});
+ set('evt_d2_rurian',{tags:['當地JST候補','第一可刪'],note:'可刪短逛，不訂付費手作；先問當日能否看製作，不能便略過，不等開工。接近、站看算入同一組步行負荷，不因多一站再加30分鐘；延誤先刪本點，再縮眼鏡橋，保留午餐與出島。'});
+ set('evt_d2_megane',{note:'只從平地拍雙拱與倒影約10–15分鐘；不下河床、不走橋階。算入接近與站看，與瑠璃庵合計走約30分鐘便休5分鐘。延誤先刪瑠璃庵，再縮本點；不擠壓出島核心。'});
+ set('evt_d2_to_museum',{title:'前往出島',address:'Dejima front bridge approach, Dejima-machi',addressLocal:'長崎市出島町6-1 出島表門橋側',note:'眼鏡橋後另叫的士；14:10為當地JST候補出發，候車另留，車程由配車核對，不保證固定分鐘。請司機選表門橋附近大路合法下客，不把停車場或橋上當的士站；下車後走已核無階通道，橋有坡。',transport:{...get('evt_d2_to_museum').transport,from:'眼鏡橋',to:'出島表門橋側',durationMin:null}});
+ set('evt_d2_museum',{title:'出島',time:'14:30',tags:['當地JST候補','核心30分鐘'],address:'Dejima, 6-1 Dejima-machi',addressLocal:'長崎県長崎市出島町6-1',coords:null,openHours:'08:00–21:00；最後入場20:40（JST）；水門08:00–18:00',price:'成人¥1,100',website:'https://nagasakidejima.jp/about/',note:'約14:30–15:00候補看表門橋、復原主街外觀與一間1F貿易／倉庫展示，庭園長椅休5分鐘；不走16棟、不上2F、不再加海旁一輪。橋往返77m只是橋段，並非全程；有坡但斜度未測，連接無階通道，場內疲倦便折返。拍橋框街景及商館立面，不入鏡擋路。15:35候補叫車回港前留集合及候車餘量，須先按船鐘換算核對。'});
+ set('evt_d2_return',{note:'從出島附近大路合法上車，15:35 JST是候補起程；叫車與集合另留，車程由配車確認。船時17:00到松が枝碼頭，當地截止待核；對鐘後若餘量不足，先刪瑠璃庵、再縮眼鏡橋，不把17:00當JST。',transport:{...get('evt_d2_return').transport,from:'出島表門橋附近合法上車處',durationMin:null}});
+ card('evt_d2_to_museum','行き先：出島・表門橋側\n住所：長崎市出島町6-1\n橋には入らず、近くの大通りの合法的な場所で降ろしてください。','出島表門橋側下車；橋有坡，勿當全平。');
+ backup('ins_d2_rain',{title:'出島ワーフ海港景',tag:'TIRED',nearEventId:'evt_d2_museum',address:'Dejima Wharf, 1-1-109 Dejima-machi',addressLocal:'長崎市出島町1-1-109',note:'取代出島核心的海港景備案，不與主線疊加；不重走早上水之庭園。鄰近縣營停車場側合法下客，不駛入海濱；2F公共平台有椅，電梯在面海中央樓梯右側。大雨不勉強戶外，也不為休息買咖啡；仍按船時17:00到港倒推。'});
+ card('ins_d2_rain','行き先：出島ワーフ\n住所：長崎市出島町1-1-109\n近隣の県営駐車場側の合法的な場所で降ろしてください。','替代出島，不與主線疊加。');
+ backup('ins_d2_drop_ruri',{title:'長崎減腳程順序',note:'先刪瑠璃庵；眼鏡橋縮為平地短拍或刪除。保留午餐與出島30分鐘核心＋休5，不加第二輪海旁；若出島橋段不適便用Wharf替代，不把有坡寫全平。'});
+ set('evt_d3_yusen',{note:'09:00當地JST開門，放行即出發。只選池景近入口短區20–25分鐘，不繞全園、不登高台；接近及站看一併算，約30分鐘休5分鐘。先問職員椅位，普通高椅未核，不把地席當椅保證；需要時用大濠替代。'});
+ set('evt_d3_machiya',{note:'13:40當地JST候補，選織實演與一個精選展區約20–30分鐘；不全館巡遊。站看、接近與之後山笠同時計步行負荷，中間休5分鐘，不把下一站再當一組30分鐘。實演若取消便看町家本身；拍織機先問職員。'});
+ const approach=evt({id:"trp_7093e0fa496247048731250601df0068",day:3,time:'14:35',timeHint:'afternoon',type:'transport',title:'前往櫛田山笠',cityId:'fukuoka',address:'Kushida Shrine, parking-side entrance',addressLocal:'福岡市博多区上川端町1-41 櫛田神社 駐車場側入口',tags:['當地JST候補','短接近'],note:'町家後先休5分鐘，再由停車場側入口接近山笠；平地有部分砂礫，實際接近距離及椅位未核，不保證幾分鐘可到。媽媽當下不適便刪山笠，不加冷泉長散步。若需改乘的士，請職員協助合法上下客，不能假設可開到山笠旁。',transport:{mode:'walk',from:'博多町家',to:'櫛田神社停車場側入口・山笠',fromEventId:null,toEventId:null,operator:null,line:null,durationMin:null,stopCount:null,liveApi:null}});
+ ITINERARY.items.splice(ITINERARY.items.findIndex(x=>x.id==='evt_d3_street'),0,approach);
+ set('evt_d3_street',{title:'櫛田山笠',address:'Kushida Shrine, 1-41 Kamikawabatamachi',addressLocal:'福岡県福岡市博多区上川端町1-41 櫛田神社',openHours:'境內04:00–22:00（JST）；山笠通常展示，6月換展',price:'境內短看免費',website:'https://www.crossroadfukuoka.jp/spot/12510',tags:['當地JST候補','只看山笠'],note:'已批准進境內，只看13m山笠正反面10–15分鐘便原路離開；不是街外展品。不參拜、不進本殿、不訪其他小祠。停車場側避正門梯，部分砂礫；不保證可車到展品旁或有椅。取代冷泉長散步，不額外加步行組；疲累或延誤先刪山笠，保留町家實演及午餐。'});
+ set('evt_d3_return',{transport:{...get('evt_d3_return').transport,from:'櫛田神社停車場側附近合法上車處'}});
+ card("trp_7093e0fa496247048731250601df0068",'行き先：櫛田神社・山笠\n住所：福岡市博多区上川端町1-41\n駐車場側の入口を案内してください。山笠を見るだけで参拝しません。','只是山笠接近卡；如改乘車，合法下客點由司機選。');
+ card('evt_d3_street','行き先：櫛田神社・山笠\n住所：福岡市博多区上川端町1-41\n駐車場側から入り、山笠だけを見て戻ります。参拝しません。');
+ backup('ins_d3_tired',{note:'先刪山笠及街拍，保留町家實演與午餐；不換成冷泉長散步。町家、接近及山笠合計約走30分鐘便休5分鐘，並非每站另給30分鐘。'});
+ backup('ins_d3_tight',{note:'時間不足保留町家實演，不再跨區或加冷泉散步；山笠可刪。回港最遲於船時截止前75分鐘叫車，先換算當地鐘。'});
+ set('evt_d4_to_songdo',{tags:['訂單09:00 KST','已訂包車','08:00待確認'],note:'LOYQU已訂09:00 KST服務、3人無行李；08:00僅提早目標，未獲供應商確認，仍視放行與入境。原單北港충장대로206的1F Arrival Hall會合，與常見2F入境不同，先確認樓層，不自行改點。接車與12:00 KST午餐需對照船鐘；船時16:00到港硬線不變。'});
+ set('evt_d4_cable',{note:'免預約，當天現場買票；網票最早翌日使用。往返纜車是主體，對岸只看1F廣場10–15分鐘，不走吊橋／上坡公園；排隊過久先刪對岸停留，不壓12:00 KST正餐60–75分鐘。天候停駛用備案，船時回港倒推須先對鐘。'});
+ set('evt_d4_lunch',{timeHint:'afternoon'});
+ const ng=PHRASE_DATA.find(x=>x.category==='長崎司機');
+ const wharf=ng.items.find(x=>x.term_pronounce==='出島ワーフ');if(wharf)wharf.term_pronounce='出島ワーフ備案';
+ ng.items.push({term_primary:'出島の表門橋側へ。出島町6-1です。近くの大通りの合法的な場所で降ろしてください。',term_secondary:'出島主線；勿把車開上橋，橋有坡。',term_pronounce:'出島核心'});
+ PHRASE_DATA.find(x=>x.category==='福岡司機').items.push({term_primary:'櫛田神社の駐車場側へ。上川端町1-41です。山笠だけを見て戻り、参拝しません。',term_secondary:'已批准境內只看山笠；不進本殿、不參拜。',term_pronounce:'櫛田山笠'});
+ PHRASE_DATA.find(x=>x.category==='釜山包車').items[0].term_primary='예약은 현지 시간 09:00입니다. 08:00 변경과 만날 층은 아직 확인 중입니다.';
+ for(const e of [...ITINERARY.items,...INSPIRATIONS]) {
+   e.source='ai';
+   for(const key of ['coords','phone','whatsapp','line','messenger','openHours','price','website','cost']) if(e[key]===undefined)e[key]=null;
+   if(e.transport){e.transport.fromEventId=null;e.transport.toEventId=null;e.transport.liveApi=null;if(!Object.prototype.hasOwnProperty.call(e.transport,'stopCount'))e.transport.stopCount=null;}
+ }
+})();
