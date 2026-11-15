@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T14:59:58.840Z
+// buildTime: 2026-11-15T15:00:55.590Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1041,3 +1041,26 @@ for (const e of ITINERARY.items) {
  if (SHORE_MODAL_COPY[e.id]) [e.openHours,e.price,e.note] = SHORE_MODAL_COPY[e.id];
  if (SHORE_RIDE_COPY[e.id]) e.note = SHORE_RIDE_COPY[e.id];
 }
+
+// Place each port-to-first-stop transfer before sightseeing, without a made-up clock.
+const SHORE_FIRST_LEGS = ['evt_d1_to_garden','evt_d2_to_park','evt_d3_to_yusen','evt_d4_to_songdo'];
+if (typeof window !== 'undefined') window.addEventListener('load', function () {
+  const getOriginal = window.getItemsByDay;
+  window.getItemsByDay = function(day) {
+    return getOriginal(day).sort((a,b) => Number(SHORE_FIRST_LEGS.includes(b.id)) - Number(SHORE_FIRST_LEGS.includes(a.id)));
+  };
+  const renderOriginal = window.renderTimeline;
+  window.renderTimeline = function(key) {
+    renderOriginal(key);
+    const day = Number(String(key).replace('day',''));
+    const items = window.getItemsByDay(day);
+    const rows = document.querySelectorAll('#timeline-container .timeline-item');
+    rows.forEach((row,i) => {
+      const item=items[i];if(!item)return;
+      const time=row.querySelector('.card-time');
+      if (time && SHORE_FIRST_LEGS.includes(item.id)) time.textContent='放行後';
+      if (time && /_return$/.test(item.id)) time.textContent='船時'+(item.day===4?'16:00':'17:00')+'前到';
+    });
+  };
+  window.renderTimeline(typeof currentDay === 'string' ? currentDay : 'day1');
+});
