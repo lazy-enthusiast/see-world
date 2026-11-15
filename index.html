@@ -696,6 +696,7 @@ let modalMap = null;
 let currentEventData = null;
 let exchangeRate = 0.053;
 let weatherCache = null;
+let weatherCacheCityId = null;
 let shopState = {};
 
 // 4. 啟動程式
@@ -800,6 +801,34 @@ const STATUS_LABELS = { confirmed: '已確認', pending: '待定', wishlist: '�
 function getCityById(cityId) {
   if (!cityId || !Array.isArray(CITIES)) return null;
   return CITIES.find(c => c.id === cityId) || null;
+}
+
+/** Primary city for a day from CITIES[].days (one city per day). */
+function getPrimaryCityForDay(dayNum) {
+  if (!Array.isArray(CITIES) || dayNum == null) return null;
+  return CITIES.find(c => Array.isArray(c.days) && c.days.includes(dayNum)) || null;
+}
+
+/** Weather location for the selected day: primary city, else DESTINATION. */
+function getWeatherLocation() {
+  const dayNum = dayMeta[currentDay] && dayMeta[currentDay].dayNum;
+  const city = getPrimaryCityForDay(dayNum);
+  if (city && city.lat != null && city.lon != null) {
+    return {
+      id: city.id,
+      name: city.name,
+      lat: city.lat,
+      lon: city.lon,
+      timezone: city.timezone || DESTINATION.timezone
+    };
+  }
+  return {
+    id: DESTINATION.slug || 'destination',
+    name: DESTINATION.name,
+    lat: DESTINATION.lat,
+    lon: DESTINATION.lon,
+    timezone: DESTINATION.timezone
+  };
 }
 
 function formatMoney(amount, currency) {
@@ -912,9 +941,10 @@ function convertCurrency() {
   }
 }
 
-// 8. 天氣（沿用原本，但 dayMeta 改名）
+// 8. 天氣（依當日主城座標；無主城則 DESTINATION）
 async function fetchWeather() {
-  const lat = DESTINATION.lat, lon = DESTINATION.lon;
+  const loc = getWeatherLocation();
+  const lat = loc.lat, lon = loc.lon;
   const targetDateStr = dayMeta[currentDay].date;
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -922,7 +952,7 @@ async function fetchWeather() {
   const diffDays = Math.round((targetDate - today) / (1000 * 60 * 60 * 24));
 
   let url = ""; let isArchive = false;
-  const tz = encodeURIComponent(DESTINATION.timezone);
+  const tz = encodeURIComponent(loc.timezone);
   if (diffDays >= -1 && diffDays <= 15) {
     url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max&hourly=temperature_2m,weathercode,precipitation_probability,relative_humidity_2m&timezone=${tz}&forecast_days=16`;
   } else {
@@ -939,8 +969,10 @@ async function fetchWeather() {
       if (!data.daily.uv_index_max) data.daily.uv_index_max = [3];
       if (!data.hourly.precipitation_probability) data.hourly.precipitation_probability = new Array(24).fill(0);
     }
-    weatherCache = data; weatherCache.isArchive = isArchive;
+    weatherCache = data; weatherCache.isArchive = isArchive; weatherCache.locationName = loc.name;
+    weatherCacheCityId = loc.id;
     localStorage.setItem('weatherLastFetch', new Date().getTime());
+    localStorage.setItem('weatherLastCityId', loc.id);
     if (document.getElementById('page-weather').classList.contains('active')) renderWeatherModule();
   } catch (e) {
     console.error(e);
@@ -959,6 +991,7 @@ function renderWeatherModule() {
     apiIndex = weatherCache.daily.time.indexOf(targetDate);
     if (apiIndex === -1) { container.innerHTML = `<div style='text-align:center; padding:40px;'>尚無預報</div>`; return; }
   }
+  const locName = weatherCache.locationName || getWeatherLocation().name;
   const d = weatherCache.daily; const code = d.weathercode[apiIndex];
   const wmo = { 0:{i:'fa-sun',t:'晴朗'}, 1:{i:'fa-cloud-sun',t:'多雲'}, 2:{i:'fa-cloud-sun',t:'多雲'}, 3:{i:'fa-cloud',t:'陰天'}, 45:{i:'fa-smog',t:'霧'}, 51:{i:'fa-cloud-rain',t:'毛毛雨'}, 61:{i:'fa-cloud-showers-heavy',t:'陣雨'}, 80:{i:'fa-cloud-showers-water',t:'雷陣雨'}, 95:{i:'fa-bolt',t:'雷雨'} };
   const w = wmo[code] || {i:'fa-cloud',t:'多雲'};
@@ -966,7 +999,7 @@ function renderWeatherModule() {
   const minTemp = Math.round(d.temperature_2m_min[apiIndex]);
   const rainProb = d.precipitation_probability_max ? d.precipitation_probability_max[apiIndex] : 0;
   const tagText = weatherCache.isArchive ? "歷史平均 (去年)" : "即時預報";
-  container.innerHTML = `<div class="weather-main-card"><div class="weather-tag-badge">${tagText}</div><div class="weather-header-row"><div><div class="weather-condition"><i class="fa-solid fa-location-arrow" style="font-size:0.8rem;"></i> ${DESTINATION.name}</div><div class="weather-hl">H:${maxTemp}° L:${minTemp}°</div></div><div class="weather-main-icon" style="color:inherit"><i class="fa-solid ${w.i}"></i></div></div><div class="weather-big-temp">${maxTemp}°</div><div style="font-weight:500;">${w.t} • 降雨 ${rainProb}%</div></div>`;
+  container.innerHTML = `<div class="weather-main-card"><div class="weather-tag-badge">${tagText}</div><div class="weather-header-row"><div><div class="weather-condition"><i class="fa-solid fa-location-arrow" style="font-size:0.8rem;"></i> ${locName}</div><div class="weather-hl">H:${maxTemp}° L:${minTemp}°</div></div><div class="weather-main-icon" style="color:inherit"><i class="fa-solid ${w.i}"></i></div></div><div class="weather-big-temp">${maxTemp}°</div><div style="font-weight:500;">${w.t} • 降雨 ${rainProb}%</div></div>`;
   const hContainer = document.getElementById('weather-hourly'); hContainer.innerHTML = '';
   const startHour = weatherCache.isArchive ? 0 : apiIndex * 24;
   [9, 12, 15, 18, 21].forEach(hour => {
@@ -1014,7 +1047,10 @@ function switchMainPage(pageId, navEl) {
   if (pageId === 'weather') {
     const now = new Date().getTime();
     const lastFetch = localStorage.getItem('weatherLastFetch');
-    if (!weatherCache || !lastFetch || (now - lastFetch > 3600000)) fetchWeather();
+    const loc = getWeatherLocation();
+    const cityChanged = weatherCacheCityId !== loc.id
+      || localStorage.getItem('weatherLastCityId') !== loc.id;
+    if (!weatherCache || !lastFetch || cityChanged || (now - lastFetch > 3600000)) fetchWeather();
     else renderWeatherModule();
   }
   if (pageId === 'inspiration') renderInspirationPage();
