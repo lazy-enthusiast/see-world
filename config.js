@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T16:02:55.910Z
+// buildTime: 2026-11-15T16:53:54.694Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1264,4 +1264,64 @@ const SHORE_APPROVED_DELTA = (() => {
  // Update only two-port fallback descriptions; no restaurant or visual changes.
  const k=PHRASE_DATA.find(g=>g.category==='鹿兒島司機');
  if(k)k.items.push({term_primary:'ウォーターフロントパークへ。本港新町、隣接する県営駐車場側で降ろしてください。',term_secondary:'本港海濱公園，鄰接縣營停車場側。',term_pronounce:'本港海濱'});
+})();
+
+
+// t299: Kagoshima slow-paced route only. Other ports retain final approved values.
+(() => {
+ const find=id=>ITINERARY.items.find(e=>e.id===id);
+ const set=(id,o)=>Object.assign(find(id),o);
+ const card=(id,text)=>{SHORE_CARDS[id]=[text,''];};
+ set('evt_d1_to_garden',{
+   note:'通關放行後到terminal前的士待機場配車；行車規劃35–50分鐘，候車另留。目標09:45入園，不把GO即叫或預約當保證。',
+   transport:{...find('evt_d1_to_garden').transport,durationMin:null}
+ });
+ set('evt_d1_garden',{
+   time:'09:45',tags:['當地JST候補','上午慢遊'],
+   note:'09:45–12:00留給庭園、尚古集成館、切子與茶寮休息；不加御殿。先庭園與尚古，約11:30轉切子子項，不重複計時。約連續走30分鐘休5分鐘。拍照：庭園前景、櫻島及錦江灣。'
+ });
+ set('evt_d1_kiriko',{
+   time:'11:30',tags:['當地JST候補','上午子項','免費免約'],
+   note:'上午園區時段內約11:30–11:50看玻璃製作，預留離園轉車，12:00前結束。工場12:00–13:00休息；維修停工時略過，拍照先問職員。'
+ });
+ set('evt_d1_to_fukuya',{
+   time:'12:00',timeHint:'afternoon',tags:['當地JST候補','逐段叫車'],
+   note:'目標12:00離園上車，離園前請受付提早代叫。往ふくや預留25–40分鐘轉移，含配車、交通與酒店電梯；目標12:30午餐，較慢可至12:40，不壓縮園區及用餐。',
+   transport:{...find('evt_d1_to_fukuya').transport,durationMin:null}
+ });
+ set('evt_d1_fukuya',{
+   time:'12:30',tags:['當地JST候補','待訂位確認'],
+   note:'目標12:30–13:45午餐；原詢問12:45，新希望12:30尚未對外更改。WhatsApp身份驗證已完成，仍待訂位確認。建議豬排或生姜燒；湯醬配菜用忌口卡核對。酒店側電梯上2F，請職員協助往返。全席禁煙。延誤先刪天文館，再縮城山，不壓縮午餐。'
+ });
+ const tenmonkan=evt({id:'evt_d1_tenmonkan',day:1,time:'13:45',timeHint:'afternoon',type:'sight',title:'天文館有蓋拱廊',cityId:'kagoshima',tags:['當地JST候補','延誤先刪'],address:'Tenmonkan covered arcade',addressLocal:'鹿児島市 天文館',note:'午餐後13:45–14:15在平地有蓋拱廊散步購物，約走30分鐘休5分鐘。延誤先刪本段，不推遲回港。'});
+ const index=ITINERARY.items.findIndex(e=>e.id==='evt_d1_to_waterfront');ITINERARY.items.splice(index,0,tenmonkan);
+ set('evt_d1_to_waterfront',{
+   id:'evt_d1_to_shiroyama',title:'前往城山展望台停車場',time:'14:15',tags:['當地JST候補','逐段叫車'],address:'Shiroyama Observatory parking area',addressLocal:'鹿児島市城山町 城山展望台駐車場',
+   note:'天文館乘的士往城山停車場，14:30到為目標，車程及候車待配車核對。上車時向司機商量付費等候，15:15再直送海洋港；須司機接受，不是已訂等候車。',
+   transport:{...find('evt_d1_to_waterfront').transport,from:'天文館',to:'城山展望台停車場',fromEventId:'evt_d1_tenmonkan',toEventId:'evt_d1_shiroyama',durationMin:null}
+ });
+ set('evt_d1_waterfront',{
+   id:'evt_d1_shiroyama',title:'城山展望台',time:'14:30',tags:['當地JST候補','15:15起回程'],address:'Shiroyama Observatory',addressLocal:'鹿児島市城山町',
+   note:'14:30–15:15含停車場往返與看景拍照。停車場至展望位沿途有坡，官方局部8–10%，不是全平；不走2公里登山步道。拍櫻島、錦江灣與市景。延誤先刪天文館，再縮本段，不延後回港。'
+ });
+ card('evt_d1_to_shiroyama','行き先：城山展望台駐車場\n住所：鹿児島市城山町\n登山道の入口ではなく、展望台側の駐車場で降ろしてください。');
+ delete SHORE_CARDS.evt_d1_to_waterfront;
+ set('evt_d1_return',{
+   time:'15:15',timeHint:'afternoon',tags:['當地JST候補','船時17:00到碼頭'],
+   note:'15:15 JST候補從城山起程；建議去程司機同意付費等候後直送マリンポート，未同意便預先安排另叫車，不假設現場有車。回程行車留35–50分鐘，約15:50–16:05 JST到港，等車另留；17:00船時到碼頭不放寬，對鐘後必要時提早離開。',
+   transport:{...find('evt_d1_return').transport,from:'城山展望台停車場',fromEventId:'evt_d1_shiroyama',durationMin:null}
+ });
+ for(const e of INSPIRATIONS){
+   if(e.id==='ins_d1_k3'){
+     Object.assign(e,{title:'御膳所 桜華亭',address:'Ohkatei, Sengan-en 2F',addressLocal:'鹿児島市吉野町9700-1 仙巌園内2F',phone:null,website:null,openHours:'11:00–16:00；最後點餐15:30（JST）',price:'黑豚鍋御膳¥3,000／重疊豬排御膳¥2,400',note:'園內午餐備案；電梯上2F，有普通桌椅。3人一般席現場候位、不接受普通預約；菊花套餐含蝦不選，湯醬與小菜用忌口卡確認。'});
+   }
+   if(e.id==='ins_d1_tired')e.note='保留仙巌園與午餐；午後先刪天文館散步，再縮城山，不壓縮上午及用餐。';
+   if(e.id==='ins_d1_traffic')e.note='離園前請受付代叫的士；城山去程先商量付費等候再直返港。延誤先刪天文館，再縮城山；船時17:00前到海洋港。';
+ }
+ card('evt_d1_to_fukuya','行き先：黒豚ふくや本店\n住所：鹿児島市東千石町1-32 レム鹿児島2F\nホテル入口側で降ろしてください。');
+ card('ins_d1_k3','行き先：仙巌園内 御膳所 桜華亭\n住所：鹿児島市吉野町9700-1 仙巌園内2階\nエレベーターに近い合法的な場所で降ろしてください。');
+ INSPIRATIONS.push({id:'ins_d1_waterfront',title:'本港海濱公園',tag:INSPIRATIONS.find(e=>e.id==='ins_d1_tired').tag,type:'sight',cityId:'kagoshima',nearEventId:'evt_d1_shiroyama',status:'wishlist',source:'ai',address:'Waterfront Park, Honkoshinmachi',addressLocal:'鹿児島市本港新町 ウォーターフロントパーク',note:'午後海濱備案，不與城山疊加；看櫻島、錦江灣及港口船隻，約走30分鐘休5分鐘。鄰接縣營停車場側合法上下客，仍須按船時17:00到港線倒推回程。'});
+ card('ins_d1_waterfront','行き先：ウォーターフロントパーク\n住所：鹿児島市本港新町\n隣接する県営駐車場側の合法的な場所で降ろしてください。');
+ const g=PHRASE_DATA.find(x=>x.category==='鹿兒島司機');
+ if(g){g.items=g.items.filter(x=>!/黒かつ亭|黒べぇ|ウォーターフロントパーク/.test(x.term_primary||''));g.items.push({term_primary:'城山展望台駐車場へ。鹿児島市城山町です。',term_secondary:'展望台側停車場下車，不走山腳登山步道。',term_pronounce:'城山展望台'},{term_primary:'仙巌園内の御膳所 桜華亭へ。吉野町9700-1です。',term_secondary:'園內2F午餐備案，用電梯。',term_pronounce:'桜華亭備案'});}
 })();
