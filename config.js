@@ -27,7 +27,8 @@ const CONFIG = {
     browserTitle: "海洋光譜號岸上行程",
     headerTitle: "海洋光譜號岸上行程",
     homeTimezone: "Asia/Hong_Kong",
-    homeTimeLabel: "船時"
+    homeTimeLabel: "香港",
+    shipTimezone: "Asia/Hong_Kong"
   },
   startDate: "2026-11-25",
   duration: 4,

@@ -723,10 +723,14 @@ function init() {
 }
 
 function updateHomeClock() {
-  if (!CONFIG.ui.homeTimezone) return;
-  const options = { timeZone: CONFIG.ui.homeTimezone, hour: '2-digit', minute: '2-digit', hour12: false };
+  const ui = CONFIG.ui || {};
+  // 郵輪：船時由 config.ui.shipTimezone 指定；否則固定顯示香港時間
+  const shipTz = ui.shipTimezone;
+  const tz = shipTz || ui.homeTimezone || 'Asia/Hong_Kong';
+  const label = shipTz ? '船時' : '香港';
+  const options = { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false };
   const timeString = new Date().toLocaleTimeString('en-US', options);
-  document.getElementById('home-clock').innerText = `${CONFIG.ui.homeTimeLabel} ${timeString}`;
+  document.getElementById('home-clock').innerText = `${label} ${timeString}`;
 }
 
 // 5. 依 day 篩選 + 排序行程
