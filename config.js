@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T14:34:54.470Z
+// buildTime: 2026-11-15T14:47:37.283Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -24,8 +24,8 @@ const THEME_CONFIG = {
 
 const CONFIG = {
   ui: {
-    browserTitle: "岸上候補 Nov 25–28｜船鐘待核",
-    headerTitle: "岸上候補・未可照表行",
+    browserTitle: "海洋光譜號岸上行程",
+    headerTitle: "海洋光譜號岸上行程",
     homeTimezone: "Asia/Hong_Kong",
     homeTimeLabel: "香港"
   },
@@ -41,7 +41,7 @@ const CONFIG = {
 };
 
 const DESTINATION = {
-  name: "Spectrum 岸上",
+  name: "海洋光譜號岸上行程",
   slug: "spectrum-shore",
   lat: 31.6,
   lon: 130.56,
@@ -956,3 +956,80 @@ const PHRASE_DATA = [
     { term_primary: "全席禁煙・椅子席を希望します。 금연·의자석을 원합니다.", term_secondary: "完整日韓忌口與湯醬配菜核對卡在本日餐廳忌口備註。", term_pronounce: "禁煙椅子" }
   ]}
 ];
+
+// Compact existing timeline; cards open on demand inside the existing modals.
+const SHORE_CARDS = {
+  evt_d1_to_garden: [CARD_K1, CARD_K1_ZH],
+  evt_d1_to_fukuya: [CARD_K2, CARD_K2_ZH],
+  evt_d1_to_aq: [CARD_K_AQ, CARD_K_AQ_ZH],
+  ins_d1_rain: [CARD_K4, CARD_K4_ZH],
+  ins_d1_k3: [CARD_K3, CARD_K3_ZH],
+  evt_d1_return: [CARD_K_RET, CARD_K_RET_ZH],
+  evt_d2_to_park: [CARD_N6, CARD_N6_ZH],
+  evt_d2_to_rurian: [CARD_N4, CARD_N4_ZH],
+  evt_d2_to_katsu: [CARD_N2, CARD_N2_ZH],
+  evt_d2_to_megane: [CARD_N3, CARD_N3_ZH],
+  evt_d2_to_museum: [CARD_N_MUSE, CARD_N_MUSE_ZH],
+  ins_d2_pave: [CARD_N5, CARD_N5_ZH],
+  evt_d2_return: [CARD_N_RET, CARD_N_RET_ZH],
+  evt_d3_to_yusen: [CARD_F1, CARD_F1_ZH],
+  evt_d3_to_hm: [CARD_F2, CARD_F2_ZH],
+  evt_d3_to_machiya: [CARD_F4, CARD_F4_ZH],
+  ins_d3_ohori: [CARD_F3, CARD_F3_ZH],
+  evt_d3_return: [CARD_F_RET, CARD_F_RET_ZH],
+  evt_d4_b0: [CARD_B0, CARD_B0_ZH],
+  evt_d4_to_songdo: [CARD_B1, CARD_B1_ZH],
+  evt_d4_to_hotel: [CARD_B2, CARD_B2_ZH],
+  evt_d4_to_base: [CARD_B_BACK, CARD_B_BACK_ZH],
+  evt_d4_return: [CARD_B3, CARD_B3_ZH],
+  ins_d4_b4: [CARD_B4, CARD_B4_ZH]
+};
+const SHORE_FULL_TEXTS = Object.values(SHORE_CARDS).flat();
+const SHORE_CLOCK_NOTES = {};
+for (const e of ITINERARY.items) if (/_clock$/.test(e.id)) SHORE_CLOCK_NOTES[e.day] = e.note;
+ITINERARY.items = ITINERARY.items.filter(e => !/_(clock|diet)$/.test(e.id) && e.id !== 'evt_d4_b0');
+for (const e of ITINERARY.items) {
+  let note = e.note || '';
+  for (const text of SHORE_FULL_TEXTS) if (text) note = note.split(text).join('');
+  for (const text of [CLOCK, SHOW, WALK]) if (text) note = note.split(text).join('');
+  note = note.replace(/\n{3,}/g, '\n\n').trim();
+  if (e.transport) {
+    e.type = 'transport';
+    e.title = /_return$/.test(e.id) ? '返回郵輪碼頭' : e.transport.to;
+    e.note = note + '\n司機卡請按下方按鈕。';
+    if (/_return$/.test(e.id)) e.note = '到碼頭期限：船時' + (e.day===4?'16:00':'17:00') + '；當地換算待核。\n' + e.note;
+    if (/to_garden|to_park|to_yusen/.test(e.id)) {
+      e.time = null;
+      e.note = '通關放行後即叫車；先核船鐘與當地時間，景點開門時間以當地鐘為準。\n' + e.note;
+    }
+  } else e.note = note;
+  if (e.type==='food') e.note += '\n爸爸不吃蝦蟹；媽媽不吃牛。請用下方忌口卡確認湯底及醬料。';
+}
+if (typeof window !== 'undefined') window.addEventListener('load', function () {
+  const original = window.fillModalActions;
+  if (typeof original !== 'function') return;
+  function card(title, text) {
+    const old = document.getElementById('shore-show-card'); if(old) old.remove();
+    const backdrop = document.createElement('div'); backdrop.id='shore-show-card';
+    backdrop.style.cssText='position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:18px;';
+    const panel=document.createElement('section'); panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label',title);
+    panel.style.cssText='background:#f4f2eb;color:#263d32;border-radius:18px;padding:22px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;box-sizing:border-box;';
+    const close=document.createElement('button');close.textContent='關閉';close.className='btn-action btn-outline';close.onclick=()=>backdrop.remove();
+    const heading=document.createElement('h2');heading.textContent=title;
+    const body=document.createElement('div');body.style.cssText='white-space:pre-wrap;font-size:22px;line-height:1.65;overflow-wrap:anywhere;';body.textContent=text;
+    panel.append(close,heading,body);backdrop.append(panel);backdrop.onclick=e=>{if(e.target===backdrop)backdrop.remove();};document.body.append(backdrop);close.focus();
+    backdrop.addEventListener('keydown',e=>{if(e.key==='Escape')backdrop.remove();});
+  }
+  window.fillModalActions=function(data,layout){
+    original(data,layout);
+    const box=document.getElementById('modal-actions');
+    function button(label,text){const b=document.createElement('button');b.type='button';b.className='btn-action btn-outline';b.textContent=label;b.onclick=()=>card(label,text);box.append(b);}
+    if(SHORE_CARDS[data.id]) button('顯示司機卡',SHORE_CARDS[data.id].join('\n\n'));
+    if(data.type==='food') {
+      const ko=data.cityId==='busan';
+      button('爸爸：不吃蝦蟹',ko?'아버지는 새우와 게를 먹지 않습니다. 국물·소스에도 들어 있나요?':'父は海老・蟹を食べません。だし・ソースにも入っていますか？');
+      button('媽媽：不吃牛',ko?'어머니는 소고기를 먹지 않습니다. 육수·소스에도 들어 있나요?':'母は牛肉を食べません。だし・ソースにも入っていますか？');
+    }
+    if(data.transport) button('船時與回港提醒','日本：船時17:00前到碼頭。釜山：船時16:00前到碼頭。\n當地換算待船方核實；司機卡的當地截止時間填妥後才可使用。');
+  };
+});
