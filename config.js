@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T15:19:29.018Z
+// buildTime: 2026-11-15T15:46:55.752Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1027,8 +1027,8 @@ if (typeof window !== 'undefined') window.addEventListener('load', function () {
     if(SHORE_CARDS[data.id]) button('顯示司機卡',SHORE_CARDS[data.id].join('\n\n'));
     if(data.type==='food') {
       const ko=data.cityId==='busan';
-      button('爸爸：不吃蝦蟹',ko?'아버지는 새우와 게를 먹지 않습니다. 국물·소스에도 들어 있나요?':'父は海老・蟹を食べません。だし・ソースにも入っていますか？');
-      button('媽媽：不吃牛',ko?'어머니는 소고기를 먹지 않습니다. 육수·소스에도 들어 있나요?':'母は牛肉を食べません。だし・ソースにも入っていますか？');
+      button('爸爸：不吃蝦蟹',ko?(data.id==='evt_d4_lunch'?'맵지 않게 가능한가요? 새우·게 육수는 빼 주세요.':'아버지는 새우와 게를 먹지 않습니다. 국물·소스에도 들어 있나요?'):'父は海老・蟹を食べません。だし・ソースにも入っていますか？');
+      button('媽媽：不吃牛',ko?(data.id==='evt_d4_lunch'?'소고기 육수는 빼 주세요.':'어머니는 소고기를 먹지 않습니다. 육수·소스에도 들어 있나요?'):'母は牛肉を食べません。だし・ソースにも入っていますか？');
     }
   };
 });
@@ -1058,7 +1058,8 @@ if (typeof window !== 'undefined') window.addEventListener('load', function () {
       const item=items[i];if(!item)return;
       const time=row.querySelector('.card-time');
       if (time && SHORE_FIRST_LEGS.includes(item.id)) time.textContent='放行後';
-      if (time && /_return$/.test(item.id)) time.textContent='船時'+(item.day===4?'16:00':'17:00')+'前到';
+      if (time && /_return$/.test(item.id)) time.textContent=item.id==='evt_d4_return'?'船時15:00出發｜16:00前到':'船時17:00前到';
+   if (time && item.id==='evt_d4_to_base') time.textContent='船時13:45出發';
     });
   };
   window.renderTimeline(typeof currentDay === 'string' ? currentDay : 'day1');
@@ -1112,3 +1113,81 @@ for(const e of INSPIRATIONS){
  if(e.id==='ins_d2_pave')e.note='自助午餐備選；酒店正門下車，乘電梯上2F。逐道核對牛肉、蝦蟹及湯醬。';
  if(e.id==='ins_d3_ohori')e.note='湖景咖啡與桌椅休息，正門附近下車，不繞湖。';
 }
+
+
+// Approved travel-data delta, Nov 15: no app, schema or rendering changes.
+const SHORE_APPROVED_DELTA = (() => {
+ const byId = id => ITINERARY.items.find(e => e.id === id);
+ const patch = (id, fields) => Object.assign(byId(id), fields);
+ const shortCard = (id, text) => { SHORE_CARDS[id] = [text, '']; };
+ // Keep all unrelated baseline items and modal behavior unchanged.
+ ITINERARY.items = ITINERARY.items.filter(e => !['evt_d1_to_aq','evt_d1_aq'].includes(e.id));
+ for (let i=INSPIRATIONS.length-1;i>=0;i--) if(INSPIRATIONS[i].id==='ins_d1_rain') INSPIRATIONS.splice(i,1);
+ delete SHORE_CARDS.evt_d1_to_aq; delete SHORE_CARDS.ins_d1_rain;
+ patch('evt_d1_kiriko',{note:'免預約，參觀玻璃製作；維修停工時略過。拍照前先問職員。'});
+ patch('evt_d1_return',{
+   time:null, address:'Marine Port Kagoshima', addressLocal:'鹿児島県鹿児島市中央港新町1-10',
+   note:'午餐後另叫的士，從ふくや本店返回マリンポートかごしま。候車約20–30分鐘，車程約25–40分鐘。船時17:00前到碼頭；不另加景點。',
+   transport:{...byId('evt_d1_return').transport,from:'黒豚ふくや本店',to:'マリンポートかごしま',fromEventId:'evt_d1_fukuya',toEventId:null,durationMin:40}
+ });
+ shortCard('evt_d1_return','行き先：マリンポートかごしま\n住所：鹿児島県鹿児島市中央港新町1-10\nターミナル入口近くの合法的な場所で降ろしてください。');
+ for(const e of INSPIRATIONS){
+   if(e.id==='ins_d1_tired') e.note='保留仙巌園近入口庭園，刪切子；約走30分鐘休5分鐘。午餐後回海洋港。';
+   if(e.id==='ins_d1_traffic') e.note='請仙巌園受付代叫的士；延誤先刪切子，午餐後另叫車回海洋港，船時17:00前到。';
+ }
+ // Retain the hotel restaurant as a normal food backup, including its driver card.
+ const song = {...byId('evt_d4_lunch'),id:'ins_d4_songdo_kitchen',tag:'RAINY',status:'wishlist',nearEventId:'evt_d4_lunch'};
+ delete song.day; delete song.time; delete song.timeHint;
+ song.note='22F海景午餐備案：培根奶油麵、起司披薩或烤鰻飯。酒店全物業禁煙；正門下車乘電梯。詢問已寄，未訂位，不取消原詢問。';
+ INSPIRATIONS.push(song);
+ SHORE_CARDS.ins_d4_songdo_kitchen=[...SHORE_CARDS.evt_d4_to_hotel];
+ shortCard('ins_d4_songdo_kitchen','목적지: 페어필드 바이 메리어트 부산 송도 비치 22층 송도키친\n주소: 부산광역시 서구 송도해변로 113\n호텔 정문에 내려 주세요.');
+ patch('evt_d4_to_hotel',{
+   title:'前往松島鱈魚湯',time:null,tags:['船時倒推','已訂包車'],address:null,addressLocal:'부산광역시 서구 송도해변로 79 1F',
+   note:'纜車返回Bay Station 1F後，同一輛包車送至鱈魚湯店，車程約3分鐘，另留上下車時間。午餐須在船時13:45前結束並已上車。',
+   transport:{...byId('evt_d4_to_hotel').transport,from:'松島Bay Station 1F',to:'속시원해대구탕 송도본점',fromEventId:'evt_d4_cable',toEventId:'evt_d4_lunch',durationMin:3}
+ });
+ shortCard('evt_d4_to_hotel','목적지: 속시원해대구탕 송도본점\n주소: 부산광역시 서구 송도해변로 79 1층\n입구 가까운 합법적인 곳에 내려 주세요.');
+ patch('evt_d4_lunch',{
+   title:'松島鱈魚湯（속시원해대구탕 송도본점）',time:null,tags:['船時13:45前離店','未訂位'],
+   address:'Soks iwonhae Daegutang, Songdo main branch',addressLocal:'부산광역시 서구 송도해변로 79 1F',phone:'051-257-8867',website:null,
+   openHours:'07:00起；週六15:00–15:40休息（KST）',price:'鱈魚湯₩15,000／人，含飯及4款小菜',
+   note:'松島本店1F，包車近門合法落客。船時13:45前已上車往BIFF；當地營業時段先對船鐘。禁煙標示仍待核；確認不辣及湯底即可，未訂位。'
+ });
+ patch('evt_d4_to_base',{
+   title:'前往BIFF廣場',time:'13:45',tags:['船時','已訂包車'],address:null,addressLocal:'부산광역시 중구 구덕로 58-1 일대',
+   note:'船時13:45已上車離湯店，14:15前到BIFF。週六預測約19分鐘／4.9公里，排程留30分鐘。由司機在구덕로大路側選合法上下客點，不駛入步行街。',
+   transport:{...byId('evt_d4_to_base').transport,from:'속시원해대구탕 송도본점',to:'BIFF廣場／劇場街',fromEventId:'evt_d4_lunch',toEventId:'evt_d4_sea',durationMin:30}
+ });
+ shortCard('evt_d4_to_base','목적지: BIFF광장·극장거리\n주소: 부산광역시 중구 구덕로 58-1 일대\n구덕로 큰길 쪽에서 합법적인 승하차 장소를 골라 주세요.');
+ patch('evt_d4_sea',{
+   title:'BIFF廣場與劇場街',time:'14:15',tags:['船時','平地短段'],address:'BIFF Square, Gudeok-ro 58-1 area',addressLocal:'부산광역시 중구 구덕로 58-1 일대',
+   openHours:'戶外廣場常開；攤店通常10:00–22:00（KST）',price:'戶外廣場免費',website:null,
+   note:'看電影手印、星光路面與相連劇場街，再原路返回。走約30分鐘休5分鐘，另留10分鐘集合；船時15:00已上車。拍照：近距拍手印與劇場街招牌。不爬龍頭山、不串整個市場；人潮或交通延誤便縮短。'
+ });
+ patch('evt_d4_return',{
+   time:'15:00',tags:['船時','已訂包車'],address:'Busan Port International Passenger Terminal',addressLocal:'부산광역시 동구 충장대로 206',
+   note:'船時15:00已在BIFF大路側合法點上車，預留60分鐘回北港；16:00前到碼頭。與司機先對船鐘，路況變差即更早集合離開。',
+   transport:{...byId('evt_d4_return').transport,from:'BIFF廣場',to:'北港國際客運站',fromEventId:'evt_d4_sea',toEventId:null,durationMin:60}
+ });
+ shortCard('evt_d4_return','목적지: 부산항 국제여객터미널（북항）\n주소: 부산광역시 동구 충장대로 206\n터미널 입구 가까운 합법적인 곳에 내려 주세요.');
+ for(const e of INSPIRATIONS){
+   if(e.id==='ins_d4_rain') e.note='纜車停駛或大雨時，保留松島午餐；室內用餐可改Songdo Kitchen備案，雨勢大刪BIFF。船時16:00前回北港。';
+   if(e.id==='ins_d4_tired') e.note='刪對岸遠端與BIFF步行，保留近站海景及午餐；船時16:00前回北港。';
+   if(e.id==='ins_d4_photo') {e.nearEventId='evt_d4_cable';e.note='纜車前後在近站海邊拍纜車過海；不另外折返松島，午後接BIFF。';}
+ }
+ // Phrase shortcuts follow the new route; hotel lunch remains a backup only.
+ const busanPhrases = PHRASE_DATA.find(g => g.category === '釜山包車');
+ if(busanPhrases) for(const x of busanPhrases.items){
+   if(x.term_pronounce==='B2 午餐'){x.term_primary='속시원해대구탕 송도본점으로 가 주세요. 송도해변로 79, 1층입니다.';x.term_pronounce='松島鱈魚湯';}
+   if(x.term_pronounce==='回出發站'){x.term_primary='BIFF광장으로 가 주세요. 구덕로 58-1 큰길 쪽에서 내려 주세요.';x.term_pronounce='BIFF劇場街';}
+ }
+ // Remove retired destination phrases rather than leave obsolete cards in phrase search.
+ for(const group of PHRASE_DATA){
+   group.items=group.items.filter(x=>!Object.values(x).some(v=>typeof v==='string'&&/水族館|水族馆|いおワールド|Aquarium/i.test(v)));
+   for(const x of group.items){
+     if(/Pavé/.test(x.term_primary||'')){x.term_primary='Pavéへ。ホテル正面入口で降ろしてください。';x.term_pronounce='Pavé備案';}
+   }
+ }
+ return true;
+})();
