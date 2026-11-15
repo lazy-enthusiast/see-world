@@ -1,11 +1,11 @@
-// buildTime: 2026-11-15T18:58:00.117Z
+// buildTime: 2026-11-15T19:43:28.572Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
 // 自訂文案或頁首常駐橫額（Worker 不能改 UI）。部署時由 Worker 在檔首加 // buildTime:。
 // 舊大阪 config 仍在 versions/config/；本檔不要當可照表執行。
 // 行程以核准 v2 為準；預約句以 Nov 15, 2026 官方複核為準。
-// 船時與 JST／KST 的差未核。午餐電郵已由本人寄出，不是已訂位。
+// 船時 UTC+9（香港＋1小時），四港當地鐘相同。午餐電郵已由本人寄出，不是已訂位。
 // 座標不填景點 pin。天氣依當日城市（鹿兒島／長崎／福岡／釜山）取 CITIES 座標與時區；不改行程標題，不把 DESTINATION.name 當天氣城市。
 // ============================================================
 
@@ -28,7 +28,7 @@ const CONFIG = {
     headerTitle: "海洋光譜號岸上行程",
     homeTimezone: "Asia/Hong_Kong",
     homeTimeLabel: "香港",
-    shipTimezone: "Asia/Hong_Kong"
+    shipTimezone: "Asia/Tokyo"
   },
   startDate: "2026-11-25",
   duration: 4,
@@ -988,7 +988,7 @@ const SHORE_CARDS = {
 const SHORE_FULL_TEXTS = Object.values(SHORE_CARDS).flat();
 const SHORE_CLOCK_NOTES = {};
 for (const e of ITINERARY.items) if (/_clock$/.test(e.id)) SHORE_CLOCK_NOTES[e.day] = e.note;
-ITINERARY.items = ITINERARY.items.filter(e => !/_(clock|diet)$/.test(e.id) && e.id !== 'evt_d4_b0');
+ITINERARY.items = ITINERARY.items.filter(e => !/_diet$/.test(e.id) && e.id !== 'evt_d4_b0');
 for (const e of ITINERARY.items) {
   let note = e.note || '';
   for (const text of SHORE_FULL_TEXTS) if (text) note = note.split(text).join('');
@@ -1047,7 +1047,8 @@ const SHORE_FIRST_LEGS = ['evt_d1_to_garden','evt_d2_to_park','evt_d3_to_yusen',
 if (typeof window !== 'undefined') window.addEventListener('load', function () {
   const getOriginal = window.getItemsByDay;
   window.getItemsByDay = function(day) {
-    return getOriginal(day).sort((a,b) => Number(SHORE_FIRST_LEGS.includes(b.id)) - Number(SHORE_FIRST_LEGS.includes(a.id)));
+    const rank = e => /_clock$/.test(e.id) ? 2 : Number(SHORE_FIRST_LEGS.includes(e.id));
+    return getOriginal(day).sort((a,b) => rank(b) - rank(a));
   };
   const renderOriginal = window.renderTimeline;
   window.renderTimeline = function(key) {
@@ -1059,9 +1060,7 @@ if (typeof window !== 'undefined') window.addEventListener('load', function () {
       const item=items[i];if(!item)return;
       const time=row.querySelector('.card-time');
       if (time && SHORE_FIRST_LEGS.includes(item.id)) time.textContent='放行後';
-      if (time && /_return$/.test(item.id)) time.textContent=item.id==='evt_d4_return'?'船時15:00出發｜16:00前到':'船時17:00前到';
-   if (time && item.id==='evt_d4_to_base') time.textContent='船時13:45出發';
-   if (time && ['evt_d1_return','evt_d2_return'].includes(item.id)) time.textContent='JST候補'+item.time+'出發｜船時17:00前到';
+      if (time && /_clock$/.test(item.id)) time.textContent='';
     });
   };
   window.renderTimeline(typeof currentDay === 'string' ? currentDay : 'day1');
@@ -1371,4 +1370,64 @@ const SHORE_APPROVED_DELTA = (() => {
    for(const key of ['coords','phone','whatsapp','line','messenger','openHours','price','website','cost']) if(e[key]===undefined)e[key]=null;
    if(e.transport){e.transport.fromEventId=null;e.transport.toEventId=null;e.transport.liveApi=null;if(!Object.prototype.hasOwnProperty.call(e.transport,'stopCount'))e.transport.stopCount=null;}
  }
+})();
+
+// t318/t320: concise transport rows; all four days use confirmed UTC+9 ship time.
+(function () {
+  for (const e of ITINERARY.items) {
+    if (/_clock$/.test(e.id)) {
+      e.time = null;
+      e.title = '全日採用船時';
+      e.tags = [(e.day === 4 ? '16:00' : '17:00') + '前到碼頭'];
+      e.note = '本趟船時比香港快一小時，與日本及韓國當地時間相同。行程及營業時間統一採船時。';
+      for (const k of ['address','addressLocal','coords','phone','whatsapp','line','messenger','openHours','price','website','cost']) e[k]=null;
+      e.status='pending'; e.source='ai';
+      SHORE_CLOCK_NOTES[e.day]=e.note;
+    } else {
+      e.tags = (e.tags || []).filter(t => !/JST|KST|船時/.test(t));
+    }
+  }
+  const names = {
+    '城山展望台停車場':'城山展望台',
+    'マリンポートかごしま':'海洋港',
+    '出島表門橋附近合法上車處':'出島表門橋側',
+    '櫛田神社停車場側入口・山笠':'櫛田山笠',
+    '櫛田神社停車場側附近合法上車處':'櫛田神社停車場側',
+    '松島Bay Station 1F':'松島出發站',
+    '속시원해대구탕 송도본점':'松島鱈魚湯',
+    'BIFF廣場／劇場街':'BIFF廣場'
+  };
+  for (const e of ITINERARY.items) if (e.transport) {
+    for (const k of ['from','to']) e.transport[k]=names[e.transport[k]] || e.transport[k];
+  }
+})();
+
+// t320: remove superseded clock uncertainty; keep booking and access uncertainties.
+(function () {
+  const replacements = [
+    ['，對鐘後必要時提早離開。','；交通延誤時提早離開。'],
+    ['，須先按船鐘換算核對。','。'],
+    ['，當地截止待核；對鐘後若餘量不足','；若餘量不足'],
+    ['，不把17:00當JST。','。'],
+    ['；當地截止時間待船方核實。','。'],
+    ['接車與12:00 KST午餐需對照船鐘；',''],
+    ['，船時回港倒推須先對鐘。','。'],
+    ['與司機先對船鐘，',''],
+    ['，先換算當地鐘。','。'],
+    ['當地JST排序候補','參考時間'],
+    ['當地JST候補','參考時間'],
+    ['當地JST',''],
+    ['（JST）',''],['（KST）',''],
+    [' JST候補','參考時間'],[' JST是候補','是參考'],
+    [' JST',''],[' KST','']
+  ];
+  for (const e of [...ITINERARY.items,...INSPIRATIONS]) {
+    for (const k of ['note','openHours']) if (typeof e[k] === 'string') {
+      for (const [a,b] of replacements) e[k]=e[k].split(a).join(b);
+    }
+    if (e.tags) e.tags=e.tags.filter(t=>t!=='當地時未填' && !/JST|KST/.test(t));
+  }
+  for (const e of Object.values(DAILY_EXTRAS)) if(e.shopping) e.shopping=e.shopping.filter(t=>!t.includes('船方當日船鐘說明'));
+  for (const g of PHRASE_DATA) for (const e of g.items) if(e.term_secondary) e.term_secondary=e.term_secondary.replace('；先核船鐘。','。');
+  for (const e of ITINERARY.items) if (/_clock$/.test(e.id)) SHORE_CLOCK_NOTES[e.day]=e.note;
 })();
