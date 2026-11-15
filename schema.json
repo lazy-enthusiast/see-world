@@ -32,7 +32,8 @@
             "browserTitle": { "type": "string" },
             "headerTitle": { "type": "string" },
             "homeTimezone": { "type": ["string", "null"] },
-            "homeTimeLabel": { "type": ["string", "null"] }
+            "homeTimeLabel": { "type": ["string", "null"] },
+            "shipTimezone": { "type": ["string", "null"] }
           }
         },
         "startDate": { "type": "string", "format": "date" },
