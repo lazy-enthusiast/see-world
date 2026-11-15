@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T15:46:55.752Z
+// buildTime: 2026-11-15T15:50:16.986Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1191,3 +1191,13 @@ const SHORE_APPROVED_DELTA = (() => {
  }
  return true;
 })();
+
+// Lunch is a noon meal with an explicit time, never a null-time afternoon item.
+{
+ const ride=ITINERARY.items.find(e=>e.id==='evt_d4_to_hotel');
+ ride.time='11:45';ride.timeHint='morning';ride.tags=['當地KST','已訂包車'];
+ ride.note='11:45在松島Bay Station 1F與司機會合，包車送往鱈魚湯店。車程約3分鐘，12:00午餐。';
+ const lunch=ITINERARY.items.find(e=>e.id==='evt_d4_lunch');
+ lunch.time='12:00';lunch.timeHint='morning';lunch.tags=['午餐','當地KST','未訂位'];
+ lunch.note='12:00午餐，預留60–75分鐘用餐。松島本店1F，包車近門合法落客。禁煙標示待核；點餐確認不辣、湯底無牛及蝦蟹。';
+}
