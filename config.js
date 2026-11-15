@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T15:09:21.312Z
+// buildTime: 2026-11-15T15:14:27.060Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1095,3 +1095,20 @@ if(typeof window!=='undefined') window.addEventListener('load',function(){
  window.inspirationCardHtml=function(ins){return original(ins).replace(/<p class="inspire-note">[\s\S]*?<\/p>/,'<p class="inspire-note">點開查看備案</p>');};
  if(typeof window.renderInspirationPage==='function') window.renderInspirationPage();
 });
+
+// Backup headings identify the place or option, not acceptance conditions.
+const SHORE_BACKUP_TITLES={
+ ins_d1_rain:'鹿兒島水族館',ins_d1_tired:'仙巌園輕鬆路線',
+ ins_d1_k3:'黒かつ亭／黒べぇ',ins_d1_traffic:'鹿兒島回港交通',
+ ins_d2_rain:'長崎縣美術館',ins_d2_drop_ruri:'眼鏡橋與運河攝影',
+ ins_d2_pave:'Pavé',ins_d3_ohori:'Royal Garden Cafe 大濠公園',
+ ins_d3_tired:'博多町家與織實演',ins_d3_tight:'博多町家街區',
+ ins_d4_rain:'松島室內觀景',ins_d4_b4:'松島對岸接車',
+ ins_d4_tired:'松島近站海景',ins_d4_photo:'松島海邊攝影'
+};
+for(const e of INSPIRATIONS){
+ if(SHORE_BACKUP_TITLES[e.id])e.title=SHORE_BACKUP_TITLES[e.id];
+ if(e.id==='ins_d1_k3') e.note='豬扒午餐備選，選普通椅座。';
+ if(e.id==='ins_d2_pave')e.note='自助午餐備選；酒店正門下車，乘電梯上2F。逐道核對牛肉、蝦蟹及湯醬。';
+ if(e.id==='ins_d3_ohori')e.note='湖景咖啡與桌椅休息，正門附近下車，不繞湖。';
+}
