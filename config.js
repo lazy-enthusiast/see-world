@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T15:17:27.059Z
+// buildTime: 2026-11-15T15:19:29.018Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -366,7 +366,7 @@ function taxi(from, to, operator) {
     liveApi: null
   };
 }
-const OP_JP = "當日另叫計程車。不是全天包車，不假設上一程的車還在等。";
+const OP_JP = "";
 const OP_KR = "LOYQU 已購 9 小時、1–4 人方案；實際 3 人、行李 0。車型與語言未列。";
 
 function clockNote(port) {
