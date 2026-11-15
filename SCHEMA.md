@@ -65,8 +65,8 @@ const CONFIG = {
   ui: {
     browserTitle: "Kyoto Solo Trip",
     headerTitle: "KYOTO <span>SOLO</span>",
-    homeTimezone: "Asia/Hong_Kong",
-    homeTimeLabel: "HKG"
+    homeTimezone: "Asia/Hong_Kong", // 標題下時鐘的 IANA 時區
+    homeTimeLabel: "香港"           // 標題下時鐘標籤；郵輪行程用「船時」（時區仍填船鐘，Spectrum 多為 Asia/Hong_Kong）
   },
   startDate: "2026-05-15",     // ISO 8601
   duration: 5,                  // 天數
@@ -489,6 +489,7 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 23. **`title`**：時間軸會剝掉括號當地語（如 `（マヅラ喫茶店）`）；日文店名可放括號內供 modal 顯示，或乾脆只寫中文／英文主標題、日文詳址放 `addressLocal`
 24. **`website`**：餐廳優先填當地評論／訂位 App URL（日本 → Tabelog；香港 → OpenRice；其餘依目的地常見站）或官網；查不到填 `null`。**禁止**把評論站／官網連結寫進 `note`——URL 只放 `website`（UI 標題「APP/網站」，下方顯示 App 名或 host）
 25. **`CITIES[].days`＝每日主城（天氣）**：App「天氣」欄依當日主城的 `lat`／`lon`／`name` 顯示。**每日只屬一城**——同一天不可出現在兩個城市的 `days`；勿把 base 城寫進每一天又同時標一日遊城。一日遊當天主城＝當日主要活動城市（例：京都日 → `kyoto`，不是大阪）。單城旅行可 `CITIES = []`（天氣退回 `DESTINATION`）。有 `days` 的城必須有可用的 `lat`／`lon`／`timezone`／`name`。部署前自檢：`1…duration` 每一天至多被一個城市宣稱。
+26. **`CONFIG.ui.homeTimeLabel`／`homeTimezone`**：標題下時鐘標籤與時區。一般行程用「香港」＋`Asia/Hong_Kong`。**郵輪／岸上行程**標籤改「船時」；`homeTimezone` 填**船鐘**時區（不是靠港當地時；Spectrum 多為 `Asia/Hong_Kong`）。勿把船時標成「香港」或當地城市名。
 
 ---
 
@@ -512,3 +513,4 @@ Research 時**主動查找**店家公開聯絡管道：**電話、WhatsApp、LIN
 - v1.15 — Oct 21, 2026 — 規劃讀 `preferences.md`＋`trips/<city>-<YYYY-MM>.md`；單趟備註覆蓋長期偏好
 - v1.16 — Oct 21, 2026 — 交通 modal 不顯示下一班、不接實時到站；`website` 標題改「APP/網站」
 - v1.17 — 2026-11-16 — LLM 規則 25：`CITIES[].days` 每日主城／天氣，每日只屬一城
+- v1.18 — 2026-11-16 — LLM 規則 26：郵輪行程標題下時鐘用「船時」＋船鐘時區
