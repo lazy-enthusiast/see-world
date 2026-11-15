@@ -1,3907 +1,951 @@
-// buildTime: 2026-11-06T16:52:56.555Z
+// buildTime: 2026-11-15T14:10:00.000Z
 // ============================================================
-// 🧳 客製化設定檔 config.js —— 大阪二月（v5r：相對 v5q 恢復 Feb7 Henri 12cm 條件取貨＋B1 刺身地酒房內宵夜＋酒店第二輪；Feb10 午前白川／鴨川補強；Feb8 蚤市至午連續；Feb13 単点主備線釐清；航班 TBD 取貨非保證；不 push）
-// 結構契約見 schema.json／SCHEMA.md；facts as-of Nov 4–5, 2026；散文 to14／to14_zh
-// 座標：國土地理院／既有 v5p pins；4 位小數；交通項目用出發點
+// Spectrum 岸上 Nov 25–28, 2026（候補，未合併 main）
+// 舊大阪 config 位元組原樣：versions/config/osaka-26-11-15-2158.js
+// 行程以核准 v2 為準；預約句以 Nov 15, 2026 官方複核為準。
+// 船時與 JST／KST 的差未核。午餐電郵已由本人寄出，不是已訂位。
+// 座標不填景點 pin。天氣頁只代表鹿兒島這一點。
 // ============================================================
 
-// 1. 🎨 主題顏色（藍綠點睛＋黑白灰米；字體 Noto Sans TC）
 const THEME_CONFIG = {
-  "accentColor": "#2A7F7A",
-  "accentText": "#FFFFFF",
-  "backgroundColor": "#FAF8F4",
-  "cardColor": "#F2EFE9",
-  "textColor": "#1F1F1F",
-  "textSubColor": "#7A766F",
-  "borderColor": "#E4DFD6",
-  "googleFontsUrl": "https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;500;700&display=swap",
-  "fontHeading": "\"Noto Sans TC\", sans-serif",
-  "fontBody": "\"Noto Sans TC\", sans-serif"
+  accentColor: "#2E5344",
+  accentText: "#F6F4EE",
+  backgroundColor: "#F4F2EB",
+  cardColor: "#E6E8E0",
+  textColor: "#2A3330",
+  textSubColor: "#3A4640",
+  borderColor: "#C9CFC4",
+  googleFontsUrl: "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&family=Noto+Sans+KR:wght@400;600;700&family=Noto+Sans+TC:wght@400;600;700&display=swap",
+  fontHeading: '"Noto Sans TC", "Noto Sans JP", "Noto Sans KR", sans-serif',
+  fontBody: '"Noto Sans TC", "Noto Sans JP", "Noto Sans KR", sans-serif'
 };
 
-// 2. 🗓️ 旅程設定
 const CONFIG = {
-  "ui": {
-    "browserTitle": "大阪二月",
-    "headerTitle": "大阪二月",
-    "homeTimezone": "Asia/Hong_Kong",
-    "homeTimeLabel": "香港"
+  ui: {
+    browserTitle: "岸上 Nov 25–28",
+    headerTitle: "岸上四日",
+    homeTimezone: "Asia/Hong_Kong",
+    homeTimeLabel: "香港"
   },
-  "startDate": "2027-02-07",
-  "duration": 8,
-  "travelers": {
-    "type": "solo",
-    "count": 1,
-    "note": "一人旅行"
+  startDate: "2026-11-25",
+  duration: 4,
+  travelers: {
+    type: "family",
+    count: 3,
+    note: "3 位成人，含父母。爸爸不吃蝦／蟹；媽媽不吃牛。全席禁煙。媽媽約走 30 分鐘平路或溫和下坡後休 5 分鐘；避上坡與長陡下坡。"
   },
-  "baseCurrency": "HKD",
-  "tripCurrency": "JPY"
+  baseCurrency: "HKD",
+  tripCurrency: "JPY"
 };
 
-// 3. 📍 目的地
 const DESTINATION = {
-  "name": "大阪",
-  slug: "osaka",
-  "lat": 34.6937,
-  "lon": 135.5023,
-  "timezone": "Asia/Tokyo",
-  "currency": "jpy",
-  "currencyLabel": "JPY",
-  "baseCurrency": "HKD"
+  name: "Spectrum 岸上",
+  slug: "spectrum-shore",
+  lat: 31.6,
+  lon: 130.56,
+  timezone: "Asia/Tokyo",
+  currency: "jpy",
+  currencyLabel: "JPY",
+  baseCurrency: "HKD"
 };
 
-// 4. 🏙️ 城市
 const CITIES = [
-  {
-    "id": "osaka",
-    "name": "大阪",
-    "lat": 34.6983,
-    "lon": 135.5027,
-    "timezone": "Asia/Tokyo",
-    "days": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8
-    ],
-    "color": "#2A7F7A"
-  },
-  {
-    "id": "kyoto",
-    "name": "京都",
-    "lat": 35.0116,
-    "lon": 135.7681,
-    "timezone": "Asia/Tokyo",
-    "days": [
-      4
-    ],
-    "color": "#9AA8A3"
-  },
-  {
-    "id": "kobe",
-    "name": "神戶",
-    "lat": 34.71,
-    "lon": 135.2486,
-    "timezone": "Asia/Tokyo",
-    "days": [
-      3,
-      6,
-      7
-    ],
-    "color": "#8C8378"
-  }
+  { id: "kagoshima", name: "鹿兒島", lat: 31.6, lon: 130.56, timezone: "Asia/Tokyo", days: [1], color: "#3E5C4C" },
+  { id: "nagasaki", name: "長崎", lat: 32.75, lon: 129.88, timezone: "Asia/Tokyo", days: [2], color: "#4A5963" },
+  { id: "fukuoka", name: "福岡", lat: 33.59, lon: 130.4, timezone: "Asia/Tokyo", days: [3], color: "#5C5348" },
+  { id: "busan", name: "釜山", lat: 35.18, lon: 129.08, timezone: "Asia/Seoul", days: [4], color: "#3D5348" }
 ];
 
-// TRANSIT_CONFIG（SCHEMA v1.16）：只作除錯用；App 交通 modal 不顯示下班車、不呼叫即時 API。
-// 全部 liveApi 為 null（保留欄位），providers 留空。
-const TRANSIT_CONFIG = {
-  "providers": []
-};
+const TRANSIT_CONFIG = { providers: [] };
 
-// 5. ✈️ 航班與住宿
 const TRIP_INFO = {
-  "visa": {
-    "type": "香港特區護照免簽入境日本（短期逗留）",
-    "number": null,
-    "note": "香港特區護照可免簽短期入境日本；出發前預填 Visit Japan Web（入境及海關申報）。Nov 1, 2026 起日本退稅改為出境時於機場海關確認後退款，購物要帶護照。",
-    "expiry": null
+  visa: {
+    type: "岸上通關",
+    number: null,
+    note: "日本／韓國入境資格未在本輪岸上事實重核，出發前自行向主管機關確認。靠港不等於立刻能下船。夜宿在船上，岸上不另訂酒店，艙號不寫入。",
+    expiry: null
   },
-  "flights": [
-    {
-      "type": "去程",
-      "flight": "HK Express UO898",
-      "date": "Feb 7",
-      "dep": "HKG TBD",
-      "arr": "KIX TBD",
-      "note": "未訂；航班／時刻 TBD。假設 UO898；按實際訂位再填。",
-      "bookingRef": null
-    },
-    {
-      "type": "回程",
-      "flight": "HK Express UO851",
-      "date": "Feb 14",
-      "dep": "KIX TBD",
-      "arr": "HKG TBD",
-      "note": "未訂；航班／時刻 TBD。假設 UO851；按實際訂位再填。",
-      "bookingRef": null
-    }
-  ],
-  "hotels": [
-    {
-      "cityId": "osaka",
-      "name": "天然溫泉 浪華之湯 Dormy Inn 大阪谷町（天然温泉 浪華の湯 ドーミーイン大阪谷町）",
-      "address": "〒540-0026 大阪府大阪市中央区内本町2-1-9",
-      "phone": "+81-6-6945-5489",
-      "checkIn": "Feb 7, 2027（15:00 起）",
-      "checkOut": "Feb 14, 2027（午前／早上；改期 TBD）",
-      "bookingRef": "0AN0UPYV"
-    }
-  ],
-  "emergency": [
-    {
-      "name": "警察（日本）",
-      "phone": "110"
-    },
-    {
-      "name": "救護車／消防（日本）",
-      "phone": "119"
-    },
-    {
-      "name": "日本觀光局訪日旅客熱線（24 小時，有中文）",
-      "phone": "+81-50-3816-2787"
-    },
-    {
-      "name": "香港入境處 協助在外香港居民 24 小時熱線",
-      "phone": "+852 1868"
-    },
-    {
-      "name": "酒店 Dormy Inn 大阪谷町",
-      "phone": "+81-6-6945-5489"
-    }
+  flights: [],
+  hotels: [],
+  emergency: [
+    { name: "日本警察", phone: "110" },
+    { name: "日本救護／消防", phone: "119" },
+    { name: "日本觀光局訪日旅客熱線", phone: "+81-50-3816-2787" },
+    { name: "韓國警察", phone: "112" },
+    { name: "韓國救護／消防", phone: "119" },
+    { name: "韓國旅遊諮詢", phone: "1330" },
+    { name: "香港入境處協助在外居民", phone: "+852 1868" }
   ]
 };
 
-// 6. 🗺️ 行程
+const CHECK = "核對 Nov 15, 2026";
+const SCOPE = "【範圍】一般 3 名成人自由觀看；不是團體預約，不是付費手作。";
+const CLOCK = "時間欄：標「排序」的只為排在當天前面，不是約定時刻。標「當地JST／當地KST」的是當地營業錨點，用來排序，尚未接上船鐘。兩者都不是碼頭期限。日本與韓國當地都是 UTC+9；船鐘差 Δ 未核，不假設相同，也不自行加減 1 小時。";
+const SHOW = "司機卡先向船方確認 Δ，把當地期限空白填好才出示。未填不能拿船時 17:00 或 16:00 當成當地鐘。船方若要求更早，以船方為準。這是到碼頭，不是已登船。";
+const WALK = "3 位成人。媽媽約走 30 分鐘平路或溫和下坡後休 5 分鐘；避上坡、長陡下坡和樓梯。短休不為拍照取消。椅子未核就先問入口職員，不假設每處都有椅。";
+const MAIL = "四間午餐詢問電郵已由本人寄出（黒豚ふくや本店、勝鹿新地店、博多華味鳥筑紫口店、Songdo Kitchen）。回覆前不是已訂位。本日不改店；要換店留待日後再跟。";
+
+function venueClock(sentence) {
+  return /17:00/.test(sentence)
+    ? "句裡的時刻是場館當地營業或入館時間，不是船時家庭到碼頭線。"
+    : "";
+}
+function book(sentence, urls, extra) {
+  return ["【預約】" + sentence, venueClock(sentence), "【來源】" + urls, "【核對】" + CHECK, SCOPE, extra || ""]
+    .filter(Boolean)
+    .join("\n");
+}
+function ride(kind) {
+  return "【預約】這段只是交通，本身不是門票。目的地屬免費免約、現場買票，或當日才能判斷，只寫在到達那一站，避免和叫車混成一句。" + (kind || "");
+}
+
+const JP_WALK = "大人3名です。母は、平らな道・緩い下り坂を約30分歩いたら5分ほど座って休みます。上り坂、長い急な下り坂、階段は避けてください。";
+const K_BACK = "帰港先はマリンポートかごしま（鹿児島県鹿児島市中央港新町1-10）、船内時刻17:00までに到着が必要です。日本時間の到着期限：___時___分【船との時差確認後に記入。未記入では使用不可】。船会社の指定が早ければそちらを優先します。各区間ごとに別途配車します。";
+const N_BACK = "帰港先は長崎港松が枝国際ターミナル（長崎県長崎市松が枝町7番16号）、船内時刻17:00までに到着が必要です。日本時間の到着期限：___時___分【船との時差確認後に記入。未記入では使用不可】。船会社の指定が早ければそちらを優先します。各区間ごとに別途配車します。";
+const F_BACK = "帰港先は中央ふ頭クルーズセンター（福岡県福岡市博多区沖浜町24番25号）、船内時刻17:00までに到着が必要です。日本時間の到着期限：___時___分【船との時差確認後に記入。未記入では使用不可】。船会社の指定が早ければそちらを優先します。各区間ごとに別途配車します。";
+
+const CARD_K_RET = `行き先：マリンポートかごしま
+住所：鹿児島県鹿児島市中央港新町1-10
+ターミナル前の、タクシーが合法的に降車できる場所までお願いします。岸壁への進入は当日の係員の指示に従ってください。
+大人3名。母のため階段・坂を避けたいです。船内時刻17:00までにターミナル到着（乗船完了ではありません）。日本時間の到着期限：___時___分【船との時差確認後に記入。未記入では使用不可】。船会社が早い時刻を指定した場合はそちらを優先します。今の交通状況で間に合うか確認してください。`;
+const CARD_K_RET_ZH = "返回海洋港及上述地址，希望合法下客。船時 17:00 到碼頭，不是已登船。日本當地換算空白未填就不要用。船方更早從早。先請司機看路況。";
+
+const CARD_K1 = `行き先：仙巌園
+住所：鹿児島県鹿児島市吉野町9700-1
+駐車場・タクシー乗り場付近の合法的な降車場所へお願いします。受付で、近いベンチと坂を避ける青いルートを確認します。入口までの距離は未確認です。
+${JP_WALK}
+${K_BACK}`;
+const CARD_K1_ZH = "希望到停車場／的士乘場合法落客。受付指最近長椅和避坡的藍線；未保證幾分鐘到座位。不是全園零坡。回港船時 17:00，當地空白未填不要用。每段另叫車。";
+
+const CARD_K2 = `行き先：とんかつと、しゃぶしゃぶ。黒豚ふくや 本店
+住所：鹿児島県鹿児島市東千石町1-32 レム鹿児島2F
+レストラン正面の階段は使えません。右側のホテル入口に近い合法的な場所で降ろしてください。ホテルのエレベーターで2階へ行き、帰りも使えるか、先にスタッフに確認します。利用できなければ別の店へ変更します。
+${JP_WALK}
+${K_BACK}`;
+const CARD_K2_ZH = "本店，不是千日町店。希望酒店側入口，不走餐廳正門樓梯。先請職員確認電梯往返，不能用就改 K3，不要改去華蓮。未保證門前可停。未訂位。";
+
+const CARD_K3 = `行き先：黒かつ亭／黒べぇ
+住所：鹿児島県鹿児島市山下町2-2
+店の入口に近い合法的な降車場所へお願いします。普通の椅子席を希望し、掘りごたつ席は避けます。入口の段差と本日の昼営業・空席は先に確認します。
+${JP_WALK}
+${K_BACK}`;
+const CARD_K3_ZH = "只在ふくや電梯不能用時作備選，不是改選的第五間、也沒有另寄電郵。希望普通椅，不是掘式。當日午市和空位先問。未訂位。";
+
+const CARD_K4 = `行き先：いおワールドかごしま水族館
+住所：鹿児島県鹿児島市本港新町3-1
+水族館入口に近い合法的な降車場所へお願いします。エレベーターを使って5階の休憩展望スペースへ行く予定です。降車場所から入口までの距離は未確認です。
+${JP_WALK}
+${K_BACK}`;
+const CARD_K4_ZH = "這張是雨天替代仙巌園用，不兩者都去。希望入口附近合法落客，電梯上 5F。車到入口的步分未核。";
+
+const CARD_K_AQ = `行き先：いおワールドかごしま水族館
+住所：鹿児島県鹿児島市本港新町3-1
+水族館入口に近い合法的な降車場所へお願いします。エレベーターを使って5階の休憩展望スペースへ行く予定です。降車場所から入口までの距離は未確認です。
+これは午後の本線です。午前の庭園を済ませたあとです。雨で庭園へ行かない代替カードではありません。
+${JP_WALK}
+${K_BACK}`;
+const CARD_K_AQ_ZH = "午後主線用卡，不是 K4。不要跟司機說「不要兩邊都去」。雨天才改出示 K4。";
+
+const CARD_N_RET = `行き先：長崎港松が枝国際ターミナル
+住所：長崎県長崎市松が枝町7番16号
+松が枝のクルーズ船ターミナルの合法的な降車場所までお願いします。別のフェリー乗り場ではありません。
+大人3名。母のため階段・坂を避けたいです。船内時刻17:00までにターミナル到着（乗船完了ではありません）。日本時間の到着期限：___時___分【船との時差確認後に記入。未記入では使用不可】。船会社が早い時刻を指定した場合はそちらを優先します。今の交通状況で間に合うか確認してください。`;
+const CARD_N_RET_ZH = "回松が枝郵輪碼頭，不是別的渡輪碼頭。船時 17:00 到碼頭，不是已登船。當地空白未填不要用。";
+
+const CARD_N6 = `行き先：長崎水辺の森公園・水の庭園側
+住所：長崎県長崎市常盤町1-60。管理事務所の移転先（松が枝町7-16）は公園入口ではありません。
+水の庭園側の合法的な降車場所を確認してください。公園は24時間開園ですが、降車場所から海辺までの距離や細かな傾斜は未確認です。整備された硬い舗装の通路と園内の木・石のベンチを利用し、坂や階段は避けます。大人3名、約30分歩いたら5分休みます。
+帰港先：長崎港松が枝国際ターミナル／長崎県長崎市松が枝町7番16号。船内時刻17:00までに到着、日本時間の期限___時___分（時差確認後に記入、未記入では使用不可）。船会社の指定が早ければ優先します。`;
+const CARD_N6_ZH = "水之庭園側、常盤町 1-60。不要去管理處搬遷地址。24 小時開園、硬鋪和長椅已核；下客到海邊的步分和局部坡度未量。";
+
+const CARD_N4 = `行き先：瑠璃庵（RURIAN GLASS STUDIOS）
+住所：長崎県長崎市松が枝町5-11
+店に近い合法的な場所で降ろしてください。無理のない店内見学の予定です。予約なしでの制作見学、入口の段差、休憩席は未確認です。長時間立って待つことはできません。
+${JP_WALK}
+${N_BACK}`;
+const CARD_N4_ZH = "不保證免約看製作。當日職員確認可以看才短停，否則刪掉。本次不訂付費手作。工作椅不是休息椅。";
+
+const CARD_N2 = `行き先：勝鹿 新地店（本店）
+住所：長崎県長崎市新地町12-10 ラハイナビル1F
+2026年移転後の新地町12-10です。古い籠町の住所や万屋町の別店舗ではありません。入口近くの合法的な場所で降ろしてください。
+${JP_WALK}
+${N_BACK}`;
+const CARD_N2_ZH = "2026 新址，不是舊籠町，也不是万屋町分店。午餐是建議。電郵已由本人寄出，回覆前不是已訂位。";
+
+const CARD_N3 = `行き先：眼鏡橋
+住所：長崎県長崎市魚の町と諏訪町の間（番地・降車点は未確定）
+階段を使わず橋を遠くから見たいです。橋の上や川底へは降りません。近くの合法的な降車場所と、平らで短い経路を確認してください。難しければ立ち寄りを取りやめます。
+${JP_WALK}
+${N_BACK}`;
+const CARD_N3_ZH = "只有區域地址，沒有已核下客 pin。請司機找合法落客和短平路。不能在橋階或河階下車。做不到就刪。";
+
+const CARD_N_MUSE = `行き先：長崎県美術館
+住所：長崎県長崎市出島町2-1
+美術館の段差を避けられる入口付近で、合法的に降ろしてください。2階の運河上の回廊で建物と橋を撮る予定です。展示は見ません。カフェは店内が禁煙で喫煙室がないと確認できるまで飲食しません。入口から回廊までの距離は未確認です。
+${JP_WALK}
+${N_BACK}`;
+const CARD_N_MUSE_ZH = "午後主線是回廊拍照，不看展。咖啡要等禁煙核對過才入店飲食。這張不是「只去喝咖啡」。";
+
+const CARD_N1 = `行き先：長崎県美術館 カフェ
+住所：長崎県長崎市出島町2-1（カフェは2F）
+美術館の段差を避けられる入口付近で、合法的に降ろしてください。エレベーターで2階の運河上のカフェへ行く予定です。全席禁煙で館内に喫煙室がないか、事前確認が必要です。入口から席までの距離は未確認です。
+${JP_WALK}
+${N_BACK}`;
+const CARD_N1_ZH = "咖啡條件卡。禁煙／館內煙室未核對前不要出示成去用餐。未核就不入店飲食，仍可走公共回廊。";
+
+const CARD_N5 = `行き先：Restaurant Pavé／ANAクラウンプラザホテル長崎グラバーヒル
+住所：長崎県長崎市南山手町1-18（レストラン2F）
+ホテル玄関の乗降場所までお願いします。エレベーターで2階へ行きます。ランチのビュッフェ利用を家族が了承した場合だけ使うカードです。坂道を歩いてホテルへ向かう経路は避けてください。
+${JP_WALK}
+${N_BACK}`;
+const CARD_N5_ZH = "只有家人接受 buffet 才用。尚未接受，不自動切換，也不是本日改選。酒店玄關落客、電梯上 2F，不要從街上走坡。未訂位。";
+
+const CARD_F_RET = `行き先：中央ふ頭クルーズセンター
+住所：福岡県福岡市博多区沖浜町24番25号
+沖浜町24-25のクルーズセンター前の合法的な降車場所までお願いします。14-1の博多港国際ターミナルではありません。入場方法は当日の係員の指示に従ってください。
+大人3名。母のため階段・坂を避けたいです。船内時刻17:00までにターミナル到着（乗船完了ではありません）。日本時間の到着期限：___時___分【船との時差確認後に記入。未記入では使用不可】。船会社が早い時刻を指定した場合はそちらを優先します。今の交通状況で間に合うか確認してください。`;
+const CARD_F_RET_ZH = "回沖浜町 24-25 的郵輪中心，不是 14-1 渡輪樓。船時 17:00 到碼頭，不是已登船。當地空白未填不要用。";
+
+const CARD_F1 = `行き先：友泉亭公園
+住所：福岡県福岡市城南区友泉亭1-46
+駐車場・正門付近の合法的な降車場所へお願いします。母が約30分歩いた後に5分ほど休める、一般利用の椅子と、坂・階段を避ける経路を先に確認します。床に座ることを前提にはしません。帰りは別のタクシーを呼びます。
+${JP_WALK}
+${F_BACK}`;
+const CARD_F1_ZH = "希望停車場或正門。一般散客高椅和到座位的坡階先核，不能把包場椅當必有，也不預設坐在地上。離開另叫車。";
+
+const CARD_F2 = `行き先：博多華味鳥 博多駅筑紫口店
+住所：福岡県福岡市博多区博多駅東1-13-31 駅東サンシティビル1F
+「筑紫口店」です。「筑紫口店 別館」「祇園店」「博多駅前店」ではありません。入口に近い合法的な場所で降ろしてください。店内の段差と3名の席は到着時に確認します。
+${JP_WALK}
+${F_BACK}`;
+const CARD_F2_ZH = "只去筑紫口店，不是別館、祇園店或駅前店。1F 不等於門內零高差。未訂位。電郵已由本人寄出。";
+
+const CARD_F4 = `行き先：博多町家ふるさと館
+住所：福岡県福岡市博多区冷泉町6-10
+館の入口に近い合法的な場所で降ろしてください。織物実演と町家の建物を見学する予定です。入口の段差・館内の椅子は未確認です。神社参拝はしません。
+${JP_WALK}
+${F_BACK}`;
+const CARD_F4_ZH = "午後主線。看織實演和町家，不參拜。入口和椅子未核。實演可能停，不保證不停。";
+
+const CARD_F3 = `行き先：ロイヤルガーデンカフェ大濠公園
+住所：福岡県福岡市中央区大濠公園1-3 ボートハウス大濠パーク1F
+明治通り側の公園入口から店へ向かう予定です。短く平らな経路に近い合法的な降車場所を確認してください。車で店のテーブルまで行けるとは考えていません。店内の喫煙室の有無と経路は使用前に確認します。
+${JP_WALK}
+${F_BACK}`;
+const CARD_F3_ZH = "只在友泉亭不適用、而且當日 H 容得下跨區時才考慮。不繞湖。禁煙室、落客和步程未核前不當確定飲食點。不要把友泉亭、町家、大濠串成一天。回港不要套用町家的短車程。";
+
+const KR_WALK = "성인 3명이고 어머니는 평지나 완만한 내리막을 약 30분 걸으면 5분 정도 앉아서 쉬십니다. 오르막, 긴 급경사 내리막, 계단과 오래 서서 기다리는 것은 피하고 싶습니다.";
+
+const CARD_B0 = `LOYQU 예약: 9시간, 1–4인 상품 / 실제 성인 3명, 짐 0개입니다. 차량 종류와 기사님 사용 언어는 아직 확인되지 않았습니다.
+예약된 픽업은 09:00 KST, 장소는 부산항 국제여객터미널, 부산광역시 동구 충장대로 206입니다. 예약서에는 “1F Arrival Hall”이라고 되어 있지만, 항만 안내에는 일반 입국장이 2층으로 나옵니다. 예약 문구를 임의로 바꾸지 않고, 실제 만날 층과 위치를 확인하고 싶습니다.
+08:00은 희망 시간일 뿐 확정이 아니며 입국 수속에 따라 달라집니다. 같은 터미널로 돌아옵니다. 선내 시각 16:00까지 터미널 도착 / 한국 현지 도착 마감 ___시 ___분（시차 확인 후 기입, 미기입 시 사용 금지）이 필요하고 9시간을 모두 사용할 필요는 없습니다. 배에서 더 이른 시간을 안내하면 그 시간을 따릅니다.`;
+const CARD_B0_ZH = "9 小時 1–4 人方案，實際 3 人 0 行李。車型和司機使用的語言都還沒有列出來，不要猜。09:00 是訂單上的當地 KST；08:00 未確認。訂單寫 1F，港方常見入境在 2F，請供應商確認，不改樓層。船時 16:00 回到同一北港，不是已上船。KST 空白未填不要用。不必用完 9 小時。";
+
+const CARD_B1 = `목적지: 송도해상케이블카 송도베이스테이션（Songdo Bay Station）
+주소: 부산광역시 서구 송도해변로 171
+1층 정문 또는 송림주차장 근처에서 합법적으로 내릴 수 있는 곳을 부탁드립니다. 정문 앞 정차 가능 여부는 현장에서 확인해 주세요. 차량이 4층 승강장까지 갈 수 있다고 생각하지 않습니다. 1층 매표소에서 표를 사고 엘리베이터 안내를 받아 4층 승강장으로 가려고 합니다.
+${KR_WALK} 장시간 서야 하면 탑승을 생략하겠습니다.
+오늘은 송도 서쪽 일정만 갑니다. 한국 현지 ___시 ___분까지 송도에서 차량에 이미 탑승하여 출발（현지 귀항 마감 75분 전, 시차 확인 후 기입）, 선내 시각 16:00 전 부산항 국제여객터미널（동구 충장대로 206）도착 / 한국 현지 마감 ___시 ___분（확인 후 기입）이 필요합니다. 배의 더 이른 안내가 있으면 우선합니다.`;
+const CARD_B1_ZH = "松島出發站 171。希望 1F 正門或松林停車場附近合法落客，未保證能停在門前，車不到 4F。只去西側。KST 離區空白和到港空白都要先填。船時 16:00 不是 KST。";
+
+const CARD_B2 = `목적지: 페어필드 바이 메리어트 부산 송도 비치 / 22층 송도키친（Songdo Kitchen）
+주소: 부산광역시 서구 송도해변로 113
+호텔 정문 근처의 합법적인 승하차 장소를 부탁드립니다. 케이블카에서 호텔까지는 차량으로 이동하고, 부모님은 해변을 따라 걷지 않겠습니다. 정문에서 엘리베이터를 타고 22층으로 갑니다.
+점심 운영은 12:00–14:30, 마지막 주문은 14:00입니다. 12시쯤 도착을 희망하지만 3인 좌석은 아직 예약되지 않았습니다. 케이블카가 운휴하거나 오래 서야 하면 식사와 앉아서 보는 바다 경치를 우선하겠습니다.
+성인 3명, 짐 0개. ${KR_WALK} 한국 현지 ___시 ___분까지 호텔 정문에서 이미 차에 타고 출발하여, 선내 시각 16:00에 해당하는 한국 현지 ___시 ___분까지 부산항 국제여객터미널（동구 충장대로 206）에 도착（시차 확인 후 기입, 미기입 시 사용 금지）해야 합니다. 배의 더 이른 안내가 있으면 우선합니다.`;
+const CARD_B2_ZH = "Fairfield 松島 113、22F Songdo Kitchen。包車短送正門，不要沿著沙灘走。約 12:00 當地午餐，14:00 最後點餐。3 人座未訂位。電郵已由本人寄出，回覆前不是已訂位。停駛時優先坐下來吃飯看海。離區 KST 空白未填不要用。";
+
+const CARD_B3 = `목적지: 부산항 국제여객터미널（북항 / MBF-1）
+주소: 부산광역시 동구 충장대로 206
+성인 3명, 짐 0개입니다. 선내 시각 16:00까지 터미널에 도착 / 한국 현지 마감 ___시 ___분（시차 확인 후 기입, 미기입 시 사용 금지）해야 합니다. 승선 완료 시간이 아니라 터미널 도착 기준이며, 배에서 더 이른 시간을 안내하면 그 시간을 따릅니다. 영도나 다른 여객터미널로 가지 말아 주세요.
+출발지에서 부모님이 오래 걷지 않도록 합법적인 장소에서 태워 주세요. 송도에서는 한국 현지 ___시 ___분까지 이미 차에 타고 출발（귀항 마감 75분 전, 시차 확인 후 기입）해야 합니다. 교통이 막히면 더 일찍 출발하겠습니다. 터미널 내 실제 하차 지점은 당일 안내에 따라 주세요.`;
+const CARD_B3_ZH = "回北港 MBF-1、忠壯大路 206，不要去影島。船時 16:00 到碼頭，KST 空白未填不要用。松島要在到港線前 75 分鐘已坐在車上，但那個 KST 時刻也還沒填，不能自己減 12:00 午餐。塞車就更早走。";
+
+const CARD_B_BACK = `목적지: 송도해상케이블카 송도베이스테이션
+주소: 부산광역시 서구 송도해변로 171
+호텔에서 출발역 쪽으로 같은 예약 차량이 짧게 이동합니다. 1층 정문 또는 송림주차장 근처의 합법적인 하차를 부탁드립니다. 차량이 4층까지 간다고 생각하지 않습니다. 해변을 따라 걷지 않습니다.
+${KR_WALK}
+송도에서는 한국 현지 ___시 ___분까지 이미 차에 타고 북항으로 출발해야 합니다. 선내 시각 16:00까지 충장대로 206에 도착 / 한국 현지 ___시 ___분（확인 후 기입, 미기입 시 사용 금지）。`;
+const CARD_B_BACK_ZH = "午餐後同一輛包車短送回出發站一帶，不是另叫一台車，也不是新的下車 pin。車不到 4F。離區時刻仍是空白。";
+
+const CARD_B4 = `현재 위치: 송도스카이파크, 부산광역시 서구 암남공원로 181.
+케이블카로 베이스테이션에 돌아갈 수 없는 상황입니다. 역 직원과 기사님이 안전한 귀환 방법 및 합법적인 승차 지점을 먼저 확인해 주세요. 이 주소가 차량 승차 가능 지점으로 확인된 것은 아닙니다. 부모님과 걸어서 공원·구름다리를 지나 돌아가지는 않겠습니다.
+성인 3명, 짐 0개. 어머니는 평지나 완만한 내리막을 약 30분 걸은 뒤 5분 정도 쉬시며, 계단·오르막은 피해야 합니다. 선내 시각 16:00까지 부산항 국제여객터미널（동구 충장대로 206）도착 / 한국 현지 마감 ___시 ___분（확인 후 기입）이 필요하며, 배의 더 이른 안내가 우선입니다.`;
+const CARD_B4_ZH = "對岸 Skypark 只是人在的位置，不是已核接車點。請站方和司機一起找合法上車處。不要自己穿過公園或吊橋走回去。仍是船時 16:00 回北港。不要等到離區線才處理。";
+
+const DIET_DAD = `父の料理について：えび・かには食べません。料理、だし、スープ、ソース、付け合わせに、えび・かに、えびペースト等が入っていないか確認してください。今回は食事制限のお願いです。店全体からそれらをなくすお願いではありません。分からない料理は注文前に教えてください。
+
+아버지가 드실 음식은 새우와 게를 먹지 않습니다. 음식, 육수, 수프, 소스, 반찬에 새우·게·새우젓 등이 들어가는지 확인해 주세요. 이번 요청은 식사 제한에 대한 안내이며, 가게 전체에 해당 재료가 없어야 한다는 뜻은 아닙니다. 확인이 어려운 음식은 주문 전에 알려 주세요.`;
+const DIET_DAD_ZH = "只針對爸爸的菜。不吃蝦和蟹，請核高湯、醬和配菜，包括蝦醬。不是全店禁用，也不是嚴重過敏聲明。沒有把所有魚貝都列為不吃。";
+
+const DIET_MOM = `母の料理について：牛肉は食べません。牛肉、ビーフエキス、牛骨だし等が料理、スープ、ソース、付け合わせに入っていないか確認してください。今回は食事制限のお願いで、店全体から牛肉をなくすお願いではありません。豚肉・鶏肉・魚などの候補から、材料を確認して選びたいです。
+
+어머니가 드실 음식은 소고기를 먹지 않습니다. 음식, 국물, 소스, 반찬에 소고기·쇠고기 엑기스·사골 육수 등이 들어가는지 확인해 주세요. 식사 제한에 대한 안내이며, 가게 전체에 소고기가 없어야 한다는 뜻은 아닙니다. 돼지고기·닭고기·생선 요리 중 재료를 확인하고 고르겠습니다.`;
+const DIET_MOM_ZH = "只針對媽媽的菜。不吃牛、牛萃取和牛骨湯。豬、雞、魚只是選菜方向，不是已保證的配方。";
+
+const DIET_ROOM = `全席禁煙で、店内に喫煙室のないお店を希望しています。母のため、床に座る席ではなく、背もたれのある普通の椅子を希望します。長く立って待てません。辛いものは避け、柚子こしょう・からし・辛いソースは入れず、別添えにできるか教えてください。
+
+전 좌석 금연이고 실내 흡연실이 없는 곳을 원합니다. 어머니를 위해 바닥 좌석이 아닌 등받이 있는 일반 의자를 부탁드립니다. 오래 서서 기다리기는 어렵습니다. 매운 음식은 피하고, 고추 양념 등은 넣지 말고 따로 받을 수 있는지 알려 주세요.`;
+const DIET_ROOM_ZH = "希望全席禁煙，而且店內沒有吸煙室。要靠背普通椅，不能久站。少辣：柚胡椒、芥末、辣醬不要拌進去，可以另放。預醃若拿不掉要先說。這是請求，不保證店家一定做得到。";
+
+const A_KIRIKO = "薩摩切子工場見學免費、無需事前預約；11/25 不在官方 11 月定休日，但須避開 12:00–13:00 等休息時段，機器維護可能臨時休業，不保證當下正在作業；此為工場見學，不是另址磯工芸館商店，也不是付費手作。";
+const A_MACHI = "博多町家一般入館 200 円、3 人屬個人票、無需事前預約，現場購票即可；町家棟博多織實演本身免費且官方寫預約不要，午後場 13:30–15:00，但週三及 7–9 月休演，11/27 依規則應有實演、不是保證不停演。這是觀看實演，不是付費繪付／曲物體驗，也不是要預約的英語導覽。";
+const A_RURI = "瑠璃庵週二休、11/26（四）依規則應開；付費玻璃手作須預約，本次不訂體驗。官方未寫「免預約即可看製作」，也未保證隔窗或場內見學，故不保證可看製作，只在當日確認能免約觀看才短停，否則刪點。";
+const A_SEN = "仙巌園庭園需買入場券（一般 1,600 円，含御殿・尚古集成館），3 人可當日售票機購買，也可選網上預購，無需強制事前預約；9:00–17:00、最終入園 16:30，年中無休，但不保證園內全線平路或無等候。";
+const A_AQ = "水族館一般入館（非市民）大人 2,000 円，3 人屬個人、可現場購票，官方未要求必須事前預約；11/25 不在已公布休館日，9:30–18:00、入館至 17:00，不保證無排隊，也不把市民價當成適用。";
+const A_YUS = "友泉亭一般入園 200 円，3 人屬個人票、無需按 30 人團體申請，現場購票即可，不須為看庭先租和室；9:00–17:00，週一休，11/27（五）依規則應開，高椅與近入口座位仍須現場確認，不保證能坐高椅。";
+const A_PARK = "水辺の森公園／水之庭園是免費公園，縣官方資料寫開園 24 小時、入園料免費，無需預約；管理處曾移址，不要把事務所新地址當成園區入口，也不保證全線無坡。";
+const A_STREET = "眼鏡橋遠看與博多冷泉町／上川端街景、櫛田神社山笠外觀均屬公共街道景觀，無需預約或門票；不上橋階、不入神社參拜。";
+const A_MUSE = "美術館入館免費、不看展則不必另購展覽票；2F 運河橋咖啡為店內消費（11:00–17:00），3 人無需為進館預約。11/26（四）不是第 2／第 4 星期一休館，但仍可能因事業變更開館日。";
+const A_OHORI = "大濠公園湖邊短段是公園公共空間，無需預約門票；Royal Garden Cafe 是飲食店，不作「免約見學」標註。";
+const A_CABLE = "松島海上纜車不必網上預約，官方 FAQ 寫可現場購票；網上預售須翌日起用、當日買當日不可用。11 月當地 09:00–21:00，售票至結束前 30 分；惡天候或售票情況可提早收班或停駛，週六可能候乘，不保證準點或有座可坐等。";
+const A_SEA = "出發站附近海邊馬路側看海屬公共平路，無需預約；1F 官方 Photo Zone 與 3F Bay Terrace 是否必須持纜車票才能進入，官方樓層圖未寫死，不得寫成已確認的免費免約室內點，現場再看標示。不上沙灘、吊橋或公園爬坡。";
+
+const URL_KIRIKO = "https://www.senganen.jp/how-to-walk/adjacent-facility/shimadzu-satsuma-kiriko-glassworks/ ；https://www.senganen.jp/satsuma-kiriko-factory-closed-days-in-november/ ；https://www.senganen.jp/faq/";
+const URL_MACHI = "https://hakatamachiya.com/access/ ；https://hakatamachiya.com/experience/ ；https://hakatamachiya.com/news/opening-hours/";
+const URL_RURI = "https://rurian.com/ ；https://www.rurian.com/blowglass.html";
+const URL_SEN = "https://www.senganen.jp/faq/";
+const URL_AQ = "https://ioworld.jp/information ；https://ioworld.jp/faq";
+const URL_YUS = "https://fukuoka-teien.com/yusentei/information/ ；https://fukuoka-teien.com/yusentei/service/";
+const URL_PARK = "https://www.pref.nagasaki.jp/uploads/2025/11/1764121203-3.pdf ；https://nagasaki-p.com/mizube/ ；https://nagasaki-p.com/mizube/stone/";
+const URL_BRIDGE = "https://www.at-nagasaki.jp/barrierfree/64024";
+const URL_YAMA = "https://yokanavi.com/spots/26906";
+const URL_MUSE = "https://www.nagasaki-museum.jp/visitor/info ；https://www.nagasaki-museum.jp/visitor/cafe";
+const URL_OHORI = "https://www.royal-gardencafe.com/store-menu/ohoripark.html";
+const URL_CABLE = "https://busanaircruise.co.kr/cmm/faq.html?BD_CD=FAQ2&rank=4 ；https://busanaircruise.co.kr/info/time?rank=2 ；https://busanaircruise.co.kr/info/use";
+const URL_FLOOR = "https://busanaircruise.co.kr/about/floor?rank=4";
+const URL_FUKU = "https://www.hotpepper.jp/strJ004050226/ ；https://r.gnavi.co.jp/f73zjf3v0000/lunch/";
+const URL_KATSU = "https://www.katsu-shika.com/tonkatsu";
+const URL_HM = "https://www.hanamidori.net/menu-lunch/";
+const URL_SONG = "https://www.songdokitchen.com/our-menus";
+const URL_KURO = "https://f189601.gorp.jp/";
+const URL_PAVE = "https://www.anacrowneplaza-nagasaki.jp/restaurants/pave";
+
+function evt(o) {
+  return {
+    id: o.id,
+    day: o.day,
+    time: Object.prototype.hasOwnProperty.call(o, "time") ? o.time : null,
+    timeHint: o.timeHint || null,
+    type: o.type,
+    title: o.title,
+    cityId: o.cityId || null,
+    address: o.address == null ? null : o.address,
+    addressLocal: o.addressLocal == null ? null : o.addressLocal,
+    coords: null,
+    tags: o.tags || [],
+    moodColor: o.moodColor || null,
+    note: o.note || null,
+    phone: o.phone == null ? null : o.phone,
+    whatsapp: null,
+    line: null,
+    messenger: null,
+    openHours: o.openHours == null ? null : o.openHours,
+    price: o.price == null ? null : o.price,
+    website: o.website == null ? null : o.website,
+    cost: null,
+    status: "pending",
+    source: "ai",
+    transport: o.transport == null ? null : o.transport
+  };
+}
+function taxi(from, to, operator) {
+  return {
+    mode: "taxi",
+    from: from,
+    to: to,
+    fromEventId: null,
+    toEventId: null,
+    operator: operator,
+    line: null,
+    durationMin: null,
+    stopCount: null,
+    liveApi: null
+  };
+}
+const OP_JP = "當日另叫計程車。不是全天包車，不假設上一程的車還在等。";
+const OP_KR = "LOYQU 已購 9 小時、1–4 人方案；實際 3 人、行李 0。車型與語言未列。";
+
+function clockNote(port) {
+  return [CLOCK, SHOW, WALK, port, "放行後就出門，不要在船上等咖啡開門。館還沒開，不假裝可以進去，先用已知的戶外點或對調順序。", MAIL].join("\n");
+}
+function dietNote() {
+  return [
+    "三張分開給餐廳，不要合成「全桌都不能吃」。不是司機卡。",
+    "【爸爸】",
+    DIET_DAD,
+    DIET_DAD_ZH,
+    "【媽媽】",
+    DIET_MOM,
+    DIET_MOM_ZH,
+    "【禁煙／椅子／少辣】",
+    DIET_ROOM,
+    DIET_ROOM_ZH,
+    "【預約】這張不是訂位，也不代表店已留位。",
+    MAIL
+  ].join("\n");
+}
+
 const ITINERARY = {
-  "items": [
-    {
-      "timeHint": "afternoon",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "入境"
-      ],
-      "moodColor": "#333333",
-      "id": "evt_d1_01",
-      "day": 1,
-      "time": "16:25",
-      "type": "arrival",
-      "title": "關西國際機場 第 1 航廈",
-      "cityId": "osaka",
-      "address": "Kansai Airport Terminal 1",
-      "addressLocal": "大阪府泉佐野市泉州空港北1 関西国際空港 第1ターミナル",
-      "coords": [
-        34.4343,
-        135.2442
-      ],
-      "note": "【入境】出發前填好 Visit Japan Web；入境連提行李預留 45–60 分鐘。\n【攻略】便利店 ATM 提備用現金；利木津巴士在第 1 航廈 1 樓 7 號站。\n【實用】航班時刻 TBD（假設 UO898）；刷卡選日圓（JPY）。若實際抵達太晚，近鐵 B2 蛋糕取貨窗（約 19:00–19:45，館至 20:00）可能趕不上——見 evt_d1_03【備案】，取貨不作保證。",
-      "openHours": "機場總合案內 24 小時",
-      "price": null
-    },
-    {
-      "id": "trp_d1_02",
-      "day": 1,
-      "time": "17:55",
-      "timeHint": "evening",
-      "type": "transport",
-      "title": "前往近鐵上本町（機場利木津巴士）",
-      "cityId": "osaka",
-      "address": "關西國際機場第 1 航廈 1 樓 利木津巴士 7 號站",
-      "addressLocal": "関西空港 第1ターミナル 1階 リムジンバス 7番のりば（近鉄上本町・心斎橋行き）",
-      "coords": [
-        34.4343,
-        135.2442
-      ],
-      "tags": [
-        "機場巴士"
-      ],
-      "moodColor": "#2A7F7A",
-      "note": "【上車】第 1 航廈 1 樓 7 號站（近鐵上本町線）；先在售票機買票（可刷卡）。假設約 16:25 抵則約 17:55 前上車，較易趕 19:00 取貨窗。\n【下車】近鐵上本町 2 樓巴士總站，直入近鐵百貨地庫。\n【車資】成人 ¥1,800。\n【備案】南海空港急行往難波 → 轉地鐵到谷町四丁目（IC 約 ¥1,210）；晚抵略過上本町取貨則直回谷町＋KOHYO（見靈感）。\n【實用】實際班次按抵達時刻再核；航班 TBD——不能保證趕上取貨。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "約 20–30 分鐘一班（傍晚）",
-      "price": "成人 ¥1,800",
-      "website": null,
-      "cost": {
-        "amount": 1800,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": {
-        "mode": "bus",
-        "from": "關西機場第 1 航廈",
-        "to": "近鐵上本町",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "關西空港交通／近鐵巴士",
-        "line": "近鐵上本町／心齋橋線",
-        "durationMin": 61,
-        "stopCount": 1,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d1_03",
-      "day": 1,
-      "time": "19:00",
-      "timeHint": "evening",
-      "type": "shop",
-      "title": "近鐵百貨上本町店",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市天王寺區上本町6-1-55 近鐵百貨上本町店 地庫 1 樓",
-      "addressLocal": "大阪府大阪市天王寺区上本町6-1-55 近鉄百貨店上本町店 B1F 鮮魚 西浅／和洋酒売場",
-      "coords": [
-        34.6659,
-        135.5195
-      ],
-      "tags": [
-        "百貨地庫",
-        "刺身",
-        "清酒",
-        "蛋糕"
-      ],
-      "moodColor": "#8C8378",
-      "note": "【今次】生日條件取貨：B2 Henri Charpentier（アンリ・シャルパンティエ）12cm 士多啤梨忌廉Chantilly Fraise（シャンティ・フレーズ，Oct 2026 頁面約 ¥4,536）→ 再上 B1 鮮魚西淺買刺身、清酒賣場揀四合瓶地酒（有試飲先試）。\n【攻略】先 B2 取蛋糕付款（報 E 字頭預約號碼），再上 B1 買刺身與地酒。\n【預約】Suzette（シュゼット）網店「店舖取貨」（店舗受取）：先註冊會員；取貨日 3 日前日本時間 17:00 前下單（Feb 7 取→最遲 Feb 4 17:00 JST）；蠟燭／生日牌／保冷劑下單時選；上本町＝到店付款（非網上預付）。取貨日 3 日前 17:59 前可網上取消。\n【實用】館日營業至 20:00；可行窗約 19:00–19:45。刺身加保冷劑；蛋糕回房即放冰箱。航班 TBD：僅在實際能於窗內抵達時執行取貨——不作保證。\n【備案】趕不上網訂／會員不成：B2 現場買單件 The Shortcake（ザ・ショートケーキ）約 ¥853（晚市或售罄）；20:00 後才到或略過上本町→酒店隔鄰 KOHYO 買刺身／酒（見靈感）。",
-      "phone": "+81-6-6773-8002",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "10:00–20:00（日同）",
-      "price": "12cm 蛋糕約 ¥4,536（取貨時付；Oct 2026 估算）＋刺身約 ¥1,000–2,000＋地酒四合瓶約 ¥1,500–2,500（估算；費用計入宵夜站，此站 cost 不重複）",
-      "website": "https://www.d-kintetsu.co.jp/uehonmachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "id": "trp_d1_04",
-      "day": 1,
-      "time": "19:46",
-      "timeHint": "evening",
-      "type": "transport",
-      "title": "前往谷町四丁目（地鐵谷町線）",
-      "cityId": "osaka",
-      "address": "大阪地鐵谷町九丁目站（谷町線）2 號月台",
-      "addressLocal": "Osaka Metro 谷町九丁目駅 2番線（谷町線・大日方面）／近鉄百貨店上本町店 B1 から地下通路",
-      "coords": [
-        34.665,
-        135.5175
-      ],
-      "tags": [
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "note": "【上車】近鐵百貨地庫經地下通道步行約 5 分鐘到谷町九丁目站，2 號月台，谷町線往大日。\n【下車】谷町四丁目站 4 號出口，步行約 4 分鐘回酒店。\n【車資】IC ¥190。\n【備案】行李多就在上本町乘的士（約 ¥1,000）。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥190（ICOCA）",
-      "website": null,
-      "cost": {
-        "amount": 190,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": {
-        "mode": "subway",
-        "from": "谷町九丁目",
-        "to": "谷町四丁目",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵 Osaka Metro",
-        "line": "谷町線",
-        "durationMin": 3,
-        "stopCount": 2,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "evening",
-      "phone": "+81-6-6945-5489",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": {
-        "amount": 97750,
-        "currency": "JPY",
-        "category": "hotel"
-      },
-      "status": "confirmed",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "酒店",
-        "溫泉"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d1_05",
-      "day": 1,
-      "time": "19:55",
-      "type": "hotel",
-      "title": "Dormy Inn 大阪谷町",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【攻略】7 晚同一間（Feb 7 入／Feb 14 午前出；改期 TBD）：標準方案（ドーミーインスタンダードプラン＜素泊まり＞）禁煙雙人房；13 樓天然溫泉浪華之湯連桑拿，住客免費；酒店對面 KOHYO 超市（遲到宵夜備案）。\n【免費服務】歡迎飲品、浴後雪條、夜鳴蕎麥麵（夜鳴きそば，21:30–23:00）、朝早乳酸菌飲品。\n【預約】Jalan 確認編號 0AN0UPYV（原 8 晚；改 7 晚／Feb 14 CO 未完成）；到店付款（現地払い）；Feb 6 取消收 50%，當日 100%。\n【實用】到店用恒生 travel+ 實體卡付日圓；宿泊稅估 Feb 13 ¥500、其餘每晚 ¥200，共約 ¥1,700；入湯稅每晚 ¥150×7＝約 ¥1,050；退房時付（以酒店為準）。1、4、13 樓有吸煙亭，盡量離遠。",
-      "openHours": "入住 15:00 起；退房 Feb 14 午前（改期 TBD）",
-      "price": "7 晚約 ¥95,000（同方案市價 as-of Nov 4, 2026；已訂 0AN0UPYV 原 8 晚 ¥109,000，改期後以確認為準）＋稅約 ¥2,750（合計約 ¥97,750）"
-    },
-    {
-      "id": "evt_d1_06",
-      "day": 1,
-      "time": "20:15",
-      "timeHint": "evening",
-      "type": "food",
-      "title": "生日宵夜：上本町刺身＋地酒＋蛋糕",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9（Dormy Inn 大阪谷町） 客房",
-      "addressLocal": "〒540-0026 大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "tags": [
-        "超市宵夜",
-        "刺身",
-        "清酒",
-        "蛋糕"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【今次】生日宵夜：房間裏上本町刺身、地酒、12cm 蛋糕（若已取到）。\n【攻略】紙杯問前台借；未取到蛋糕或想加壽司／沙律，可在酒店對面 KOHYO 補（07:00–23:00）。\n【實用】大浴場禁酒，留在房間吃；喝酒後休息 30 分鐘、多喝水才泡湯。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "酒店房間（20:15 起）；KOHYO 07:00–23:00",
-      "price": "刺身＋地酒約 ¥3,000（估算）＋12cm 蛋糕約 ¥4,536（取貨時付；合計約 ¥7,536）",
-      "website": "https://www.suzette-shop.jp/shop/r/r101036/",
-      "cost": {
-        "amount": 7536,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "night",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "天然溫泉",
-        "夜鳴蕎麥麵"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d1_07",
-      "day": 1,
-      "time": "21:30",
-      "type": "rest",
-      "title": "浪華之湯",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【今次】生日第二輪：泡湯後雪條（湯上處，約 15:00–25:00）＋13 樓 HATAGO 免費夜鳴蕎麥麵（21:30–23:00；22:15 後較空）。\n【攻略】室內溫泉 → 露天／壺湯 → 桑拿；與房內宵夜不衝突。\n【實用】浴場不可帶食物和酒；同層有吸煙亭，離遠坐；有紋身不可入浴。",
-      "openHours": "大浴場 15:00–翌日 10:00；夜鳴蕎麥麵（夜鳴きそば）21:30–23:00；雪條約 15:00–25:00",
-      "price": "住客免費"
-    },
-    {
-      "timeHint": "morning",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "步行"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "openHours": "步行約 10–15 分鐘",
-      "price": "免費",
-      "id": "trp_d2_01",
-      "day": 2,
-      "time": "09:15",
-      "title": "前往生國魂蚤之市（步行）",
-      "address": "Dormy Inn 大阪谷町",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【上車】酒店步行出發。\n【下車】生玉表參道一帶攤位。\n【車資】免費。\n【備案】谷町九丁目站出再步行約 5 分鐘。",
-      "transport": {
-        "mode": "walk",
-        "from": "Dormy Inn 谷町",
-        "to": "生國魂蚤之市",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": null,
-        "line": null,
-        "durationMin": 12,
-        "stopCount": null,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d2_02",
-      "day": 2,
-      "time": "09:30",
-      "timeHint": "morning",
-      "type": "shop",
-      "title": "生國魂蚤之市（生國魂蚤の市）",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市天王寺區生玉町13-9（表參道一帶）",
-      "addressLocal": "大阪府大阪市天王寺区生玉町13-9 表参道 蚤の市",
-      "coords": [
-        34.6651,
-        135.5133
-      ],
-      "tags": [
-        "市集",
-        "古物",
-        "現金"
-      ],
-      "moodColor": "#8C8378",
-      "note": "【今次】每月 8 日小型古物市；只逛攤位，不參拜。\n【攻略】約 10 檔古道具攤沿表參道；議價客氣問「可以便宜一點嗎？（少し安くなりますか）」。主線逛至約 11:20 再赴午膳，午前不另硬塞館點。\n【實用】多數只收現金；07:00–14:00。\n【備案】蚤市早完有餘力：大阪歷史博物館（月曜開；見靈感），可略。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "每月 8 日 07:00–14:00 左右",
-      "price": "免費入場（多數攤檔只收現金）",
-      "website": "https://ikutamajinja.jp/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "morning",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "步行"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "openHours": "步行約 5–8 分鐘",
-      "price": "免費",
-      "id": "trp_d2_03",
-      "day": 2,
-      "time": "11:40",
-      "title": "前往和sai（步行）",
-      "address": "生國魂蚤之市",
-      "addressLocal": "大阪府大阪市天王寺区生玉町13-9",
-      "coords": [
-        34.6651,
-        135.5133
-      ],
-      "note": "【上車】蚤市攤位步行。\n【下車】和sai。\n【車資】免費。\n【備案】已逛歷史博物館則由此續行；時間緊直赴和sai。",
-      "transport": {
-        "mode": "walk",
-        "from": "生國魂蚤之市",
-        "to": "和sai",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": null,
-        "line": null,
-        "durationMin": 7,
-        "stopCount": null,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d2_04",
-      "day": 2,
-      "time": "12:00",
-      "timeHint": "afternoon",
-      "type": "food",
-      "title": "和sai",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市天王寺區生玉町5-26",
-      "addressLocal": "大阪府大阪市天王寺区生玉町5-26 和sai",
-      "coords": [
-        34.6642,
-        135.5135
-      ],
-      "tags": [
-        "和食",
-        "天然魚",
-        "日本酒",
-        "可預約"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【Tabelog】3.57\n【攻略】古民家和食，天然魚；點當日魚料理定食配一杯冷酒。\n【預約】Tabelog 網上訂 12:00、1 位，只訂座位；約 Dec 中旬開放。\n【實用】Feb 8（一）營業；全席禁煙。\n【備案】訂不到或趕 Pokémon：北極星 心齋橋本店蛋包飯（オムライス）（見靈感；walk-in）。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "星期一 11:30–15:00（L.O. 14:00）；星期二、三休",
-      "price": "午市 ¥1,000–1,999（連一杯日本酒約 ¥2,500，估算）",
-      "website": "https://tabelog.com/osaka/A2701/A270202/27125938/",
-      "cost": {
-        "amount": 2500,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 190,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥190",
-      "id": "trp_d2_05",
-      "day": 2,
-      "time": "13:30",
-      "title": "前往心齋橋（地鐵）",
-      "address": "和sai 附近",
-      "addressLocal": "大阪府大阪市天王寺区生玉町",
-      "coords": [
-        34.6642,
-        135.5135
-      ],
-      "note": "【上車】谷町九丁目或近站，轉御堂筋線往心齋橋。\n【下車】心齋橋站，步行至大丸心齋橋本館。\n【車資】IC 約 ¥190。\n【備案】步行約 20–25 分鐘亦可。",
-      "transport": {
-        "mode": "train",
-        "from": "谷町九丁目",
-        "to": "心齋橋",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵",
-        "line": "谷町線／御堂筋線",
-        "durationMin": 15,
-        "stopCount": 3,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "afternoon",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://osaka.pokemon-cafe.jp/",
-      "cost": {
-        "amount": 3500,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "驚喜",
-        "咖啡",
-        "必訂"
-      ],
-      "moodColor": "#E8A33D",
-      "id": "evt_d2_06",
-      "day": 2,
-      "time": "14:00",
-      "type": "food",
-      "title": "寶可夢咖啡 OSAKA（ポケモンカフェ Osaka）",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區心齋橋筋1-7-1 大丸心齋橋本館 9F",
-      "addressLocal": "大阪府大阪市中央区心斎橋筋1-7-1 大丸心斎橋店本館9F Pokémon Café",
-      "coords": [
-        34.6734,
-        135.5013
-      ],
-      "note": "【今次】驚喜；大丸心齋橋本館 9F；停留約 90 分鐘。\n【攻略】Seat C（1–6 人）可一人；跳過節日限定餐。同層 Pokémon Center DX、PARCO 美少女戰士 Store 可 walk-in。\n【預約】官網必訂（不收電話／電郵）；Feb輪次估 Jan 1, 2027 18:00 JST 開搶（待 NEWS）。\n【實用】10:00–20:00；館內禁煙；可刷卡（含銀聯）。",
-      "openHours": "10:00–20:00（預約制；最後入店約 18:00 輪；L.O. 19:00）",
-      "price": "套餐視輪次；另加飲"
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 190,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥190",
-      "id": "trp_d2_07",
-      "day": 2,
-      "time": "16:00",
-      "title": "前往長堀（地鐵）",
-      "address": "大丸心齋橋",
-      "addressLocal": "大阪府大阪市中央区心斎橋筋1-7-1",
-      "coords": [
-        34.6734,
-        135.5013
-      ],
-      "note": "【上車】心齋橋／長堀橋方向。\n【下車】松屋町或近上町，步行至長堀。\n【車資】IC 約 ¥190。\n【備案】訂不到長堀改燗之美穗（谷町六；見靈感）。",
-      "transport": {
-        "mode": "train",
-        "from": "心齋橋",
-        "to": "松屋町",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵",
-        "line": "長堀鶴見綠地線",
-        "durationMin": 10,
-        "stopCount": 2,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d2_08",
-      "day": 2,
-      "time": "17:00",
-      "timeHint": "evening",
-      "type": "food",
-      "title": "長堀（ながほり）",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區上町1-3-9",
-      "addressLocal": "大阪府大阪市中央区上町1-3-9 ながほり",
-      "coords": [
-        34.6765,
-        135.5257
-      ],
-      "tags": [
-        "居酒屋",
-        "清酒",
-        "百名店",
-        "要預約"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【Tabelog】3.70\n【攻略】上町居酒屋；月曜開；點店主推薦小菜配清酒。\n【預約】Tabelog 網上訂；Feb 日曆 Nov 4, 2026 仍未開。\n【實用】全席禁煙；可刷卡。\n【備案】燗之美穗（谷町六；walk-in；16:00 開門問位）。",
-      "phone": "+81-6-6768-0515",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "星期一、二、四、五 17:00–22:00（星期一由 Aug 2026 起營業）；六 13:00–22:00；逢星期三、日及假期休",
-      "price": "預算 ¥10,000–14,999（連清酒）",
-      "website": "https://tabelog.com/osaka/A2701/A270204/27000581/",
-      "cost": {
-        "amount": 12000,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "evening",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 190,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥190",
-      "id": "trp_d2_09",
-      "day": 2,
-      "time": "20:20",
-      "title": "前往谷町四丁目（地鐵谷町線）",
-      "address": "長堀附近",
-      "addressLocal": "大阪府大阪市中央区上町",
-      "coords": [
-        34.6765,
-        135.5257
-      ],
-      "note": "【上車】近站轉谷町線。\n【下車】谷町四丁目，回酒店。\n【車資】IC 約 ¥190。\n【備案】的士約 10 分鐘。",
-      "transport": {
-        "mode": "train",
-        "from": "谷町九丁目",
-        "to": "谷町四丁目",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵",
-        "line": "谷町線",
-        "durationMin": 5,
-        "stopCount": 2,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "night",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "溫泉",
-        "酒店"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d2_10",
-      "day": 2,
-      "time": "20:40",
-      "type": "rest",
-      "title": "浪華之湯",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【攻略】13 樓天然溫泉連桑拿，住客免費；收工即泡。\n【實用】15:00–翌日 10:00；同層有吸煙亭，離遠坐。",
-      "openHours": "15:00–翌日 10:00（住客）",
-      "price": "住客免費"
-    },
-    {
-      "timeHint": "morning",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 190,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥190",
-      "id": "trp_d3_01",
-      "day": 3,
-      "time": "09:40",
-      "title": "前往東梅田（地鐵谷町線）",
-      "address": "谷町四丁目站",
-      "addressLocal": "Osaka Metro 谷町四丁目駅",
-      "coords": [
-        34.6826,
-        135.5176
-      ],
-      "note": "【上車】谷町四丁目站 2 號月台，谷町線往大日。\n【下車】東梅田，步行入 LUCUA 南館。\n【車資】IC ¥190。\n【備案】約 15–20 分鐘含步行上 13F。",
-      "transport": {
-        "mode": "train",
-        "from": "谷町四丁目",
-        "to": "東梅田",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵",
-        "line": "谷町線",
-        "durationMin": 12,
-        "stopCount": 3,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "morning",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.nintendo.com/jp/officialstore/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "驚喜",
-        "任天堂",
-        "購物"
-      ],
-      "moodColor": "#E8A33D",
-      "id": "evt_d3_02",
-      "day": 3,
-      "time": "10:00",
-      "type": "shop",
-      "title": "任天堂大阪專門店（Nintendo OSAKA）",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市北區梅田3-1-3 LUCUA 南館 13F",
-      "addressLocal": "大阪府大阪市北区梅田3-1-3 LUCUA osaka 南館 13F Nintendo OSAKA",
-      "coords": [
-        34.7019,
-        135.4963
-      ],
-      "note": "【今次】驚喜；LUCUA 南館 13F；主機／amiibo／限定商品。\n【攻略】平日通常不用整理券；可順路同層 CAPCOM STORE 只睇店（カフェ另計、可略）。11:10 前離店；簡食改梅田站內／寶塚站便利店（釜竹見靈感；今雪 walk-in 不定休，有餘力才去）。\n【實用】10:00–20:00；walk-in；館內禁煙。\n【硬限制】須 11:10 前離店，趕阪急寶塚 13:00 開演。",
-      "openHours": "10:00–20:00",
-      "price": "免費入場（商品另計）"
-    },
-    {
-      "timeHint": "morning",
-      "type": "transport",
-      "cityId": "kobe",
-      "tags": [
-        "私鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 320,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "急行約 10 分鐘一班",
-      "price": "IC ¥320",
-      "id": "trp_d3_04",
-      "day": 3,
-      "time": "11:15",
-      "title": "前往寶塚（阪急寶塚線急行）",
-      "address": "阪急大阪梅田",
-      "addressLocal": "阪急大阪梅田駅 宝塚線",
-      "coords": [
-        34.705,
-        135.498
-      ],
-      "note": "【上車】阪急大阪梅田寶塚線急行；最遲約 11:25 上車。\n【下車】寶塚站，徒歩約 8–10 分鐘到大劇場。\n【車資】IC 約 ¥320。\n【備案】準急／普通多約 5–10 分鐘；建議 12:00–12:15 到場。",
-      "transport": {
-        "mode": "train",
-        "from": "阪急大阪梅田",
-        "to": "寶塚",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "阪急",
-        "line": "寶塚線急行",
-        "durationMin": 35,
-        "stopCount": 5,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "afternoon",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://kageki.hankyu.co.jp/",
-      "cost": {
-        "amount": 8000,
-        "currency": "JPY",
-        "category": "ticket"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "驚喜",
-        "歌劇",
-        "必訂"
-      ],
-      "moodColor": "#E8A33D",
-      "id": "evt_d3_05",
-      "day": 3,
-      "time": "13:00",
-      "type": "sight",
-      "title": "寶塚大劇場",
-      "cityId": "kobe",
-      "address": "日本兵庫縣寶塚市榮町1-1-57",
-      "addressLocal": "兵庫県宝塚市栄町1-1-57 宝塚大劇場",
-      "coords": [
-        34.8077,
-        135.3462
-      ],
-      "note": "【今次】驚喜；宙組『The London Way』『Ivresse Vague』・Feb 9 13:00（約 3 小時連休）。\n【攻略】開場＝開演 30 分前；建議 12:00–12:15 到。無英語字幕／耳機（僅網上英／繁中劇情概要）。手塚治虫記念館休館→可逛寶塚歌劇之殿堂（2–3F・¥500）。途經小神社，只經過、不參拜。\n【預約】外國人 ARS（ars-takarazuka.triplabo.jp；護照；1 席 OK）＋一般前售 Jan 9, 2027。\n【實用】票 ¥3,500–14,000；敷地全禁煙・無吸煙所。",
-      "openHours": "開演 13:00；開場＝開演 30 分前",
-      "price": "一般席 ¥3,500–14,000"
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "私鐵",
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 510,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥510",
-      "id": "trp_d3_06",
-      "day": 3,
-      "time": "16:30",
-      "title": "前往谷町六丁目（阪急→地鐵）",
-      "address": "寶塚大劇場",
-      "addressLocal": "兵庫県宝塚市栄町1-1-57",
-      "coords": [
-        34.8077,
-        135.3462
-      ],
-      "note": "【上車】寶塚站阪急往大阪梅田。\n【轉車】梅田轉谷町線到谷町六丁目。\n【下車】燗之美穗一帶。\n【車資】IC 約 ¥510。\n【備案】散場人潮可稍等後一班。",
-      "transport": {
-        "mode": "train",
-        "from": "寶塚",
-        "to": "谷町六丁目",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "阪急／大阪地鐵",
-        "line": "寶塚線→谷町線",
-        "durationMin": 55,
-        "stopCount": 8,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "evening",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://tabelog.com/osaka/A2701/A270204/27117661/",
-      "cost": {
-        "amount": 5000,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "清酒",
-        "燙酒"
-      ],
-      "moodColor": "#A0785A",
-      "id": "evt_d3_07",
-      "day": 3,
-      "time": "18:00",
-      "type": "food",
-      "title": "燗之美穗（燗の美穂）",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區谷町",
-      "addressLocal": "大阪府大阪市中央区谷町六丁目 燗の美穂",
-      "coords": [
-        34.6761,
-        135.5157
-      ],
-      "note": "【Tabelog】3.43\n【攻略】散場後回谷町；米芝蓮 Bib；燙酒／清酒強；walk-in，16:00 開門問位。\n【實用】全席禁煙。\n【備案】日本酒原價酒藏 谷町四丁目（酒店近）或酒店 Lounge。",
-      "openHours": "星期一至六 16:00–22:00；日 15:00–22:00；逢星期三及每月第 3 個星期四休",
-      "price": "小菜＋酒估算 ¥4,000–6,000"
-    },
-    {
-      "timeHint": "evening",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "步行"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "openHours": "步行約 10 分鐘",
-      "price": "免費",
-      "id": "trp_d3_08",
-      "day": 3,
-      "time": "20:30",
-      "title": "前往谷町四丁目（步行）",
-      "address": "燗之美穗",
-      "addressLocal": "大阪府大阪市中央区谷町六丁目",
-      "coords": [
-        34.6761,
-        135.5157
-      ],
-      "note": "【上車】店外步行。\n【下車】回酒店。\n【車資】免費。\n【備案】谷町線一站亦可。",
-      "transport": {
-        "mode": "walk",
-        "from": "谷町六丁目",
-        "to": "Dormy Inn 谷町",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": null,
-        "line": null,
-        "durationMin": 10,
-        "stopCount": null,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "night",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "溫泉",
-        "酒店"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d3_09",
-      "day": 3,
-      "time": "20:50",
-      "type": "rest",
-      "title": "浪華之湯",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【攻略】13 樓天然溫泉連桑拿，住客免費；收工即泡。\n【實用】15:00–翌日 10:00；同層有吸煙亭，離遠坐。",
-      "openHours": "15:00–翌日 10:00（住客）",
-      "price": "住客免費"
-    },
-    {
-      "id": "trp_d4_01",
-      "day": 4,
-      "time": "09:05",
-      "timeHint": "morning",
-      "type": "transport",
-      "title": "前往祇園四條（谷町線 → 京阪本線特急）",
-      "cityId": "kyoto",
-      "address": "谷町四丁目站",
-      "addressLocal": "Osaka Metro 谷町四丁目駅",
-      "coords": [
-        34.6826,
-        135.5176
-      ],
-      "tags": [
-        "地鐵",
-        "京阪"
-      ],
-      "moodColor": "#2A7F7A",
-      "note": "【上車】谷町四丁目站谷町線往東。\n【轉車】天滿橋或適站轉京阪本線特急往出町柳。\n【下車】祇園四條；步行至繩手通／白川南通口（午膳前散步起點）。\n【車資】IC 約 ¥600–700。\n【備案】時間極緊則略過散步與鍵善，直奔一之傳 12:30。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC 約 ¥660",
-      "website": null,
-      "cost": {
-        "amount": 660,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": {
-        "mode": "train",
-        "from": "谷町四丁目",
-        "to": "祇園四條",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵／京阪",
-        "line": "谷町線→京阪本線特急",
-        "durationMin": 80,
-        "stopCount": 12,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d4_01",
-      "day": 4,
-      "time": "10:30",
-      "timeHint": "morning",
-      "type": "sight",
-      "title": "祇園白川南通・鴨川河畔（白川南通り・鴨川）",
-      "cityId": "kyoto",
-      "address": "日本京都府京都市東山區末吉町 白川南通（繩手通入口）",
-      "addressLocal": "京都府京都市東山区末吉町 白川南通（縄手通側）",
-      "coords": [
-        35.0054,
-        135.7729
-      ],
-      "tags": [
-        "散步",
-        "傳統街區"
-      ],
-      "moodColor": "#6B7F7A",
-      "note": "【今次】京瓷已不排；午膳前短逛補上午：祇園新橋傳統建築保存地區白川南通，再沿鴨川東岸慢行。\n【攻略】繩手通入白川南通，約 60 m 看茶屋格子窗即折返（不行到東端小橋）；回繩手通向南過大和橋，沿白川南岸小路向西到川端通，落鴨川東岸向北至三條大橋一帶再折返上街（河邊只坐一陣；整段約 20–30 分鐘）。之後步行約 5 分鐘赴鍵善良房。\n【實用】免費；途經小神社，只經過、不參拜。\n【備案】下雨改簷下慢行或直奔鍵善／一之傳；想入室內見靈感漢字博物館（雨天後備，非主線）。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "隨時",
-      "price": "免費",
-      "website": null,
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "id": "evt_d4_03",
-      "day": 4,
-      "time": "11:20",
-      "timeHint": "afternoon",
-      "type": "food",
-      "title": "鍵善良房 四條本店（鍵善良房 四条本店）",
-      "cityId": "kyoto",
-      "address": "日本京都府京都市東山區祇園町北側264",
-      "addressLocal": "〒605-0073 京都府京都市東山区祇園町北側264",
-      "coords": [
-        35.004,
-        135.7748
-      ],
-      "tags": [
-        "和菓子",
-        "葛切",
-        "休息"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【攻略】和菓子；由白川／鴨川上街步行約 5 分鐘。午膳前短憩（時間緊可略，直奔一之傳）。\n【實用】全席禁煙；水曜應開；walk-in／或排隊；唔使預約。",
-      "phone": "+81-75-561-1818",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "喫茶 10:00–18:00（L.O. 17:30）；逢星期一休（假期則翌平日）",
-      "price": "葛切 ¥1,600",
-      "website": "https://www.kagizen.co.jp/pages/shops-honten",
-      "cost": {
-        "amount": 1600,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "id": "evt_d4_02",
-      "day": 4,
-      "time": "12:30",
-      "timeHint": "afternoon",
-      "type": "food",
-      "title": "一之傳 祇園別館（一の傳 祇園ハナレ）",
-      "cityId": "kyoto",
-      "address": "日本京都府京都市東山區祇園町南側566",
-      "addressLocal": "京都府京都市東山区祇園町南側566 京都一の傳 祇園ハナレ",
-      "coords": [
-        35.0034,
-        135.7755
-      ],
-      "tags": [
-        "西京漬",
-        "午市御膳",
-        "網上預約"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【Tabelog】3.08\n【攻略】日本料理御膳約 ¥4,900；限時約 1 小時。\n【預約】Tabelog 全預約；不定休⚠️出發前再核。\n【實用】全席禁煙。\n【備案】祇園綺羅良（祇をん きらら；見靈感）。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "午市 11:00、12:30、14:00 三輪；不定休",
-      "price": "銀鱈藏味噌燒御膳 ¥4,900",
-      "website": "https://tabelog.com/kyoto/A2601/A260301/26044729/",
-      "cost": {
-        "amount": 4900,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "kyoto",
-      "tags": [
-        "私鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 270,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥270",
-      "id": "trp_d4_04",
-      "day": 4,
-      "time": "14:00",
-      "title": "前往中書島（京阪本線特急）",
-      "address": "祇園四條",
-      "addressLocal": "京阪本線 祇園四条駅",
-      "coords": [
-        35.0036,
-        135.7722
-      ],
-      "note": "【上車】京阪祇園四條往大阪方向特急。\n【下車】中書島，步行至月桂冠。\n【車資】IC 約 ¥270。\n【備案】普通車多停幾站。",
-      "transport": {
-        "mode": "train",
-        "from": "祇園四條",
-        "to": "中書島",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "京阪",
-        "line": "京阪本線特急",
-        "durationMin": 15,
-        "stopCount": 4,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d4_05",
-      "day": 4,
-      "time": "14:30",
-      "timeHint": "afternoon",
-      "type": "sight",
-      "title": "月桂冠大倉記念館",
-      "cityId": "kyoto",
-      "address": "日本京都府京都市伏見區南濱町247",
-      "addressLocal": "京都府京都市伏見区南浜町247 月桂冠大倉記念館",
-      "coords": [
-        34.93,
-        135.7608
-      ],
-      "tags": [
-        "清酒",
-        "資料館",
-        "試飲"
-      ],
-      "moodColor": "#6B7F7A",
-      "note": "【攻略】酒造紀念館；¥600 walk-in。\n【實用】09:30–16:30。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "09:30–16:30（16:00 前入館）",
-      "price": "¥600（不收現金，用信用卡）",
-      "website": "https://www.gekkeikan.co.jp/enjoy/museum/access/",
-      "cost": {
-        "amount": 600,
-        "currency": "JPY",
-        "category": "ticket"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "kyoto",
-      "tags": [
-        "步行"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "openHours": "步行約 5–8 分鐘",
-      "price": "免費",
-      "id": "trp_d4_06",
-      "day": 4,
-      "time": "15:30",
-      "title": "前往伏水酒藏小路（步行）",
-      "address": "月桂冠大倉記念館",
-      "addressLocal": "京都府京都市伏見区南浜町247",
-      "coords": [
-        34.93,
-        135.7608
-      ],
-      "note": "【上車】紀念館步行。\n【下車】伏水酒藏小路。\n【車資】免費。\n【備案】小路內各店 TableCheck。",
-      "transport": {
-        "mode": "walk",
-        "from": "月桂冠大倉記念館",
-        "to": "伏水酒藏小路",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": null,
-        "line": null,
-        "durationMin": 6,
-        "stopCount": null,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d4_07",
-      "day": 4,
-      "time": "15:45",
-      "timeHint": "afternoon",
-      "type": "food",
-      "title": "伏水酒藏小路（伏水酒蔵小路）",
-      "cityId": "kyoto",
-      "address": "日本京都府京都市伏見區平野町82-2",
-      "addressLocal": "京都府京都市伏見区平野町82-2 伏水酒蔵小路",
-      "coords": [
-        34.9325,
-        135.7605
-      ],
-      "tags": [
-        "清酒",
-        "伏見",
-        "試飲"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【今次】伏見清酒飲比。\n【攻略】日本酒吧「酒藏」吧枱；點十八藏飲比配小菜。\n【預約】可 TableCheck 訂吧枱。\n【實用】Feb 10（三）營業；全席禁煙。附近有小神社，只經過、不參拜。\n【備案】小路內立飲；或轉北新地和 Demekin。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "11:00–22:00（L.O. 21:00）；星期二只有日本酒吧「酒藏」營業",
-      "price": "十八藏飲比 ¥3,280（含稅）",
-      "website": "https://www.tablecheck.com/ja/shops/fushimi-sakagura-kouji/reserve",
-      "cost": {
-        "amount": 3280,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "evening",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "私鐵",
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 700,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥700",
-      "id": "trp_d4_08",
-      "day": 4,
-      "time": "18:30",
-      "title": "前往北新地（京阪→地鐵）",
-      "address": "伏水酒藏小路",
-      "addressLocal": "京都府京都市伏見区",
-      "coords": [
-        34.9325,
-        135.7605
-      ],
-      "note": "【上車】京阪往大阪。\n【轉車】適站轉地鐵到肥後橋／淀屋橋一帶北新地。\n【下車】和 Demekin。\n【車資】IC 約 ¥700。\n【備案】趕收工改日本酒原價酒藏 谷町四丁目（酒店近）。",
-      "transport": {
-        "mode": "train",
-        "from": "中書島",
-        "to": "北新地",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "京阪／大阪地鐵",
-        "line": "京阪本線→地鐵",
-        "durationMin": 55,
-        "stopCount": 10,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d4_09",
-      "day": 4,
-      "time": "19:40",
-      "timeHint": "evening",
-      "type": "food",
-      "title": "和 Demekin（和デメキン）",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區上本町西3-3-30",
-      "addressLocal": "大阪府大阪市中央区上本町西3-3-30 和デメキン",
-      "coords": [
-        34.6732,
-        135.5191
-      ],
-      "tags": [
-        "和食",
-        "居酒屋",
-        "日本酒",
-        "可預約"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【攻略】北新地立飲／小菜；水曜應開（月休）。\n【預約】Tabelog 網上訂座位（只訂座位）；約 Dec 中旬開放。\n【實用】全席禁煙。\n【備案】日本酒原價酒藏 谷町四丁目。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "17:00–22:00；星期一休",
-      "price": "預算 ¥4,000–4,999（單點，只訂座位）",
-      "website": "https://tabelog.com/osaka/A2701/A270204/27110023/",
-      "cost": {
-        "amount": 5000,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "evening",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 230,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥230",
-      "id": "trp_d4_10",
-      "day": 4,
-      "time": "21:30",
-      "title": "前往谷町四丁目（地鐵谷町線）",
-      "address": "北新地",
-      "addressLocal": "大阪府大阪市北区",
-      "coords": [
-        34.697,
-        135.5
-      ],
-      "note": "【上車】近站轉谷町線。\n【下車】谷町四丁目，回酒店。\n【車資】IC 約 ¥230。\n【備案】的士約 15 分鐘。",
-      "transport": {
-        "mode": "train",
-        "from": "東梅田",
-        "to": "谷町四丁目",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵",
-        "line": "谷町線",
-        "durationMin": 10,
-        "stopCount": 3,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "night",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "溫泉",
-        "酒店"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d4_11",
-      "day": 4,
-      "time": "21:50",
-      "type": "rest",
-      "title": "浪華之湯",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【攻略】13 樓天然溫泉連桑拿，住客免費；收工即泡。\n【實用】15:00–翌日 10:00；同層有吸煙亭，離遠坐。",
-      "openHours": "15:00–翌日 10:00（住客）",
-      "price": "住客免費"
-    },
-    {
-      "timeHint": "morning",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "JR",
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 1640,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥1,640",
-      "id": "trp_d5_01",
-      "day": 5,
-      "time": "08:40",
-      "title": "前往網干（谷町線 → JR 新快速）",
-      "address": "谷町四丁目站",
-      "addressLocal": "Osaka Metro 谷町四丁目駅",
-      "coords": [
-        34.6826,
-        135.5176
-      ],
-      "note": "【上車】谷町四丁目→東梅田→JR 大阪，JR 神戶線新快速往姬路方向至網干。\n【下車】JR 網干，徒歩約 3–5 分鐘到本田商店。\n【車資】IC 大阪↔網干約 ¥1,640。\n【備案】推 10:30 場；單程約 1 小時 35–50 分。",
-      "transport": {
-        "mode": "train",
-        "from": "谷町四丁目",
-        "to": "網干",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵／JR 西日本",
-        "line": "谷町線→JR 神戶線新快速",
-        "durationMin": 100,
-        "stopCount": 15,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "morning",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.taturiki.com/",
-      "cost": {
-        "amount": 2000,
-        "currency": "JPY",
-        "category": "ticket"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "清酒",
-        "利酒會"
-      ],
-      "moodColor": "#6B7F7A",
-      "id": "evt_d5_02",
-      "day": 5,
-      "time": "10:30",
-      "type": "sight",
-      "title": "龍力 新酒利酒會（本田商店）",
-      "cityId": "osaka",
-      "address": "日本兵庫縣姬路市網干區高田361-1",
-      "addressLocal": "兵庫県姫路市網干区高田361-1 本田商店",
-      "coords": [
-        34.8142,
-        134.5816
-      ],
-      "note": "【今次】建國記念日假日場；往年 10:30／14:00；推 10:30 接午膳。\n【攻略】試飲新酒；可自帶食物；唔入蔵；禮貌避濃香。\n【預約】只網上 Air 預約（不收電話）；往年 Jan 上旬 10:00 開放；1 人 OK。\n【實用】當日現金 ¥2,000；約 1.5 小時。",
-      "openHours": "假日場往年 10:30–12:00／14:00–15:30（2027 約 Jan 上旬公布）",
-      "price": "當日現金 ¥2,000／人"
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "的士"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 2200,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "的士隨時",
-      "price": "的士約 ¥2,200",
-      "id": "trp_d5_03",
-      "day": 5,
-      "time": "12:15",
-      "title": "前往和之味處（的士）",
-      "address": "JR 網干",
-      "addressLocal": "JR 網干駅",
-      "coords": [
-        34.8142,
-        134.5816
-      ],
-      "note": "【上車】JR 網干站前的士。\n【下車】和之味處（太子町太田）。\n【車資】約 ¥2,000–2,500（約 8–12 分／2.4 km）。\n【備案】改 Gusto 姬路網干店（徒歩約 9 分；見靈感）。",
-      "transport": {
-        "mode": "taxi",
-        "from": "JR 網干",
-        "to": "和之味處",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": null,
-        "line": null,
-        "durationMin": 10,
-        "stopCount": 1,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "afternoon",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.hotpepper.jp/strJ000490168/",
-      "cost": {
-        "amount": 2000,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "和食",
-        "烏冬"
-      ],
-      "moodColor": "#A0785A",
-      "id": "evt_d5_04",
-      "day": 5,
-      "time": "12:30",
-      "type": "food",
-      "title": "和之味處（和の味処 いろり）",
-      "cityId": "osaka",
-      "address": "日本兵庫縣揖保郡太子町太田2222-1",
-      "addressLocal": "兵庫県揖保郡太子町太田2222-1 和の味処 いろり",
-      "coords": [
-        34.8311,
-        134.6007
-      ],
-      "note": "【攻略】自家製烏冬＋和膳；午餐全席禁煙（晚分煙→只排午）。\n【預約】Hot Pepper（店評約 4.1）；Hot Pepper 網上訂（只訂座位／席のみ）／1 人；Feb 日曆 Nov 4, 2026 未開。\n【實用】祝日 11:00–14:00（L.O. 14）；可刷卡（滿 ¥2,000）。\n【備案】Gusto 姬路網干店（全席禁煙；walk-in）。",
-      "openHours": "祝日 11:00–14:00（L.O. 14）；月休（祝則改火）",
-      "price": "午餐估算 ¥1,500–2,500"
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "JR",
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 1640,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC 約 ¥1,640",
-      "id": "trp_d5_05",
-      "day": 5,
-      "time": "14:20",
-      "title": "前往天神橋（JR→地鐵）",
-      "address": "網干站一帶",
-      "addressLocal": "JR 網干駅",
-      "coords": [
-        34.8311,
-        134.6007
-      ],
-      "note": "【上車】的士或巴士回 JR 網干，新快速往大阪。\n【轉車】大阪／東梅田轉谷町線到天神橋筋四丁目。\n【下車】天神橋筋四丁目；沿天神橋筋商店街逛到 17:30 黒兔，唔經酒店。\n【車資】IC 約 ¥1,640＋短程。\n【備案】若揀 14:00 利酒場則利酒後直回、午餐改輕食。",
-      "transport": {
-        "mode": "train",
-        "from": "網干",
-        "to": "天神橋筋四丁目",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "JR 西日本／大阪地鐵",
-        "line": "JR 神戶線→谷町線",
-        "durationMin": 110,
-        "stopCount": 15,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "evening",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://tabelog.com/osaka/A2701/A270103/27136227/",
-      "cost": {
-        "amount": 5000,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "食堂",
-        "清酒"
-      ],
-      "moodColor": "#A0785A",
-      "id": "evt_d5_06",
-      "day": 5,
-      "time": "17:30",
-      "type": "food",
-      "title": "黑兔食堂（食堂 黒うさぎ）",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市北區天神橋",
-      "addressLocal": "大阪府大阪市北区天神橋 食堂 黒うさぎ",
-      "coords": [
-        34.708,
-        135.511
-      ],
-      "note": "【Tabelog】3.68\n【攻略】中華技法配清酒；坐吧枱點當日小菜。\n【預約】官網優先＋Tabelog 網上訂；假日 15:00–24:00。\n【實用】全席禁煙（店外吸煙）。\n【備案】稻田酒店立飲／淺野日本酒店。",
-      "openHours": "15:00–24:00；星期二及第 4 個星期三休，假期營業",
-      "price": "估算 ¥4,000–6,000"
-    },
-    {
-      "timeHint": "evening",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 230,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥230",
-      "id": "trp_d5_07",
-      "day": 5,
-      "time": "20:00",
-      "title": "前往谷町四丁目（地鐵谷町線）",
-      "address": "天神橋筋",
-      "addressLocal": "大阪府大阪市北区天神橋",
-      "coords": [
-        34.708,
-        135.511
-      ],
-      "note": "【上車】天神橋筋四丁目等地鐵站。\n【下車】谷町四丁目，回酒店。\n【車資】IC 約 ¥230。\n【備案】的士約 15 分鐘。",
-      "transport": {
-        "mode": "train",
-        "from": "天神橋筋四丁目",
-        "to": "谷町四丁目",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵",
-        "line": "谷町線",
-        "durationMin": 12,
-        "stopCount": 4,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "night",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "溫泉",
-        "酒店"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d5_08",
-      "day": 5,
-      "time": "20:20",
-      "type": "rest",
-      "title": "浪華之湯",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【攻略】13 樓天然溫泉連桑拿，住客免費；收工即泡。\n【實用】15:00–翌日 10:00；同層有吸煙亭，離遠坐。",
-      "openHours": "15:00–翌日 10:00（住客）",
-      "price": "住客免費"
-    },
-    {
-      "id": "trp_d6_01",
-      "day": 6,
-      "time": "08:40",
-      "timeHint": "morning",
-      "type": "transport",
-      "title": "前往池田（谷町線 → 阪急寶塚線急行）",
-      "cityId": "osaka",
-      "address": "大阪地鐵谷町四丁目站 2 號月台",
-      "addressLocal": null,
-      "coords": [
-        34.6826,
-        135.5176
-      ],
-      "tags": [
-        "地鐵",
-        "阪急"
-      ],
-      "moodColor": "#2A7F7A",
-      "note": "【上車】谷町四丁目站 2 號月台，谷町線往大日 3 個站到東梅田。\n【轉車】步行到阪急大阪梅田，寶塚線急行到池田。\n【下車】池田站東口，步行約 5 分鐘。\n【車資】IC ¥520。\n【備案】準急或多約 5–10 分鐘。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥520（ICOCA）",
-      "website": null,
-      "cost": {
-        "amount": 520,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": {
-        "mode": "train",
-        "from": "谷町四丁目",
-        "to": "池田",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵／阪急電鐵",
-        "line": "谷町線 → 阪急寶塚線",
-        "durationMin": 38,
-        "stopCount": 8,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d6_02",
-      "day": 6,
-      "time": "09:30",
-      "timeHint": "morning",
-      "type": "sight",
-      "title": "杯麵博物館 大阪池田（カップヌードルミュージアム 大阪池田）",
-      "cityId": "osaka",
-      "address": "日本大阪府池田市滿壽美町8-25",
-      "addressLocal": "大阪府池田市満寿美町8-25 カップヌードルミュージアム 大阪池田",
-      "coords": [
-        34.8178,
-        135.4264
-      ],
-      "tags": [
-        "驚喜",
-        "博物館",
-        "體驗"
-      ],
-      "moodColor": "#6B7F7A",
-      "note": "【今次】杯麵博物館；五開✅；盡早完成 My CUP。\n【攻略】入館先領 My CUP 號碼票；設計杯身、揀 4 款配料（約 45 分鐘）。雞湯工房若節日主題則跳過。\n【實用】入館免費；My CUP ¥500 現金售票機；全場禁煙；09:30–16:30（入館至 15:30）。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "09:30–16:30（入館至 15:30）；逢星期二休",
-      "price": "入館免費；My CUPNOODLES Factory ¥500",
-      "website": "https://www.cupnoodles-museum.jp/ja/osaka_ikeda/",
-      "cost": {
-        "amount": 500,
-        "currency": "JPY",
-        "category": "ticket"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "id": "trp_d6_03",
-      "day": 6,
-      "time": "11:20",
-      "timeHint": "morning",
-      "type": "transport",
-      "title": "前往伊丹（阪急寶塚線 → JR 寶塚線）",
-      "cityId": "osaka",
-      "address": "阪急池田站 1 號月台",
-      "addressLocal": null,
-      "coords": [
-        34.8218,
-        135.4256
-      ],
-      "tags": [
-        "阪急",
-        "JR"
-      ],
-      "moodColor": "#2A7F7A",
-      "note": "【上車】阪急池田往大阪方向，轉 JR／阪急至伊丹。\n【下車】伊丹，步行至長壽藏。\n【車資】IC 約 ¥220–350。\n【備案】極趕 Pearl 可改 Ikari 熟食後直去神戶。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥350（ICOCA）",
-      "website": null,
-      "cost": {
-        "amount": 350,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": {
-        "mode": "train",
-        "from": "池田",
-        "to": "JR 伊丹",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "阪急電鐵／JR 西日本",
-        "line": "阪急寶塚線 → JR 寶塚線",
-        "durationMin": 25,
-        "stopCount": 3,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d6_04",
-      "day": 6,
-      "time": "12:00",
-      "timeHint": "afternoon",
-      "type": "food",
-      "title": "白雪酒藏餐廳 長壽藏（白雪ブルワリーレストラン長寿蔵）",
-      "cityId": "osaka",
-      "address": "日本兵庫縣伊丹市中央3-4-15",
-      "addressLocal": "兵庫県伊丹市中央3-4-15 白雪ブルワリービレッジ 白雪ブルワリーレストラン長寿蔵",
-      "coords": [
-        34.7813,
-        135.4176
-      ],
-      "tags": [
-        "午餐",
-        "精釀啤酒",
-        "清酒"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【Tabelog】3.49\n【攻略】縮時短坐即走；商店／資料館可跳。白雪蔵祭規律日＝Feb 14（已回程）→本日非主疊。\n【預約】可網上訂（只訂座位）；趕 Pearl＋梵高則改 Ikari 超市熟食。\n【實用】午市 14:00 前落單；全席禁煙；五開。",
-      "phone": "+81-72-773-1111",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "11:30–21:00（午市 L.O. 14:00）；逢星期二休",
-      "price": "午市約 ¥1,000–1,999；連飲品約 ¥2,500",
-      "website": "https://tabelog.com/hyogo/A2803/A280306/28003767/",
-      "cost": {
-        "amount": 2500,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "kobe",
-      "tags": [
-        "JR",
-        "私鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 500,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC 約 ¥500",
-      "id": "trp_d6_05",
-      "day": 6,
-      "time": "13:15",
-      "title": "前往三之宮（阪急／JR）",
-      "address": "伊丹長壽藏",
-      "addressLocal": "兵庫県伊丹市",
-      "coords": [
-        34.7813,
-        135.4176
-      ],
-      "note": "【上車】伊丹站轉往神戶三宮／元町。\n【下車】三宮或元町，步行至 Pearl Pearl。\n【車資】IC 約 ¥400–600。\n【備案】須 17:00 前到 Pearl；留緩衝。",
-      "transport": {
-        "mode": "train",
-        "from": "伊丹",
-        "to": "三宮",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "阪急／JR",
-        "line": "神戶方向",
-        "durationMin": 40,
-        "stopCount": 8,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d6_06",
-      "day": 6,
-      "time": "15:00",
-      "timeHint": "afternoon",
-      "type": "shop",
-      "title": "Pearl Pearl Kobe（パール・パール・コウベ）",
-      "cityId": "kobe",
-      "address": "日本兵庫縣神戶市中央區江戶町98-1 東町・江戶町大廈 6 樓",
-      "addressLocal": "兵庫県神戸市中央区江戸町98-1 東町・江戸町ビル6F パール・パール・コウベ",
-      "coords": [
-        34.69,
-        135.1946
-      ],
-      "tags": [
-        "珍珠",
-        "舊居留地",
-        "可免稅"
-      ],
-      "moodColor": "#8C8378",
-      "note": "【今次】必排買珍珠；平日 10–17；須 17:00 前到店。\n【攻略】比較單顆與連材；問珠層、鑑別書、金屬刻印。\n【日文】「これはあこや真珠ですか？淡水ですか？」\n【實用】五開✅；walk-in；排在梵高前。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "10:00–17:00；星期六、日及假日休",
-      "price": "¥7,700 起（店內價錢範圍 ¥20,000–800,000）",
-      "website": "https://www.pkobe.jp/page/40",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "kobe",
-      "tags": [
-        "步行"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "openHours": "步行約 8–12 分鐘",
-      "price": "免費",
-      "id": "trp_d6_07",
-      "day": 6,
-      "time": "16:30",
-      "title": "前往神戶市立博物館（步行）",
-      "address": "Pearl Pearl Kobe",
-      "addressLocal": "兵庫県神戸市中央区",
-      "coords": [
-        34.69,
-        135.1946
-      ],
-      "note": "【上車】Pearl 步行。\n【下車】神戶市立博物館。\n【車資】免費。\n【備案】南京町春節祭＝縮或靈感（不參與祈願）；伊藤 Grill 僅靈感。",
-      "transport": {
-        "mode": "walk",
-        "from": "Pearl Pearl",
-        "to": "神戶市立博物館",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": null,
-        "line": null,
-        "durationMin": 10,
-        "stopCount": null,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d6_08",
-      "day": 6,
-      "time": "16:45",
-      "timeHint": "afternoon",
-      "type": "sight",
-      "title": "神戶市立博物館",
-      "cityId": "kobe",
-      "address": "日本兵庫縣神戶市中央區京町24",
-      "addressLocal": "兵庫県神戸市中央区京町24 神戸市立博物館",
-      "coords": [
-        34.6879,
-        135.1914
-      ],
-      "tags": [
-        "美術",
-        "梵高",
-        "特別展"
-      ],
-      "moodColor": "#6B7F7A",
-      "note": "【今次】大梵高展「阿爾的吊橋」（アルルの跳ね橋）；主軸；五開至 20:00；留充裕觀展。\n【攻略】平日不用預約優先；必看《阿爾勒的吊橋》等。\n【預約】前售至 Feb 5 23:59（¥2,600）；之後當日票 ¥2,800。\n【實用】展室入場至閉館前 30 分鐘。",
-      "phone": "+81-78-391-0035",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "09:30–17:30（星期五、六至 20:00）；展室入場至閉館前 30 分鐘；逢星期一休（星期一為假期則開館）",
-      "price": "大梵高展 預售 ¥2,600（至 Feb 5 23:59 日本時間）；當日票 ¥2,800",
-      "website": "https://e-tix.jp/vangogh_kobe/",
-      "cost": {
-        "amount": 2600,
-        "currency": "JPY",
-        "category": "ticket"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "evening",
-      "type": "transport",
-      "cityId": "kobe",
-      "tags": [
-        "步行"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "openHours": "步行約 10 分鐘",
-      "price": "免費",
-      "id": "trp_d6_09",
-      "day": 6,
-      "time": "19:45",
-      "title": "前往播州地酒 HINO（步行）",
-      "address": "神戶市立博物館",
-      "addressLocal": "兵庫県神戸市中央区京町24",
-      "coords": [
-        34.6879,
-        135.1914
-      ],
-      "note": "【上車】博物館步行至三宮。\n【下車】播州地酒 HINO。\n【車資】免費。\n【備案】Propeller／Inazuma（見靈感）。",
-      "transport": {
-        "mode": "walk",
-        "from": "神戶市立博物館",
-        "to": "ひの",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": null,
-        "line": null,
-        "durationMin": 10,
-        "stopCount": null,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d6_10",
-      "day": 6,
-      "time": "20:00",
-      "timeHint": "evening",
-      "type": "food",
-      "title": "播州地酒 HINO（播州地酒 ひの）",
-      "cityId": "kobe",
-      "address": "日本兵庫縣神戶市中央區北長狹通2-4-7 TSK 三宮大廈 4 樓",
-      "addressLocal": "兵庫県神戸市中央区北長狭通2-4-7 TSK三宮ビル4F 播州地酒 ひの",
-      "coords": [
-        34.6921,
-        135.1903
-      ],
-      "tags": [
-        "兵庫地酒",
-        "居酒屋",
-        "百名店",
-        "可預約"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【Tabelog】3.64\n【攻略】三宮清酒吧；席料 ¥500。\n【預約】Tabelog 網上訂；約 Jan 15, 2027 開 Feb。\n【實用】全席禁煙。\n【備案】Propeller／Inazuma。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "星期一至六 18:00–22:00；星期日休",
-      "price": "預算 ¥6,000–7,999＋席料 ¥500",
-      "website": "https://tabelog.com/hyogo/A2801/A280101/28023316/",
-      "cost": {
-        "amount": 7500,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "evening",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "JR",
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 660,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥660",
-      "id": "trp_d6_11",
-      "day": 6,
-      "time": "22:00",
-      "title": "前往谷町四丁目（JR→地鐵）",
-      "address": "三宮",
-      "addressLocal": "兵庫県神戸市中央区",
-      "coords": [
-        34.6921,
-        135.1903
-      ],
-      "note": "【上車】JR 三宮新快速往大阪。\n【轉車】大阪／東梅田轉谷町線。\n【下車】谷町四丁目，回酒店。\n【車資】IC ¥660。\n【備案】末班前出發。",
-      "transport": {
-        "mode": "train",
-        "from": "三宮",
-        "to": "谷町四丁目",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "JR 西日本／大阪地鐵",
-        "line": "JR 神戶線→谷町線",
-        "durationMin": 50,
-        "stopCount": 8,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "night",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "溫泉",
-        "酒店"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d6_12",
-      "day": 6,
-      "time": "23:00",
-      "type": "rest",
-      "title": "浪華之湯",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【攻略】13 樓天然溫泉連桑拿，住客免費；收工即泡。\n【實用】15:00–翌日 10:00；同層有吸煙亭，離遠坐。",
-      "openHours": "15:00–翌日 10:00（住客）",
-      "price": "住客免費"
-    },
-    {
-      "timeHint": "morning",
-      "type": "transport",
-      "cityId": "kobe",
-      "tags": [
-        "私鐵",
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 500,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥500",
-      "id": "trp_d7_01",
-      "day": 7,
-      "time": "09:20",
-      "title": "前往西宮（谷町線→阪神）",
-      "address": "谷町四丁目站",
-      "addressLocal": "Osaka Metro 谷町四丁目駅",
-      "coords": [
-        34.6826,
-        135.5176
-      ],
-      "note": "【上車】谷町四丁目→東梅田→阪神本線往西宮。\n【下車】西宮，步行至白鹿蔵開會場（主線）。\n【車資】IC 約 ¥400–540。\n【備案】若改備線：阪神改下魚崎／石屋川等就近館點（見靈感）；勿加第二蔵 timed。",
-      "transport": {
-        "mode": "train",
-        "from": "谷町四丁目",
-        "to": "西宮",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵／阪神",
-        "line": "谷町線→阪神本線",
-        "durationMin": 45,
-        "stopCount": 8,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d7_02",
-      "day": 7,
-      "time": "10:30",
-      "timeHint": "morning",
-      "type": "food",
-      "title": "白鹿 西宮蔵開（辰馬本家酒造）",
-      "cityId": "kobe",
-      "address": "日本兵庫縣西宮市建石町2-10 辰馬本家酒造",
-      "addressLocal": "兵庫県西宮市建石町2-10 辰馬本家酒造 白鹿",
-      "coords": [
-        34.7292,
-        135.3358
-      ],
-      "tags": [
-        "清酒",
-        "藏開",
-        "攤位午餐"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【今次】午前單點：主線＝白鹿「西宮蔵開」（規律推 Feb 13＝Feb 第 2 六；往年 10:00–15:00；只現金）。2027 日期約 Dec 中公布——未公布或非當日則改走備線，勿同日硬塞兩蔵。\n【攻略】主線：有料試飲當日限定；午餐攤位輕食。飲酒優先→即使節日主題仍可。途經小神社，只經過、不參拜。備線（蔵開不開催）：改一個灘／西宮館點（菊正宗酒造記念館／浜福鶴吟釀工房／酒博物館／白鹿 Classics 擇一；見靈感），午改酒林（見靈感）。\n【實用】主線只現金；公布後再鎖交通下車站。\n【備案】見上方備線；勿加第二蔵 timed。",
-      "phone": "+81-798-32-2727",
-      "whatsapp": null,
-      "line": null,
-      "messenger": "https://m.me/hakushika.tatsuumahonke",
-      "openHours": "往年 10:00–15:00（2027 年日期約 Dec 中旬發表）",
-      "price": "免費入場；攤位午餐＋有料試飲約 ¥3,500（現金，估算）",
-      "website": "https://www.hakushika.co.jp/",
-      "cost": {
-        "amount": 3500,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "timeHint": "afternoon",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "私鐵",
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 400,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥400",
-      "id": "trp_d7_03",
-      "day": 7,
-      "time": "15:30",
-      "title": "前往北新地（阪神→地鐵）",
-      "address": "西宮白鹿",
-      "addressLocal": "兵庫県西宮市",
-      "coords": [
-        34.7292,
-        135.3358
-      ],
-      "note": "【上車】阪神往大阪梅田。\n【轉車】適站到北新地。\n【下車】燒鳥店附近；約 15:00 前後蔵開收束後回阪。\n【車資】IC 約 ¥400。\n【備案】勿再塞遠點。",
-      "transport": {
-        "mode": "train",
-        "from": "西宮",
-        "to": "北新地",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "阪神／大阪地鐵",
-        "line": "阪神本線",
-        "durationMin": 35,
-        "stopCount": 6,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d7_04",
-      "title": "燒鳥 Sumiemon（焼き鳥すみえもん）",
-      "note": "【Tabelog】3.62\n【攻略】特選串套餐 ¥6,280＋席料 ¥550＋飲；U 字吧枱。\n【預約】Tabelog／TableCheck 網上訂；Feb 日曆估 Nov 中, 2026 開。\n【實用】六開；日・祝休；全席禁煙。途經小神社，只經過、不參拜。\n【備案】玄盛；GAJO 僅高預算備註（唔作主選）。",
-      "type": "food",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市北區曾根崎新地1-3-3 好陽大廈 1 樓",
-      "addressLocal": "大阪府大阪市北区曽根崎新地1-3-3 好陽ビル 1F 焼き鳥すみえもん",
-      "coords": [
-        34.6973,
-        135.4969
-      ],
-      "phone": "+81-6-6616-8683",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "星期一至六 18:00–23:00；星期日及假期休",
-      "price": "套餐 ¥6,280＋席料 ¥550（約 ¥6,830，飲品另計）",
-      "website": "https://tabelog.com/osaka/A2701/A270101/27148344/",
-      "status": "pending",
-      "source": "ai",
-      "day": 7,
-      "time": "18:00",
-      "timeHint": "evening",
-      "transport": null,
-      "cost": {
-        "amount": 6830,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "tags": [
-        "燒鳥",
-        "北新地"
-      ],
-      "moodColor": "#A0785A"
-    },
-    {
-      "timeHint": "evening",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 230,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥230",
-      "id": "trp_d7_05",
-      "day": 7,
-      "time": "20:30",
-      "title": "前往谷町四丁目（地鐵谷町線）",
-      "address": "北新地",
-      "addressLocal": "大阪府大阪市北区曽根崎新地",
-      "coords": [
-        34.6973,
-        135.4969
-      ],
-      "note": "【上車】近站轉谷町線。\n【下車】谷町四丁目，回酒店。\n【車資】IC 約 ¥230。\n【備案】的士約 15 分鐘。",
-      "transport": {
-        "mode": "train",
-        "from": "東梅田",
-        "to": "谷町四丁目",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵",
-        "line": "谷町線",
-        "durationMin": 10,
-        "stopCount": 3,
-        "liveApi": null
-      }
-    },
-    {
-      "timeHint": "night",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "溫泉",
-        "酒店"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d7_06",
-      "day": 7,
-      "time": "20:50",
-      "type": "rest",
-      "title": "浪華之湯",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【攻略】13 樓天然溫泉連桑拿，住客免費；收工即泡。\n【實用】15:00–翌日 10:00；同層有吸煙亭，離遠坐。",
-      "openHours": "15:00–翌日 10:00（住客）",
-      "price": "住客免費"
-    },
-    {
-      "timeHint": "morning",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "溫泉"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d8_01",
-      "day": 8,
-      "time": "08:00",
-      "type": "rest",
-      "title": "浪華之湯",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【攻略】退房前極早可泡；以實際 CO 時間為準。\n【實用】住客；同層吸煙亭離遠。",
-      "openHours": "至退房前（住客）",
-      "price": "住客免費"
-    },
-    {
-      "timeHint": "morning",
-      "phone": "+81-6-6945-5489",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": "https://www.dormy-hotels.com/dormyinn/hotels/osaka_tanimachi/",
-      "cost": null,
-      "status": "confirmed",
-      "source": "ai",
-      "transport": null,
-      "tags": [
-        "退房"
-      ],
-      "moodColor": "#2A7F7A",
-      "id": "evt_d8_02",
-      "day": 8,
-      "time": "09:30",
-      "type": "hotel",
-      "title": "Dormy Inn 大阪谷町",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市中央區內本町2-1-9",
-      "addressLocal": "大阪府大阪市中央区内本町2-1-9 天然温泉 浪華の湯 ドーミーイン大阪谷町",
-      "coords": [
-        34.6835,
-        135.5139
-      ],
-      "note": "【攻略】午前／早上 Check-out（改期 TBD）。\n【實用】行李可先寄放再輕食；Lounge 或近鐵上本町 B1。",
-      "openHours": "退房 Feb 14 午前（改期 TBD）",
-      "price": null
-    },
-    {
-      "timeHint": "morning",
-      "type": "transport",
-      "cityId": "osaka",
-      "tags": [
-        "地鐵"
-      ],
-      "moodColor": "#2A7F7A",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "website": null,
-      "cost": {
-        "amount": 190,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "openHours": "班次頻密，不用趕指定班次",
-      "price": "IC ¥190",
-      "id": "trp_d8_03",
-      "day": 8,
-      "time": "10:00",
-      "title": "前往近鐵上本町（地鐵谷町線）",
-      "address": "谷町四丁目站",
-      "addressLocal": "Osaka Metro 谷町四丁目駅",
-      "coords": [
-        34.6826,
-        135.5176
-      ],
-      "note": "【上車】谷町四丁目往天王寺／谷町九。\n【下車】谷町九丁目，步行近鐵上本町。\n【車資】IC ¥190。\n【備案】直接酒店叫利木津亦可。",
-      "transport": {
-        "mode": "train",
-        "from": "谷町四丁目",
-        "to": "谷町九丁目",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "大阪地鐵",
-        "line": "谷町線",
-        "durationMin": 5,
-        "stopCount": 2,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d8_04",
-      "day": 8,
-      "time": "10:15",
-      "timeHint": "morning",
-      "type": "shop",
-      "title": "近鐵百貨上本町店",
-      "cityId": "osaka",
-      "address": "日本大阪府大阪市天王寺區上本町6-1-55 近鐵百貨上本町店 地庫 1 樓",
-      "addressLocal": "大阪府大阪市天王寺区上本町6-1-55 近鉄百貨店上本町店 B1F 和洋酒売場",
-      "coords": [
-        34.6659,
-        135.5195
-      ],
-      "tags": [
-        "清酒",
-        "百貨地庫"
-      ],
-      "moodColor": "#8C8378",
-      "note": "【攻略】B1 輕食／手信；回程日不硬排正餐。\n【實用】按起飛時刻留足去機場時間。",
-      "phone": "+81-6-6775-1111",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "10:00–20:00",
-      "price": "按貨品標價",
-      "website": "https://www.d-kintetsu.co.jp/uehonmachi/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "id": "trp_d8_05",
-      "day": 8,
-      "time": "11:40",
-      "timeHint": "afternoon",
-      "type": "transport",
-      "title": "前往關西機場第 1 航廈（利木津巴士）",
-      "cityId": "osaka",
-      "address": "近鐵上本町 2 樓巴士總站（UH1）",
-      "addressLocal": "近鉄上本町（2階バスターミナル）UH1 のりば（関西空港行き）",
-      "coords": [
-        34.6659,
-        135.5195
-      ],
-      "tags": [
-        "機場巴士"
-      ],
-      "moodColor": "#2A7F7A",
-      "note": "【上車】近鐵上本町利木津往關西機場。\n【下車】第 1 航廈。\n【車資】成人 ¥1,800。\n【備案】時刻按 UO851 TBD 再核；預留 1–1.5 小時車程＋值機。",
-      "phone": null,
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "約 30 分鐘一班",
-      "price": "成人 ¥1,800",
-      "website": null,
-      "cost": {
-        "amount": 1800,
-        "currency": "JPY",
-        "category": "transport"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": {
-        "mode": "bus",
-        "from": "近鐵上本町",
-        "to": "關西機場第 1 航廈",
-        "fromEventId": null,
-        "toEventId": null,
-        "operator": "關西空港交通／近鐵巴士",
-        "line": "近鐵上本町／心齋橋線",
-        "durationMin": 51,
-        "stopCount": 1,
-        "liveApi": null
-      }
-    },
-    {
-      "id": "evt_d8_06",
-      "day": 8,
-      "time": "13:05",
-      "timeHint": "afternoon",
-      "type": "shop",
-      "title": "KIX DUTY FREE",
-      "cityId": "osaka",
-      "address": "日本大阪府泉佐野市泉州空港北1 關西國際機場第 1 航廈 2 樓（出境保安檢查後）",
-      "addressLocal": "大阪府泉佐野市泉州空港北1 関西国際空港 第1ターミナル 2F 国際線出国エリア KIX DUTY FREE",
-      "coords": [
-        34.4343,
-        135.2442
-      ],
-      "tags": [
-        "清酒",
-        "免稅",
-        "手信"
-      ],
-      "moodColor": "#8C8378",
-      "note": "【攻略】退稅後再買手信。\n【實用】航班時刻 TBD。",
-      "phone": "+81-72-455-4195",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "06:00–26:00（按航班情況調整）",
-      "price": "機場限定純米大吟釀 720ml 約 ¥3,600–8,700（免稅價）",
-      "website": "https://www.kixdutyfree.jp/",
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "id": "evt_d8_07",
-      "day": 8,
-      "time": "13:45",
-      "timeHint": "afternoon",
-      "type": "food",
-      "title": "佐海屋",
-      "cityId": "osaka",
-      "address": "關西國際機場第 1 航廈 2 樓 國際線出境保安檢查後",
-      "addressLocal": "関西国際空港 第1ターミナル 2F 国際線 出国審査後エリア 佐海屋",
-      "coords": [
-        34.4343,
-        135.2442
-      ],
-      "tags": [
-        "和食",
-        "禁區"
-      ],
-      "moodColor": "#A0785A",
-      "note": "【攻略】禁區內輕食備案。\n【實用】航班 TBD。",
-      "phone": "+81-72-455-2500",
-      "whatsapp": null,
-      "line": null,
-      "messenger": null,
-      "openHours": "06:30–24:55（按航班調整）",
-      "price": "定食按餐牌（約 ¥1,500，估算）",
-      "website": "https://tabelog.com/osaka/A2705/A270503/27158190/",
-      "cost": {
-        "amount": 1500,
-        "currency": "JPY",
-        "category": "food"
-      },
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    },
-    {
-      "id": "evt_d8_08",
-      "day": 8,
-      "time": "15:15",
-      "timeHint": "afternoon",
-      "type": "departure",
-      "title": "關西國際機場 第 1 航廈",
-      "cityId": "osaka",
-      "address": "關西國際機場第 1 航廈",
-      "addressLocal": "関西国際空港 第1ターミナル",
-      "coords": [
-        34.4343,
-        135.2442
-      ],
-      "tags": [
-        "航班"
-      ],
-      "moodColor": "#3A3A3A",
-      "note": "【實用】回程 UO851 時刻 TBD；按實際起飛填。\n【攻略】純回程日；不排劇場／遠遊。",
-      "phone": "+852 3951 7229",
-      "whatsapp": "+85239517229",
-      "line": null,
-      "messenger": null,
-      "openHours": "15:15 起飛（登機閘口截止時間以登機證為準）",
-      "price": "機票 HK$2,450",
-      "website": null,
-      "cost": null,
-      "status": "pending",
-      "source": "ai",
-      "transport": null
-    }
+  items: [
+    evt({
+      id: "evt_d1_clock", day: 1, time: "08:40", timeHint: "morning", type: "note",
+      title: "先核船鐘", cityId: "kagoshima", moodColor: "#6B5E52",
+      tags: ["排序", "船鐘"],
+      note: clockNote("Nov 25 鹿兒島。船時靠離港 07:00–19:00。家庭到碼頭線是船時 17:00，返回マリンポートかごしま（鹿児島県鹿児島市中央港新町1-10）。H（當地到碼頭時間）未填。最遲約在 H 前 95 分鐘開始叫回港車；人若還在仙巌園、不繞水族館，則改為 H 前 80 分鐘。這格 08:40 不是出港時刻。")
+    }),
+    evt({
+      id: "evt_d1_to_garden", day: 1, time: "09:00", timeHint: "morning", type: "transport",
+      title: "前往仙巌園", cityId: "kagoshima",
+      tags: ["當地JST", "逐段叫車"],
+      address: null,
+      addressLocal: "鹿児島県鹿児島市中央港新町1-10 マリンポートかごしま",
+      website: null,
+      transport: taxi("海洋港", "仙巌園", OP_JP),
+      note: [CLOCK, SHOW, "【候車】碼頭大型船日常見約 30 分鐘，不是保證。", "【車程暫抓】30–45 分鐘，不是實測。", "目標是當地約 09:00 到可開放的點。早到而園未開，不承諾能進。", ride(""), CARD_K1, CARD_K1_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d1_garden", day: 1, time: "09:00", timeHint: "morning", type: "sight",
+      title: "仙巌園", cityId: "kagoshima", moodColor: "#3E5C4C",
+      tags: ["當地JST", "現場買票"],
+      address: "Sengan-en, Yoshino-cho 9700-1",
+      addressLocal: "鹿児島県鹿児島市吉野町9700-1 仙巌園",
+      openHours: "當地 JST 09:00–17:00，最終入園 16:30。年中無休這句不保證園內無等候。",
+      price: "一般 1,600 円（含御殿・尚古集成館）。當日售票機，也可另選網上預購。免強制事前預約 ≠ 免費 ≠ 免排隊。",
+      website: "https://www.senganen.jp/faq/",
+      note: [CLOCK, WALK, "分段看庭園，以及櫻島／錦江灣可以平路或溫和下坡到達的構圖。不走高處，不走鶴嶺神社。", "【照片】前景和櫻島換幾個構圖，用長焦，不追坡。", "每約 30 分鐘在已問過的園內長椅休 5 分鐘。請受付標出要避開的橙色介助坡、紅色砂石和階梯。不是全園零坡。", "只看旁邊切子工場不必買這張門票；用園內停車場則停車費另計。不要把工場免費寫成這園也免費。", "輪椅／WHILL 是現場限量、不可預約，本次不假設要租。茶屋個室和傳統文化體驗不是一般入園規則。", book(A_SEN, URL_SEN)].join("\n")
+    }),
+    evt({
+      id: "evt_d1_kiriko", day: 1, time: "11:00", timeHint: "morning", type: "sight",
+      title: "薩摩切子工場", cityId: "kagoshima", moodColor: "#3E5C4C",
+      tags: ["當地JST", "免費免約"],
+      address: "Satsuma kiriko glassworks, next to Sengan-en",
+      addressLocal: "鹿児島県鹿児島市吉野町9700-1 薩摩切子工場",
+      openHours: "當地 JST 見學 09:00–16:30。休息 10:00–10:15、12:00–13:00、15:00–15:15。",
+      price: "見學免費，無需事前預約。不是仙巌園門票，也不是付費手作。",
+      website: "https://www.senganen.jp/how-to-walk/adjacent-facility/shimadzu-satsuma-kiriko-glassworks/",
+      note: [CLOCK, WALK, "看玻璃製作，不只逛商店。入口步程未核。途中休 5 分鐘。", "【見學】11/25 不在 11 月定休（2、9、15、16、24、30）。仍須避開休息，尤其 12:00–13:00。機器維護可能臨時休業。休息或停工時只能看場地，不能當成正在製作。不保證當下有人在作業。", "不是另址磯工芸館（吉野町 9688-24）。", "【照片】只在允許的位置拍製作，不為工藝加訂體驗。", "雨天若上午已改去水族館，13:00 後才視雨勢回來看可遮蔽的見學。", book(A_KIRIKO, URL_KIRIKO, "【區別】A：見學本身免費且免事前預約。這一句不能套到仙巌園。")].join("\n")
+    }),
+    evt({
+      id: "evt_d1_to_fukuya", day: 1, time: "11:35", timeHint: "morning", type: "transport",
+      title: "前往黒豚ふくや本店", cityId: "kagoshima",
+      tags: ["當地JST", "逐段叫車"],
+      address: null,
+      addressLocal: "鹿児島県鹿児島市吉野町9700-1 仙巌園",
+      transport: taxi("仙巌園", "ふくや本店", OP_JP),
+      note: [CLOCK, SHOW, "【候車】20–30 分鐘，暫抓，不是保證。偏遠，離開前請受付代叫。", "【車程暫抓】25–40 分鐘。", "保底才是仙巌園前巴士，不預設媽媽走到車站。", ride(""), CARD_K2, CARD_K2_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d1_diet", day: 1, time: "12:40", timeHint: "afternoon", type: "note",
+      title: "餐廳忌口卡", cityId: "kagoshima", moodColor: "#6A5348",
+      tags: ["給餐廳", "排序"],
+      note: dietNote()
+    }),
+    evt({
+      id: "evt_d1_fukuya", day: 1, time: "12:45", timeHint: "afternoon", type: "food",
+      title: "黒豚ふくや本店", cityId: "kagoshima", moodColor: "#6A5348",
+      tags: ["未訂位", "當地JST"],
+      address: "Kurobuta Fukuya main shop, Remm Kagoshima 2F",
+      addressLocal: "鹿児島県鹿児島市東千石町1-32 レム鹿児島2F",
+      phone: "099-201-3210",
+      openHours: "當地 JST。正常午市 11:30 起；14:30 前用完較保守。Nov 25 未見臨休，仍非當日保證。",
+      price: "純豬炸排約 ¥2,600–2,900／人；生姜燒定食 ¥1,300。未訂位，不是已確認的帳單。",
+      website: "https://r.gnavi.co.jp/f73zjf3v0000/lunch/",
+      note: ["建議菜：豬腰肉或里脊炸排，或生姜燒定食。不要咖喱、蝦 mix、肉種不明的メンチ。湯和醬當場問。", "全席禁煙，店家資料寫沒有室內吸煙專室。希望靠背椅。", "用餐約 60–65 分鐘，不要拉成 90 分鐘。若改備選或等位，先縮短下午水族館。", "不要改去華蓮：店內有吸煙空間，不因黑豚肉回到主線。", "【預約】午餐仍是建議，不是已訂位。", MAIL, "【來源】" + URL_FUKU, "【核對】" + CHECK].join("\n")
+    }),
+    evt({
+      id: "evt_d1_to_aq", day: 1, time: "13:50", timeHint: "afternoon", type: "transport",
+      title: "前往鹿兒島水族館", cityId: "kagoshima",
+      tags: ["當地JST", "逐段叫車"],
+      address: null,
+      addressLocal: "鹿児島県鹿児島市東千石町1-32 レム鹿児島",
+      transport: taxi("ふくや本店", "鹿兒島水族館", OP_JP),
+      note: [CLOCK, SHOW, "【候車】15–25 分鐘。【車程暫抓】10–20 分鐘。這是另一程，不是上一程的車在等。", ride(""), CARD_K_AQ, CARD_K_AQ_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d1_aq", day: 1, time: "14:35", timeHint: "afternoon", type: "sight",
+      title: "鹿兒島水族館", cityId: "kagoshima", moodColor: "#3E5C4C",
+      tags: ["當地JST", "現場買票"],
+      address: "Io World Kagoshima Aquarium",
+      addressLocal: "鹿児島県鹿児島市本港新町3-1 いおワールドかごしま水族館",
+      openHours: "當地 JST 09:30–18:00，入館至 17:00。這個 17:00 不是船時回港。",
+      price: "非市民大人 2,000 円。現場可付。免強制事前預約 ≠ 免費 ≠ 免排隊。不要用市民價。",
+      website: "https://ioworld.jp/information",
+      note: [CLOCK, WALK, "平層可到的展示，加上電梯上 5F 看錦江灣／櫻島。入口無段差和 5F 展望有記錄；未核的展區名稱不預告。", "走約 30 分鐘休 5 分鐘，再看景，不是坐一小時。", "【照片】5F 不同窗面拍海灣和火山，鏡頭靠近玻璃減少反光。", "14:35 不是不可改的硬時間。回港叫車見下一段，受 H 倒推。", "已公布休館在 12 月，11/25 不在名單；臨時休仍可能另公告。", book(A_AQ, URL_AQ, "【區別】B：免事前預約，但要現場買票，可能排隊。")].join("\n")
+    }),
+    evt({
+      id: "evt_d1_return", day: 1, time: null, timeHint: "afternoon", type: "transport",
+      title: "回海洋港", cityId: "kagoshima",
+      tags: ["船時回港"],
+      address: null,
+      addressLocal: "鹿児島県鹿児島市本港新町3-1 いおワールドかごしま水族館",
+      transport: taxi("水族館", "海洋港", OP_JP),
+      note: [SHOW, "最遲在 H 前 95 分鐘開始叫車。H 未填，所以這裡不印當地鐘點，也不把 15:30 當成硬時間。", "【候車】20–30 分鐘，已含在回程，不要再加一小時。", "【車程暫抓】25–40 分鐘，再留 25–50 分鐘餘量。即時估計更長就提前走。", "若人還在仙巌園、不繞水族館：最遲 H 前 80 分鐘走（配車暫抓 40–60 分鐘加至少 20 分鐘餘量）。", CARD_K_RET, CARD_K_RET_ZH, ride("")].join("\n")
+    }),
+
+    evt({
+      id: "evt_d2_clock", day: 2, time: "08:40", timeHint: "morning", type: "note",
+      title: "先核船鐘", cityId: "nagasaki", moodColor: "#6B5E52",
+      tags: ["排序", "船鐘"],
+      note: clockNote("Nov 26 長崎。船時靠離港 08:00–19:00。家庭到碼頭線是船時 17:00，返回長崎港松が枝国際ターミナル（松が枝町7番16号），不是別的渡輪碼頭。H 未填。人在美術館一帶，最遲約 H 前 65 分鐘叫車；人若還在眼鏡橋，用含配車 20–35 分鐘加至少 25 分鐘餘量倒推。這格 08:40 不是出港時刻。不要用哥拉巴園的長下坡補景。")
+    }),
+    evt({
+      id: "evt_d2_to_park", day: 2, time: "09:00", timeHint: "morning", type: "transport",
+      title: "前往水之庭園", cityId: "nagasaki",
+      tags: ["當地JST", "逐段叫車"],
+      address: null,
+      addressLocal: "長崎県長崎市松が枝町7-16 長崎港松が枝国際ターミナル",
+      transport: taxi("松が枝", "水之庭園", OP_JP),
+      note: [CLOCK, SHOW, "【候車】15–25 分鐘。【車程暫抓】5–15 分鐘。不是實測。", "放行就走，不要等 11:00 的咖啡。", ride(""), CARD_N6, CARD_N6_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d2_park", day: 2, time: "09:00", timeHint: "morning", type: "sight",
+      title: "水之庭園", cityId: "nagasaki", moodColor: "#4A5963",
+      tags: ["當地JST", "免費免約"],
+      address: "Water Garden side, Tokiwa-machi 1-60",
+      addressLocal: "長崎県長崎市常盤町1-60 長崎水辺の森公園",
+      openHours: "免費公園。縣資料寫 24 小時開園。這不是船時。",
+      price: "入園免費，無需預約。不是免坡保證。",
+      website: "https://nagasaki-p.com/mizube/",
+      note: [CLOCK, WALK, "海港硬鋪短段，拍海港和船。每約 30 分鐘用園內木椅或石椅休 5 分鐘。", "【照片】海港和船，不追高處。", "管理處遷到松が枝町 7-16，那不是入口。下客到海邊的步分和局部坡度未量。", book(A_PARK, URL_PARK, "【區別】A：免費，且無需預約。園內活動仍聽現場。")].join("\n")
+    }),
+    evt({
+      id: "evt_d2_to_rurian", day: 2, time: "10:00", timeHint: "morning", type: "transport",
+      title: "前往瑠璃庵", cityId: "nagasaki",
+      tags: ["當地JST", "逐段叫車", "可刪"],
+      address: null,
+      addressLocal: "長崎県長崎市常盤町1-60 長崎水辺の森公園",
+      transport: taxi("水之庭園", "瑠璃庵", OP_JP),
+      note: [CLOCK, SHOW, "【候車】15–20 分鐘。【車程暫抓】5–10 分鐘。", "不承諾可以從公園平路走到店。放行若晚，先刪這段，不砍午後拍照。", ride(""), CARD_N4, CARD_N4_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d2_rurian", day: 2, time: "10:30", timeHint: "morning", type: "sight",
+      title: "瑠璃庵", cityId: "nagasaki", moodColor: "#4A5963",
+      tags: ["當地JST", "當日再判斷", "可刪"],
+      address: "Rurian Glass Studios",
+      addressLocal: "長崎県長崎市松が枝町5-11 瑠璃庵",
+      openHours: "當地 JST 09:30–17:00。週二休。11/26 週四依規則應開，不是當日保證，也不等於可以看製作。",
+      price: "付費吹玻璃等手作要預約。本次不訂。觀看製作沒有免約保證。",
+      website: "https://rurian.com/",
+      note: [CLOCK, WALK, "只在當日職員確認可以免約觀看時短停約 30 分鐘，先休 5 分鐘。否則刪掉，保留午後眼鏡橋或運河。", "不保證隔窗或場內見學。商店開著不等於工場見學已鎖定。工作椅不是自由休息椅。入口段差未核。不能久站。", "【照片】只有確認看得到時，才拍玻璃和光。不為工藝加訂體驗。", book(A_RURI, URL_RURI, "【區別】C：不得寫成已保證免約可看製作。")].join("\n")
+    }),
+    evt({
+      id: "evt_d2_to_katsu", day: 2, time: "11:10", timeHint: "morning", type: "transport",
+      title: "前往勝鹿新地店", cityId: "nagasaki",
+      tags: ["當地JST", "逐段叫車"],
+      address: null,
+      addressLocal: "長崎県長崎市松が枝町5-11 瑠璃庵",
+      transport: taxi("瑠璃庵一帶", "勝鹿新地店", OP_JP),
+      note: [CLOCK, SHOW, "【候車】15–20 分鐘。【車程暫抓】5–10 分鐘。若已刪瑠璃庵，就從公園或碼頭另叫，不假設原車等候。", ride(""), CARD_N2, CARD_N2_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d2_diet", day: 2, time: "11:35", timeHint: "morning", type: "note",
+      title: "餐廳忌口卡", cityId: "nagasaki", moodColor: "#6A5348",
+      tags: ["給餐廳", "排序"],
+      note: dietNote()
+    }),
+    evt({
+      id: "evt_d2_katsu", day: 2, time: "11:40", timeHint: "morning", type: "food",
+      title: "勝鹿新地店", cityId: "nagasaki", moodColor: "#6A5348",
+      tags: ["未訂位", "當地JST"],
+      address: "Katsushika Shinchi main shop, Lahaina Building 1F",
+      addressLocal: "長崎県長崎市新地町12-10 ラハイナビル1F",
+      phone: "095-825-0188",
+      openHours: "當地 JST 正常午市 11:30–15:00。不定休，不是當日保證。",
+      price: "豬排或雞排約 ¥1,000–1,600／人。未訂位。",
+      website: URL_KATSU,
+      note: ["建議：午市豬腰肉、里脊或雞排。不要蝦排、海鮮 mix、牛肉。湯醬和芥末當場問，芥末可另放。", "全席禁煙；雇主資料寫店內禁煙，未見室內煙室條款。1F 普通靠背椅有 2026 實訪，門檻未量，所以不稱已核無障礙。", "用餐約 65 分鐘。普通午餐可以 walk-in，3 人要不要等未知。walk-in 不是免排隊，也不是已訂位。", "不要改去吉宗：茶碗蒸含蝦。Pavé 的 buffet 家人尚未接受，不自動切換。", "【預約】午餐仍是建議，不是已訂位。", MAIL, "【來源】" + URL_KATSU + " ；https://tabiiro.jp/gourmet/s/316579-nagasaki-katsushika/", "【核對】" + CHECK].join("\n")
+    }),
+    evt({
+      id: "evt_d2_to_megane", day: 2, time: "12:45", timeHint: "afternoon", type: "transport",
+      title: "前往眼鏡橋", cityId: "nagasaki",
+      tags: ["當地JST", "逐段叫車", "可刪"],
+      address: null,
+      addressLocal: "長崎県長崎市新地町12-10",
+      transport: taxi("勝鹿新地店", "眼鏡橋", OP_JP),
+      note: [CLOCK, SHOW, "【候車】15–25 分鐘。【車程暫抓】5–10 分鐘。", ride(""), CARD_N3, CARD_N3_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d2_megane", day: 2, time: "13:20", timeHint: "afternoon", type: "sight",
+      title: "眼鏡橋", cityId: "nagasaki", moodColor: "#4A5963",
+      tags: ["當地JST", "免費免約", "可刪"],
+      address: "Meganebashi, between Uo-no-machi and Suwa-machi",
+      addressLocal: "長崎県長崎市魚の町 眼鏡橋",
+      openHours: "戶外橋。沒有另設開館時間。遠看即可。",
+      price: "公共橋樑遠看，無需預約或門票。不是免坡、也不是無車流保證。",
+      website: URL_BRIDGE,
+      note: [CLOCK, WALK, "平地能到的範圍遠看雙拱和倒影。不上橋階，不下河階。約 30 分鐘後休 5 分鐘。具體坐點仍待核，不保證河邊一下車就能拍。", "【照片】河岸雙拱和倒影。不追階梯高位。", "地址沒有已核門牌 pin。做不到短平路就刪，保留運河回廊。", book(A_STREET, URL_BRIDGE, "【區別】A：公共空間外觀，免費且無需預約。這一句只涵蓋遠看，不含登橋。")].join("\n")
+    }),
+    evt({
+      id: "evt_d2_to_museum", day: 2, time: "14:10", timeHint: "afternoon", type: "transport",
+      title: "前往長崎縣美術館", cityId: "nagasaki",
+      tags: ["當地JST", "逐段叫車"],
+      address: null,
+      addressLocal: "長崎県長崎市魚の町 眼鏡橋",
+      transport: taxi("眼鏡橋", "長崎縣美術館", OP_JP),
+      note: [CLOCK, SHOW, "【候車】15–25 分鐘。【車程暫抓】10–15 分鐘。", "若眼鏡橋已刪，從勝鹿一帶另叫。", ride(""), CARD_N_MUSE, CARD_N_MUSE_ZH, "【咖啡條件卡，未核禁煙不要當餐卡出示】", CARD_N1, CARD_N1_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d2_museum", day: 2, time: "14:50", timeHint: "afternoon", type: "sight",
+      title: "長崎縣美術館回廊", cityId: "nagasaki", moodColor: "#4A5963",
+      tags: ["當地JST", "免費進館"],
+      address: "Nagasaki Prefectural Art Museum, Dejima-machi 2-1",
+      addressLocal: "長崎県長崎市出島町2-1 長崎県美術館",
+      openHours: "進館免費。咖啡當地 JST 11:00–17:00，這個 17:00 是咖啡營業，不是船時。",
+      price: "不看展不必另買展覽票。咖啡是店內消費，可能要等座位。",
+      website: "https://www.nagasaki-museum.jp/visitor/info",
+      note: [CLOCK, WALK, "看建築外觀和 2F 運河橋回廊。平坦入口／斜道、電梯、回廊約 30 米、咖啡 40 席有記錄。不看展，不走屋頂坡。", "咖啡最多約 20 分鐘，而且要先確認全席禁煙、館內沒有吸煙室。未補到這句前不入店飲食。回廊仍可看。", "官頁提到電話預約可能加快取餐，那不是進館或看回廊的條件。本次不打電話訂咖啡。", "【照片】運河和建築線條。不追高處。", "11/26 不是第 2 或第 4 個星期一，仍可能因事業改開館日。", book(A_MUSE, URL_MUSE, "【區別】進館免費。咖啡不是免約見學，也未核到無煙室原文。")].join("\n")
+    }),
+    evt({
+      id: "evt_d2_return", day: 2, time: null, timeHint: "afternoon", type: "transport",
+      title: "回松が枝", cityId: "nagasaki",
+      tags: ["船時回港"],
+      address: null,
+      addressLocal: "長崎県長崎市出島町2-1 長崎県美術館",
+      transport: taxi("美術館", "松が枝", OP_JP),
+      note: [SHOW, "近港：最遲 H 前 65 分鐘叫車。H 未填，不印當地鐘點。", "【候車】15–25 分鐘。【車程暫抓】10–15 分鐘，留 25–40 分鐘餘量。", "人若還在眼鏡橋：含配車 20–35 分鐘，再加至少 25 分鐘餘量，倒推叫車。", "保底是大浦海岸通電車站，步程現場看。不走哥拉巴長下坡。", CARD_N_RET, CARD_N_RET_ZH].join("\n")
+    }),
+
+    evt({
+      id: "evt_d3_clock", day: 3, time: "08:40", timeHint: "morning", type: "note",
+      title: "先核船鐘", cityId: "fukuoka", moodColor: "#6B5E52",
+      tags: ["排序", "船鐘"],
+      note: clockNote("Nov 27 福岡。船時靠離港 08:00–19:00。家庭到碼頭線是船時 17:00，返回中央ふ頭クルーズセンター（博多区沖浜町24番25号）。不要去沖浜町 14-1。市索引寫中央５岸，官頁原文未核，司機卡不寫這句。H 未填。町家區最遲約 H 前 75 分鐘叫車。若改大濠，不要套這段短車程，改約 H 前 95 分鐘並看即時路況。福岡是否另辦日本出境未核。這格 08:40 不是出港時刻。")
+    }),
+    evt({
+      id: "evt_d3_to_yusen", day: 3, time: "09:00", timeHint: "morning", type: "transport",
+      title: "前往友泉亭", cityId: "fukuoka",
+      tags: ["當地JST", "逐段叫車"],
+      address: null,
+      addressLocal: "福岡県福岡市博多区沖浜町24-25 中央ふ頭クルーズセンター",
+      transport: taxi("中央碼頭", "友泉亭", OP_JP),
+      note: [CLOCK, SHOW, "【候車】20–30 分鐘。【車程暫抓】25–35 分鐘。住宅區，不能假設門口有車。", "不要為了等 09:15 留在船上。", ride(""), CARD_F1, CARD_F1_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d3_yusen", day: 3, time: "09:00", timeHint: "morning", type: "sight",
+      title: "友泉亭", cityId: "fukuoka", moodColor: "#5C5348",
+      tags: ["當地JST", "現場買票"],
+      address: "Yusentei Park",
+      addressLocal: "福岡県福岡市城南区友泉亭1-46 友泉亭公園",
+      openHours: "當地 JST 09:00–17:00。週一休。11/27 週五依規則應開，不是當日保證。句中 17:00 是閉園，不是船時。",
+      price: "一般入園 200 円。抹茶 700 円是另選。免事前預約 ≠ 免費 ≠ 一定有高椅。",
+      website: "https://fukuoka-teien.com/yusentei/information/",
+      note: [CLOCK, WALK, "看本館大廣間和入口附近能到的池泉。不登高台東屋，不繞全園。每 30 分鐘休 5 分鐘。", "一般抹茶和坐著看庭有記錄。高椅、短休座位和局部坡階現場核。不能坐地就不勉強。包場椅不是散客必有。", "【照片】池庭框景。", "離開前請園方代叫。巴士友泉亭站約 5 分鐘步行只作保底。", book(A_YUS, URL_YUS, "【區別】B：個人票現場買，不必按 30 人團體申請。不是免票。")].join("\n")
+    }),
+    evt({
+      id: "evt_d3_to_hm", day: 3, time: "10:40", timeHint: "morning", type: "transport",
+      title: "前往華味鳥筑紫口店", cityId: "fukuoka",
+      tags: ["當地JST", "逐段叫車"],
+      address: null,
+      addressLocal: "福岡県福岡市城南区友泉亭1-46 友泉亭公園",
+      transport: taxi("友泉亭", "華味鳥筑紫口店", OP_JP),
+      note: [CLOCK, SHOW, "【候車】20–30 分鐘。【車程暫抓】25–35 分鐘。請園方代叫。", "11:30 前到就先問有沒有可以坐著等的位，不站著排。", ride(""), CARD_F2, CARD_F2_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d3_diet", day: 3, time: "11:40", timeHint: "morning", type: "note",
+      title: "餐廳忌口卡", cityId: "fukuoka", moodColor: "#6A5348",
+      tags: ["給餐廳", "排序"],
+      note: dietNote()
+    }),
+    evt({
+      id: "evt_d3_hm", day: 3, time: "11:45", timeHint: "morning", type: "food",
+      title: "華味鳥筑紫口店", cityId: "fukuoka", moodColor: "#6A5348",
+      tags: ["未訂位", "當地JST"],
+      address: "Hakata Hanamidori Chikushiguchi",
+      addressLocal: "福岡県福岡市博多区博多駅東1-13-31 駅東サンシティビル1F",
+      phone: "092-432-8737",
+      openHours: "當地 JST 11:30–15:00，最後點餐 14:00。平日限定御膳。11/27 週五依規則應有午市，不是臨休保證。",
+      price: "水炊御膳 ¥1,980／人。未訂位。",
+      website: URL_HM,
+      note: ["建議：水炊御膳。品牌湯、雞丸和 ponzu 的公開用料沒有列出牛、蝦、蟹；這不是分店當天每一鍋的保證。當日小鉢、唐揚、湯和高湯仍要問。不要加柚胡椒。預醃若不能去掉，先告訴我們。", "終日禁煙，店家平台寫沒有吸煙專室，有餐桌椅。1F 外觀看不到外梯；門內高差未核，不稱已核無障礙。", "用餐約 75 分鐘，不要拉成 90 分鐘。", "未見普通午餐必須預約。平日御膳頁寫電話詢問，本行不打電話。未必須預約 ≠ 免排隊。3 人桌和等候座位未核。不要說成網訂已開。", "不要去祇園店（沒有午餐）或駅前店（另有電子煙室）。不是別館。", "【預約】午餐仍是建議，不是已訂位。", MAIL, "【來源】https://www.hanamidori.net/stores/0924328737/ ；" + URL_HM, "【核對】" + CHECK].join("\n")
+    }),
+    evt({
+      id: "evt_d3_to_machiya", day: 3, time: "13:00", timeHint: "afternoon", type: "transport",
+      title: "前往博多町家", cityId: "fukuoka",
+      tags: ["當地JST", "逐段叫車"],
+      address: null,
+      addressLocal: "福岡県福岡市博多区博多駅東1-13-31",
+      transport: taxi("華味鳥筑紫口店", "博多町家", OP_JP),
+      note: [CLOCK, SHOW, "【候車】15–25 分鐘。【車程暫抓】10–15 分鐘。", ride(""), CARD_F4, CARD_F4_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d3_machiya", day: 3, time: "13:40", timeHint: "afternoon", type: "sight",
+      title: "博多町家", cityId: "fukuoka", moodColor: "#5C5348",
+      tags: ["當地JST", "現場買票"],
+      address: "Hakata Machiya Furusato-kan",
+      addressLocal: "福岡県福岡市博多区冷泉町6-10 博多町家ふるさと館",
+      openHours: "當地 JST 10:00–18:00，入館至 17:30。織實演午後 13:30–15:00。",
+      price: "一般入館 200 円，現場買，3 人按個人票。織實演觀看免費且官方寫不要預約。整館不是免費。",
+      website: "https://hakatamachiya.com/access/",
+      note: [CLOCK, WALK, "看博多織實演、町家建築和製品。每 30 分鐘休 5 分鐘。入口和椅子未核，不因此刪掉整個下午。", "週三及 7–9 月休演。11 月休館含 11/24，11/27 不在該休館日。週五午後場依規則應有，官方請再看最新時間表，可能臨時停演。不是保證不停。", "本次只看，不安排機織上手，也不約英語導覽或付費繪付／曲物。", "【照片】格子立面和織機。遵守現場可拍指示。", "不入神社、不參拜。", book(A_MACHI, URL_MACHI, "【區別】入館是 B：200 円現場票。實演觀看是 A：免費且預約不要。兩句不要併成整館免費。")].join("\n")
+    }),
+    evt({
+      id: "evt_d3_street", day: 3, time: "14:45", timeHint: "afternoon", type: "sight",
+      title: "冷泉町街景", cityId: "fukuoka", moodColor: "#5C5348",
+      tags: ["當地JST", "免費免約"],
+      address: "Reisen-machi and Kami-Kawabata streetscape",
+      addressLocal: "福岡県福岡市博多区冷泉町 博多町家ふるさと館付近",
+      openHours: "街道外觀，沒有開館時間。",
+      price: "公共街道，無需預約或門票。不是整區零坡。",
+      website: URL_YAMA,
+      note: [CLOCK, WALK, "只沿現場確認的平路走一小段。約 30 分鐘後休 5 分鐘。對面山笠只看外觀，不入神社、不參拜。", "【照片】山笠外觀，平地取景。", book(A_STREET, URL_YAMA + "（位置頁，不涉及售票）；街景與 " + URL_BRIDGE + " 同屬公共外觀這一句", "【區別】A：外觀免費、無需預約。不寫成整條街沒有坡。")].join("\n")
+    }),
+    evt({
+      id: "evt_d3_return", day: 3, time: null, timeHint: "afternoon", type: "transport",
+      title: "回中央碼頭郵輪中心", cityId: "fukuoka",
+      tags: ["船時回港"],
+      address: null,
+      addressLocal: "福岡県福岡市博多区冷泉町6-10",
+      transport: taxi("冷泉町", "中央碼頭郵輪中心", OP_JP),
+      note: [SHOW, "町家區最遲 H 前 75 分鐘開始叫車。H 未填，不印當地鐘點。", "【候車】15–25 分鐘。【車程暫抓】15–25 分鐘，留 25–45 分鐘餘量。", "必須講 24-25／クルーズセンター。不要只開到 14-1。若巴士在 14-1 下來，還要再走約 500 米，不預設適合媽媽。", CARD_F_RET, CARD_F_RET_ZH].join("\n")
+    }),
+
+    evt({
+      id: "evt_d4_clock", day: 4, time: "08:40", timeHint: "morning", type: "note",
+      title: "先核船鐘", cityId: "busan", moodColor: "#6B5E52",
+      tags: ["排序", "船鐘", "非接車"],
+      note: clockNote("Nov 28 釜山，只去西側松島。船時靠離港 07:00–18:00。家庭到碼頭線是船時 16:00，返回부산항 국제여객터미널／北港、충장대로 206。這格 08:40 不是接車時刻。08:00 只是未確認的希望，而且要看入境。訂單接車是 09:00 KST，要等船鐘換算後才知道趕不趕得上，不能用船時 07:00 靠泊來保證。H 未填。離松島是 H 前 75 分鐘已坐在車上，另留約 15 分鐘收尾；不把船時直接減成 KST，也不和 12:00 午餐相減。東區、膠囊、青沙浦都不去。")
+    }),
+    evt({
+      id: "evt_d4_b0", day: 4, time: "08:50", timeHint: "morning", type: "note",
+      title: "包車會合卡", cityId: "busan", moodColor: "#6B5E52",
+      tags: ["排序", "當地KST"],
+      address: "Busan Port International Passenger Terminal",
+      addressLocal: "부산광역시 동구 충장대로 206 부산항 국제여객터미널",
+      website: "https://www.busanpa.com/eng/index.bpa?menuCd=DOM_000000202003001000",
+      note: ["08:50 只為排在接車之前，不是 08:00，也不是已改的接車時間。", SHOW, CARD_B0, CARD_B0_ZH, "【預約】包車時段已購買；會合樓層和船鐘是否接得上 09:00 KST 仍待核，所以這張保持待定。沒有把訂單改寫。"].join("\n")
+    }),
+    evt({
+      id: "evt_d4_to_songdo", day: 4, time: "09:00", timeHint: "morning", type: "transport",
+      title: "前往松島出發站", cityId: "busan",
+      tags: ["當地KST", "已訂包車"],
+      address: null,
+      addressLocal: "부산광역시 동구 충장대로 206 부산항 국제여객터미널",
+      transport: taxi("北港", "松島出發站", OP_KR),
+      note: [CLOCK, "09:00 是訂單上的當地 KST 接車，不是船時。船鐘未核前，不能保證放行後趕得上。", "【車程暫抓】30–50 分鐘。會合和上下車另留約 10 分鐘。", SHOW, ride(" 纜車票見下一站：現場買；當天買的網上票當天不能用。"), CARD_B1, CARD_B1_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d4_cable", day: 4, time: "10:00", timeHint: "morning", type: "sight",
+      title: "松島纜車", cityId: "busan", moodColor: "#3D5348",
+      tags: ["當地KST", "現場買票"],
+      address: "Songdo Marine Cable Car, Bay Station",
+      addressLocal: "부산광역시 서구 송도해변로 171 송도베이스테이션",
+      openHours: "當地 KST，11 月 09:00–21:00。售票到結束前 30 分。惡天候可停。",
+      price: "須現場購票。票價金額本輪不填。網上預售要翌日才能用，當天買的網上票當天不能用。免網上預約 ≠ 免費 ≠ 免排隊。",
+      website: "https://busanaircruise.co.kr/info/time?rank=2",
+      note: [CLOCK, WALK, "1F 買票，按電梯指示上 4F 候乘。去對岸，在 1F 廣場看海，再回來。往返要重新排隊。排隊、下車和約 30 分鐘活動之後都算進 5 分鐘休息，不要久站。久站就先休息或不搭。", "車不到 4F。官方樓層有 1F 售票和 4F 月台；訪客記錄有電梯，不是保證本團的連續無階路線。輪椅 FAQ 只是設施說明，本團不需要輪椅。", "對岸 2F 景觀咖啡可刪。先確認升降和禁煙才用。", "【照片】艙內海灣，以及對岸 1F 廣場。不追吊橋和公園爬坡。", "11/28 不在既有紀錄的 11/30–12/1 檢修段；本輪沒有再打開檢修日曆，所以不把這句寫成保證不停駛。", book(A_CABLE, URL_CABLE, "【區別】B：不必網上預約，現場購票。不是免費，也不保證有位子坐著等。")].join("\n")
+    }),
+    evt({
+      id: "evt_d4_to_hotel", day: 4, time: "11:30", timeHint: "morning", type: "transport",
+      title: "前往松島酒店午餐", cityId: "busan",
+      tags: ["當地KST", "已訂包車"],
+      address: null,
+      addressLocal: "부산광역시 서구 송도해변로 171",
+      transport: taxi("松島出發站", "Songdo Kitchen", OP_KR),
+      note: [CLOCK, SHOW, "同一輛包車短送。聯絡和上下車留 10–15 分鐘。短程未測距。不要讓父母沿著沙灘走。", ride(""), CARD_B2, CARD_B2_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d4_diet", day: 4, time: "11:50", timeHint: "morning", type: "note",
+      title: "餐廳忌口卡", cityId: "busan", moodColor: "#6A5348",
+      tags: ["給餐廳", "排序"],
+      note: dietNote() + "\n東區鱈魚湯仍在另查，尚未選定，不排進今天，也不換成本日午餐。"
+    }),
+    evt({
+      id: "evt_d4_lunch", day: 4, time: "12:00", timeHint: "afternoon", type: "food",
+      title: "Songdo Kitchen", cityId: "busan", moodColor: "#6A5348",
+      tags: ["未訂位", "當地KST"],
+      address: "Songdo Kitchen, Fairfield Songdo Beach 22F",
+      addressLocal: "부산광역시 서구 송도해변로 113 페어필드 바이 메리어트 부산 송도 비치 22F",
+      phone: "051-260-0050",
+      openHours: "當地 KST 12:00–14:30，最後點餐 14:00。未見 Nov 28 停業公告，不是當日保證。",
+      price: "方向是熟熱麵、起司披薩或烤鰻飯。金額本輪不填。未訂位。",
+      website: URL_SONG,
+      note: ["建議方向：培根奶油麵、起司披薩、烤鰻飯這類熟熱菜。不要海鮮濃湯、蝦麵、牛排或辣菜。醬和副菜當場核。沙拉台不是每樣都適合，可以請同行者取。", "限量、須另約的招牌豬肉不要當成進門就有。", "酒店全棟禁煙，這句來自酒店本身，不是只靠法令。正門到餐廳有電梯的記錄。22F 有桌椅和海景記錄，不保證窗位。", "用餐約 70 分鐘。希望 12:00 左右到，不要 14:00 才進門。", "本日午餐維持這裡。東區鱈魚湯仍在另查，尚未選定，不排進來。", "【預約】午餐仍是建議，不是已訂位。3 人席沒有訂成。", MAIL, "【來源】" + URL_SONG + " ；https://www.songdokitchen.com/ ；https://www.marriott.com/en-us/hotels/pusfb-fairfield-busan-songdo-beach/overview/", "【核對】" + CHECK].join("\n")
+    }),
+    evt({
+      id: "evt_d4_to_base", day: 4, time: "13:10", timeHint: "afternoon", type: "transport",
+      title: "返回松島出發站", cityId: "busan",
+      tags: ["當地KST", "已訂包車"],
+      address: null,
+      addressLocal: "부산광역시 서구 송도해변로 113",
+      transport: taxi("Songdo Kitchen", "松島出發站", OP_KR),
+      note: [CLOCK, SHOW, "同一輛包車短送回出發站一帶。每次聯絡和上下車留 10–15 分鐘。不假定車停在門外等。", ride(""), CARD_B_BACK, CARD_B_BACK_ZH].join("\n")
+    }),
+    evt({
+      id: "evt_d4_sea", day: 4, time: "13:30", timeHint: "afternoon", type: "sight",
+      title: "松島海邊平路", cityId: "busan", moodColor: "#3D5348",
+      tags: ["當地KST", "部分待核"],
+      address: "Songdo Bay Station seaside road",
+      addressLocal: "부산광역시 서구 송도해변로 171 송도베이스테이션",
+      openHours: "海邊馬路沒有開館時間。站內 1F／3F 是否要票，現場看標示。",
+      price: "海邊馬路側無需預約。1F Photo Zone 和 3F Bay Terrace 沒有核成免費入場。",
+      website: URL_FLOOR,
+      note: [CLOCK, WALK, "分兩段，各約 25–30 分鐘，中間休 5 分鐘。先走出發站附近、海邊馬路側已確認的平路看海。", "3F Bay Terrace 是同一棟的替代：官方有露台／咖啡。升降跟現場標示，不爬梯。座位數和禁煙未核，不當固定吃飯的地方。", "1F 官方 Photo Zone 與 3F 是否必須持纜車票，樓層圖沒有寫死。不要當成已確認的免費室內點。", "不上沙灘，不走長海岸，不去吊橋，不在公園爬坡。", "【照片】由出發站和海邊馬路側拍纜車過海，和 22F 俯瞰不同。不靠延長吃飯來充數。", book(A_SEA, URL_FLOOR, "【區別】海邊馬路是 A。站內 1F／3F 是未確認，保持待核。")].join("\n")
+    }),
+    evt({
+      id: "evt_d4_return", day: 4, time: null, timeHint: "afternoon", type: "transport",
+      title: "回北港", cityId: "busan",
+      tags: ["船時回港"],
+      address: null,
+      addressLocal: "부산광역시 서구 송도해변로 171",
+      transport: taxi("松島", "北港", OP_KR),
+      note: [SHOW, "最遲在 H 前 75 分鐘已經坐在車上離開松島。上車前另留約 15 分鐘收尾。H 未填，所以不印 KST 鐘點，也不用 12:00 去減。", "【車程暫抓】30–50 分鐘，留 25–45 分鐘餘量。路況更長就更早走。", "不必用完 9 小時。16:30 到碼頭不算達標；達標是船時 16:00 到忠壯大路 206。", CARD_B3, CARD_B3_ZH].join("\n")
+    })
   ]
 };
 
-// 7. 💡 靈感池／後備方案
 const INSPIRATIONS = [
   {
-    "id": "ins_001",
-    "title": "北極星 心齋橋本店",
-    "tag": "FOOD",
-    "note": "【攻略】1922 年創業蛋包飯（オムライス）發祥店；點雞肉蛋包飯（チキンオムライス）和唐揚。\n【備案】Feb 8 和sai 沒位或趕 Pokémon 時；一般席不設預約。\n【實用】店內全面禁煙（店外吸煙）。",
-    "type": "food",
-    "cityId": "osaka",
-    "address": "日本大阪府大阪市中央區西心齋橋2-7-27",
-    "addressLocal": "大阪府大阪市中央区西心斎橋2-7-27 北極星 心斎橋本店",
-    "coords": [
-      34.6697,
-      135.4988
-    ],
-    "nearEventId": "evt_d2_04",
-    "phone": "+81-6-6211-7829",
-    "whatsapp": null,
-    "line": null,
-    "messenger": "https://m.me/hokkyokusei.shinsaibashi",
-    "openHours": "11:30–21:00（L.O. 閉店前 30 分鐘）",
-    "price": "雞肉蛋包飯約 ¥1,180",
-    "website": "https://www.hokkyokusei.biz/shoplist.php",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
+    id: "ins_d1_rain", title: "雨天改水族館上午", tag: "RAINY", type: "sight",
+    cityId: "kagoshima", nearEventId: "evt_d1_garden", status: "wishlist", source: "ai",
+    address: "Io World Kagoshima Aquarium",
+    addressLocal: "鹿児島県鹿児島市本港新町3-1",
+    website: "https://ioworld.jp/information",
+    price: "非市民大人 2,000 円",
+    openHours: "當地 JST 09:30–18:00",
+    note: "上午改水族館，午餐後再看雨勢，13:00 後才回切子見學。不要在雨裡走園，也不另加歷史館。\n" + book(A_AQ, URL_AQ) + "\n用這張替代卡，不兩邊都去：\n" + CARD_K4 + "\n" + CARD_K4_ZH
   },
   {
-    "id": "ins_002",
-    "title": "燗之美穗（燗の美穂）",
-    "tag": "FOOD",
-    "note": "【攻略】燙酒／清酒強；walk-in。\n【備案】Feb 8 長堀訂不到、或 Feb 9 晚。\n【實用】全席禁煙；16:00 開門問位。",
-    "type": "food",
-    "cityId": "osaka",
-    "address": "日本大阪府大阪市中央區安堂寺町2-2-14",
-    "addressLocal": "大阪府大阪市中央区安堂寺町2-2-14 燗の美穂",
-    "coords": [
-      34.6761,
-      135.5157
-    ],
-    "nearEventId": "evt_d2_08",
-    "phone": "+81-6-7222-2510",
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "星期一至六 16:00–22:00；日 15:00–22:00；逢星期三及每月第 3 個星期四休",
-    "price": "預算 ¥6,000–7,999",
-    "website": "https://tabelog.com/osaka/A2701/A270204/27117661/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
+    id: "ins_d1_tired", title: "體力不足時刪切子或縮水族館", tag: "TIRED", type: "note",
+    cityId: "kagoshima", nearEventId: "evt_d1_kiriko", status: "wishlist", source: "ai",
+    note: "先刪切子，或縮短水族館一段。仍留上午庭園和下午 5F。5 分鐘休息不刪。"
   },
   {
-    "id": "ins_003",
-    "title": "梅田 釜竹烏冬（梅田 釜たけうどん）",
-    "tag": "FOOD",
-    "note": "【攻略】梅田輕食；walk-in；現金食券。\n【備案】今雪不定休時。\n【實用】全席禁煙。",
-    "type": "food",
-    "cityId": "osaka",
-    "address": "日本大阪府大阪市北區角田町9-25 新梅田食道街 1 樓",
-    "addressLocal": "大阪府大阪市北区角田町9-25 新梅田食道街1F 梅田 釜たけうどん",
-    "coords": [
-      34.7039,
-      135.4978
-    ],
-    "nearEventId": "evt_d3_02",
-    "phone": "+81-6-6363-7746",
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "11:00–14:30；星期二休",
-    "price": "預算 ～¥1,999",
-    "website": "https://tabelog.com/osaka/A2701/A270101/27052204/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
+    id: "ins_d1_k3", title: "ふくや電梯不能用才改黒かつ亭", tag: "FOOD", type: "food",
+    cityId: "kagoshima", nearEventId: "evt_d1_fukuya", status: "wishlist", source: "ai",
+    address: "Kurokatsutei / Kurobee",
+    addressLocal: "鹿児島県鹿児島市山下町2-2",
+    website: URL_KURO,
+    phone: null,
+    openHours: "當地 JST 午餐 11:00–14:30",
+    price: "未訂位。不是本日改選。",
+    note: "只在酒店電梯不能往返時使用。希望普通椅，不是掘式。室內禁煙、吸煙處在屋外有店家記載。空位不保證。沒有另寄電郵。\n" + CARD_K3 + "\n" + CARD_K3_ZH
   },
   {
-    "id": "ins_004",
-    "title": "KOHYO 內本町店（コーヨー 内本町店）",
-    "tag": "TIRED",
-    "note": "【攻略】酒店隔鄰超市；Feb 7 遲到或略過上本町時作宵夜備案。\n【備案】其他晚回房補給。\n【實用】07:00–23:00；walk-in。",
-    "type": "shop",
-    "cityId": "osaka",
-    "address": "日本大阪府大阪市中央區內本町2-2-10",
-    "addressLocal": "大阪府大阪市中央区内本町2-2-10 KOHYO内本町店",
-    "coords": [
-      34.6833,
-      135.5138
-    ],
-    "nearEventId": "evt_d1_06",
-    "phone": "+81-6-6944-5040",
-    "whatsapp": null,
-    "line": "@rxu5960x",
-    "messenger": null,
-    "openHours": "07:00–23:00",
-    "price": "刺身拼盤約 ¥800–1,500（估算）",
-    "website": "https://www.daiei.co.jp/stores/4473/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
+    id: "ins_d1_traffic", title: "仙巌園叫不到車就直接回港", tag: "TIME", type: "transport",
+    cityId: "kagoshima", nearEventId: "evt_d1_garden", status: "wishlist", source: "ai",
+    note: "請受付代叫。巴士只是應急。若還在園裡，最遲 H 前 80 分鐘回港，不繞水族館。H 未填。"
   },
   {
-    "id": "ins_005",
-    "title": "日本酒原價酒藏 谷町四丁目店（日本酒原価酒蔵）",
-    "tag": "SOLO",
-    "note": "【攻略】酒店近；原價日本酒。\n【備案】Feb 9／10 晚趕收工。\n【實用】入場費 ¥540；全席禁煙。",
-    "type": "food",
-    "cityId": "osaka",
-    "address": "日本大阪府大阪市中央區谷町4-4-15 谷4 Plaza 1 樓",
-    "addressLocal": "大阪府大阪市中央区谷町4-4-15 谷4プラザ1F 日本酒原価酒蔵 谷町4丁目店",
-    "coords": [
-      34.6806,
-      135.5175
-    ],
-    "nearEventId": "evt_d3_07",
-    "phone": "+81-50-5487-1817",
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "星期一至五 15:00–23:30；六、日及假期 12:00–23:30（料理 L.O. 22:30）；沒有固定休息日",
-    "price": "原價日本酒（每杯價錢按銘柄）",
-    "website": "https://tabelog.com/osaka/A2701/A270104/27143338/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
+    id: "ins_d2_rain", title: "雨天縮短水之庭園", tag: "RAINY", type: "sight",
+    cityId: "nagasaki", nearEventId: "evt_d2_park", status: "wishlist", source: "ai",
+    note: "公園縮成約 30 分鐘海港段。大雨不硬走戶外。館未開不說能進。午後仍可留公共回廊。\n" + book(A_PARK, URL_PARK)
   },
   {
-    "id": "ins_006",
-    "title": "串炸松葉 總本店（串かつ 松葉 総本店）",
-    "tag": "FOOD",
-    "note": "【攻略】新梅田串炸；抵達夜出街備案。\n【實用】walk-in。",
-    "type": "food",
-    "cityId": "osaka",
-    "address": "日本大阪府大阪市北區角田町9-20 新梅田食道街 1 樓",
-    "addressLocal": "大阪府大阪市北区角田町9-20 新梅田食道街1F 串かつ専門店 松葉 総本店",
-    "coords": [
-      34.7035,
-      135.4977
-    ],
-    "nearEventId": "evt_d1_06",
-    "phone": "+81-6-6312-6615",
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "星期一至六 11:00–22:00；日及假期 11:00–21:30",
-    "price": "預算 ¥1,000–1,999；連一兩杯酒約 ¥2,500（估算）",
-    "website": "https://tabelog.com/osaka/A2701/A270101/27001927/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
+    id: "ins_d2_drop_ruri", title: "刪瑠璃庵，保留午後", tag: "TIRED", type: "note",
+    cityId: "nagasaki", nearEventId: "evt_d2_rurian", status: "wishlist", source: "ai",
+    note: "放行晚或體力不夠，先刪瑠璃庵，縮河岸。保留已核的硬鋪公園，以及午後運河、眼鏡橋至少一處。5 分鐘休息不刪。\n" + book(A_RURI, URL_RURI)
   },
   {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_007",
-    "tag": "RAINY",
-    "nearEventId": "evt_d2_02",
-    "type": "sight",
-    "cityId": "osaka",
-    "title": "大阪歷史博物館",
-    "address": "日本大阪府大阪市中央區大手前4-1-32",
-    "addressLocal": "大阪府大阪市中央区大手前4-1-32",
-    "coords": [
-      34.6826,
-      135.5205
-    ],
-    "note": "【攻略】月曜開；特集包常設票。\n【備案】Feb 8 蚤市後時間夠再去。\n【實用】館內禁煙。",
-    "openHours": "09:30–17:00；逢星期二休（假期則翌日）",
-    "price": "常設視特集"
+    id: "ins_d2_pave", title: "Pavé 僅在接受自助餐後", tag: "FOOD", type: "food",
+    cityId: "nagasaki", nearEventId: "evt_d2_katsu", status: "wishlist", source: "ai",
+    address: "Restaurant Pave, ANA Crowne Plaza Nagasaki Gloverhill 2F",
+    addressLocal: "長崎県長崎市南山手町1-18",
+    website: URL_PAVE,
+    phone: "095-818-8012",
+    openHours: "當地午市以 14:30 前完成較保守。官網寫到 15:00，地圖頁有 14:30。",
+    price: "11 月自助餐 ¥3,300／成人。未訂位。家人尚未接受。",
+    note: "不是本日改選，不自動切換。只在家人接受 buffet、並願意逐道核醬料之後才用。不能寫成午市一定有雞排或豬排單點。全席禁煙、餐廳無吸煙專室有記錄。酒店玄關落客。\n" + CARD_N5 + "\n" + CARD_N5_ZH
   },
   {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_008",
-    "tag": "SHOP",
-    "nearEventId": "evt_d3_02",
-    "type": "shop",
-    "cityId": "osaka",
-    "title": "CAPCOM STORE OSAKA",
-    "address": "日本大阪府大阪市北區梅田3-1-3 LUCUA 南館 13F",
-    "addressLocal": "大阪府大阪市北区梅田3-1-3 LUCUA osaka 南館13F",
-    "coords": [
-      34.7019,
-      135.4963
-    ],
-    "note": "【攻略】同層只睇店；咖啡店另計可略。\n【備案】Nintendo 順路。\n【實用】10:00–20:00；walk-in。",
-    "openHours": "10:00–20:00",
-    "price": "免費入場"
+    id: "ins_d3_ohori", title: "友泉亭不適用才看大濠", tag: "RAINY", type: "sight",
+    cityId: "fukuoka", nearEventId: "evt_d3_yusen", status: "wishlist", source: "ai",
+    address: "Ohori Park, short lakeside",
+    addressLocal: "福岡県福岡市中央区大濠公園",
+    website: URL_OHORI,
+    openHours: "咖啡週五當地 11:00 起。公園短段沒有開館時間。",
+    price: "湖邊短段無需門票。咖啡是飲食，不標成免約見學。",
+    note: "高椅或雨天使不上友泉亭時：可先於町家 10:00 後看建築、11:00 實演，再吃水炊；下午才是大濠室內湖景加店外短段。咖啡約 20 分鐘，不繞湖。\n若 H 容不下跨區，就留在町家和原區街景，不把三區串起來。大濠回港按 H 前 95 分鐘，不套町家車程。\n禁煙室、落客步程未核前，咖啡不當確定飲食點。\n" + book(A_OHORI, URL_OHORI) + "\n" + CARD_F3 + "\n" + CARD_F3_ZH
   },
   {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_009",
-    "tag": "TIME",
-    "nearEventId": "evt_d3_02",
-    "type": "sight",
-    "cityId": "osaka",
-    "title": "天滿市場／中崎町（未選）",
-    "address": "日本大阪府大阪市北區",
-    "addressLocal": "大阪府大阪市北区天満・中崎町",
-    "coords": [
-      34.7068,
-      135.5135
-    ],
-    "note": "【攻略】Sandy 未選；僅靈感、唔硬塞。\n【備案】他朝有餘力。\n【實用】市集 walk-in。",
-    "openHours": "市場各店約 08:00–18:00",
-    "price": null
+    id: "ins_d3_tired", title: "下午縮街景，留實演", tag: "TIRED", type: "note",
+    cityId: "fukuoka", nearEventId: "evt_d3_street", status: "wishlist", source: "ai",
+    note: "縮掉街景，留下織實演和 5 分鐘休息。不加酒販購物。"
   },
   {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_010",
-    "tag": "TIME",
-    "nearEventId": "evt_d3_05",
-    "type": "sight",
-    "cityId": "osaka",
-    "title": "奈良瑠璃絵（なら瑠璃絵・他晚靈感）",
-    "address": "日本奈良縣奈良市",
-    "addressLocal": "奈良公園一帶",
-    "coords": [
-      34.685,
-      135.84
-    ],
-    "note": "【攻略】Feb 8–14 18:00–21:00；免費燈光／市集。\n【備案】已取消硬塞；他晚有餘力可選。\n【實用】只逛燈光市集，不參拜；❄️ 保暖。",
-    "openHours": "Feb 8–14 18:00–21:00",
-    "price": "免費（有料區可選）"
+    id: "ins_d3_tight", title: "時間不夠就留在町家區", tag: "TIME", type: "note",
+    cityId: "fukuoka", nearEventId: "evt_d3_machiya", status: "wishlist", source: "ai",
+    note: "H 若容不下跨去大濠，不要硬串三區。町家區回港仍是 H 前 75 分鐘開始叫車。"
   },
   {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_011",
-    "tag": "FOOD",
-    "nearEventId": "evt_d4_02",
-    "type": "food",
-    "cityId": "kyoto",
-    "title": "祇園綺羅良（祇をん きらら）",
-    "address": "日本京都府京都市東山區",
-    "addressLocal": "京都府京都市東山区 祇をん きらら",
-    "coords": [
-      35.003,
-      135.7745
-    ],
-    "note": "【攻略】午彩御膳約 ¥2–3k。\n【備案】一之傳訂不到。\n【預約】Tabelog／OWST。\n【實用】全席禁煙。",
-    "openHours": "以店曆為準",
-    "price": "午約 ¥2,000–3,000"
+    id: "ins_d4_rain", title: "停駛或下雨留在出發站", tag: "RAINY", type: "sight",
+    cityId: "busan", nearEventId: "evt_d4_cable", status: "wishlist", source: "ai",
+    addressLocal: "부산광역시 서구 송도해변로 171",
+    website: URL_FLOOR,
+    note: "已放行就能開始的話，先用站內可遮蔽的地方。不要把 1F Photo Zone 或 3F 寫成已確認免費。中午仍吃酒店午餐。午後留同一棟裡、現場標示走得到的看海方向，不要用「一吃完就回港」取代午後。風雨大不硬走海邊。\n" + book(A_SEA, URL_FLOOR)
   },
   {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_012",
-    "tag": "FOOD",
-    "nearEventId": "evt_d5_04",
-    "type": "food",
-    "cityId": "osaka",
-    "title": "Gusto 姬路網干店（ガスト 姫路網干店）",
-    "address": "日本兵庫縣姬路市網干區和久114-1",
-    "addressLocal": "兵庫県姫路市網干区和久114-1 ガスト",
-    "coords": [
-      34.8099,
-      134.5851
-    ],
-    "note": "【攻略】家庭餐廳；全席禁煙；walk-in。\n【備案】和之味處訂不到或距離遠。\n【實用】祝日 08:00–23:30；JR 網干徒歩約 9 分。",
-    "openHours": "祝日 08:00–23:30",
-    "price": "套餐約 ¥1,000"
+    id: "ins_d4_b4", title: "對岸停駛緊急卡", tag: "TIME", type: "note",
+    cityId: "busan", nearEventId: "evt_d4_cable", status: "wishlist", source: "ai",
+    address: "Songdo Sky Park",
+    addressLocal: "부산광역시 서구 암남공원로 181",
+    note: "只在人已經在對岸、纜車回不去時用。地址不是已核的上車點。\n" + CARD_B4 + "\n" + CARD_B4_ZH
   },
   {
-    "id": "ins_013",
-    "title": "稻田酒店",
-    "tag": "SHOP",
-    "note": "【攻略】天滿一帶立飲。\n【備案】黑兔食堂後輕量清酒。\n【實用】假日開否 Feb 初核。",
-    "type": "shop",
-    "cityId": "osaka",
-    "address": "日本大阪府大阪市北區浪花町6-4",
-    "addressLocal": "大阪府大阪市北区浪花町6-4 稲田酒店",
-    "coords": [
-      34.7076,
-      135.5097
-    ],
-    "nearEventId": "evt_d5_06",
-    "phone": "+81-6-6371-0636",
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "店舖 11:00–21:30／立飲區 14:00–21:00；假期營業時店舖至 20:30、立飲區至 20:00；星期日休，假期不定休",
-    "price": "立飲區按杯計（只收現金）；一升瓶 ¥4,400 例",
-    "website": "https://osaka-saketen.jp/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
+    id: "ins_d4_tired", title: "刪對岸遠端，留近處", tag: "TIRED", type: "note",
+    cityId: "busan", nearEventId: "evt_d4_cable", status: "wishlist", source: "ai",
+    note: "刪對岸 2F 和下午較遠的一段。留 1F 附近能走的平路，約 30 分鐘後休 5 分鐘。不因此把站內照片區說成免費。"
   },
   {
-    "id": "ins_014",
-    "title": "Propeller 牛扒（プロペラ）",
-    "tag": "FOOD",
-    "note": "【攻略】三宮牛扒。\n【備案】HINO 訂不到。",
-    "type": "food",
-    "cityId": "kobe",
-    "address": "日本兵庫縣神戶市中央區磯上通8-1-14",
-    "addressLocal": "兵庫県神戸市中央区磯上通8-1-14 プロペラ",
-    "coords": [
-      34.6913,
-      135.1961
-    ],
-    "nearEventId": "evt_d6_10",
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "每日 11:00–15:30；無休",
-    "price": "午市 ¥2,000–2,999（估算）",
-    "website": "https://tabelog.com/hyogo/A2801/A280101/28040503/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
-  },
-  {
-    "id": "ins_015",
-    "title": "稻妻（日本酒バル・米屋 イナズマ）",
-    "tag": "FOOD",
-    "note": "【攻略】三宮日本酒吧。\n【備案】HINO 訂不到。",
-    "type": "food",
-    "cityId": "kobe",
-    "address": "日本兵庫縣神戶市中央區北長狹通3-10-1 KS 大廈 1 樓",
-    "addressLocal": "兵庫県神戸市中央区北長狭通3-10-1 KSビル1F 日本酒バル・米屋 イナズマ",
-    "coords": [
-      34.6919,
-      135.1884
-    ],
-    "nearEventId": "evt_d6_10",
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "平日 18:00–23:00（料理 L.O. 22:00）；不定休",
-    "price": "預算 ¥4,000–5,999",
-    "website": "https://tabelog.com/hyogo/A2801/A280102/28042842/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
-  },
-  {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_016",
-    "tag": "FOOD",
-    "nearEventId": "evt_d6_08",
-    "type": "food",
-    "cityId": "kobe",
-    "title": "伊藤 Grill（伊藤グリル）",
-    "address": "日本兵庫縣神戶市中央區",
-    "addressLocal": "兵庫県神戸市中央区 伊藤グリル",
-    "coords": [
-      34.6884,
-      135.188
-    ],
-    "note": "【攻略】僅靈感／不強制；午 L.O. 13:30 已過本線時段。\n【備案】有餘力再考慮。\n【實用】不硬塞主線。",
-    "openHours": "以店曆為準（午 L.O. 約 13:30）",
-    "price": null
-  },
-  {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_017",
-    "tag": "TIME",
-    "nearEventId": "evt_d6_08",
-    "type": "sight",
-    "cityId": "kobe",
-    "title": "南京町春節祭",
-    "address": "日本兵庫縣神戶市中央區南京町",
-    "addressLocal": "兵庫県神戸市中央区南京町",
-    "coords": [
-      34.688,
-      135.1884
-    ],
-    "note": "【攻略】縮或靈感；攤位多現金；不參與祈願。\n【備案】梵高後時間緊可略。\n【實用】開催期。",
-    "openHours": "開催期視當日",
-    "price": "免費逛攤"
-  },
-  {
-    "id": "ins_018",
-    "title": "酒林（さかばやし）",
-    "tag": "FOOD",
-    "note": "【攻略】御影・酒心館。\n【預約】Hot Pepper 網上訂。\n【備案】白鹿蔵開不開催時午餐。",
-    "type": "food",
-    "cityId": "kobe",
-    "address": "日本兵庫縣神戶市東灘區御影塚町1-8-17 神戶酒心館內",
-    "addressLocal": "兵庫県神戸市東灘区御影塚町1-8-17 神戸酒心館 蔵の料亭 さかばやし",
-    "coords": [
-      34.71,
-      135.2486
-    ],
-    "nearEventId": "evt_d7_02",
-    "phone": "+81-78-841-2612",
-    "whatsapp": null,
-    "line": null,
-    "messenger": "https://m.me/shushinkan.fukuju",
-    "openHours": "午市 11:30–15:00（L.O. 14:30）；星期三休",
-    "price": "御影膳（みかげ膳） ¥3,500（Hot Pepper 網上預約，1 名起）",
-    "website": "https://www.hotpepper.jp/strJ003599046/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
-  },
-  {
-    "id": "ins_019",
-    "title": "石挽十割蕎麥 玄盛 北新地本店（石挽き十割蕎麦 玄盛 北新地本店）",
-    "tag": "FOOD",
-    "note": "【攻略】北新地蕎麥。\n【備案】Sumiemon 訂不到。",
-    "type": "food",
-    "cityId": "osaka",
-    "address": "日本大阪府大阪市北區曾根崎新地1-10-6 北新地 Sirius 大廈 1–4 樓",
-    "addressLocal": "大阪府大阪市北区曽根崎新地1-10-6 北新地シリウスビル 1〜4F 石挽き十割蕎麦 玄盛 北新地本店",
-    "coords": [
-      34.698,
-      135.4975
-    ],
-    "nearEventId": "evt_d7_04",
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "星期一至五 11:30–14:30、17:30–翌日 03:30；星期六、日及假期 11:30–14:30、15:00–21:30（L.O. 21:00）",
-    "price": "晚市預算 ¥3,000–3,999",
-    "website": "https://tabelog.com/osaka/A2701/A270101/27104902/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
-  },
-  {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_020",
-    "tag": "FOOD",
-    "nearEventId": "evt_d7_04",
-    "type": "food",
-    "cityId": "osaka",
-    "title": "雅釀 GAJO（雅醸）",
-    "address": "日本大阪府大阪市北區",
-    "addressLocal": "大阪府大阪市北区 雅醸",
-    "coords": [
-      34.6969,
-      135.5003
-    ],
-    "note": "【攻略】僅高預算備註；配對約 ¥29,000；唔作主選。\n【備案】預算充足且想清酒配對時。\n【實用】土曜不定休。",
-    "openHours": "以店曆為準；土曜不定休",
-    "price": "配對約 ¥29,000"
-  },
-  {
-    "id": "ins_021",
-    "title": "十三市",
-    "tag": "SHOP",
-    "note": "【攻略】只逛攤位，不參拜。\n【備案】本稿不強制排入。\n【實用】現金為主。",
-    "type": "shop",
-    "cityId": "osaka",
-    "address": "日本大阪府大阪市淀川區十三東2-6-39",
-    "addressLocal": "大阪府大阪市淀川区十三東2-6-39 十三市",
-    "coords": [
-      34.7205,
-      135.4846
-    ],
-    "nearEventId": "evt_d7_02",
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "約 09:00/10:00–15:00（時間未定）",
-    "price": "免費入場",
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
-  },
-  {
-    "id": "ins_022",
-    "title": "PELMOIR（ペルモワ）",
-    "tag": "SHOP",
-    "note": "【攻略】平價 Akoya 入門：¥1,000–3,000 的字母吊墜、細粒耳環做手信；先問是 Akoya 還是淡水。\n【備案】梵高展後、去南京町前有空就順路：三宮中心街 2 丁目，三宮站向西約 5 分鐘。\n【實用】英文服務不明，可指商品、用計算機；免稅現場問（免税できますか？）。",
-    "type": "shop",
-    "cityId": "kobe",
-    "address": "日本兵庫縣神戶市中央區三宮町2-10-23（三宮中心街 2 丁目）",
-    "addressLocal": "兵庫県神戸市中央区三宮町2-10-23 ペルモワ",
-    "coords": [
-      34.6908,
-      135.1908
-    ],
-    "nearEventId": "evt_d6_06",
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "11:00–19:00；星期三休（另有臨時休業）",
-    "price": "¥1,000–3,000",
-    "website": "https://centergai2.com/shopguide/15_pelmoir/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
-  },
-  {
-    "id": "ins_023",
-    "title": "SHINYU SHOP（真優 直営店）",
-    "tag": "SHOP",
-    "note": "【攻略】珍珠卸商直營，有英文、中文顧問；請顧問把同價位 Akoya 並排比光澤和珠層。價位：Akoya 耳釘 ¥18,000 起。\n【備案】想再比較才去：北野坂，三宮站步行約 10 分鐘；隔鄰 Pearl Clinic 不主動推銷。\n【實用】免稅現場問；曾臨時休業，出發前看店方「新着情報」。",
-    "type": "shop",
-    "cityId": "kobe",
-    "address": "日本兵庫縣神戶市中央區中山手通1-23-16 Shanti 大廈 1 樓",
-    "addressLocal": "兵庫県神戸市中央区中山手通1-23-16 シャンティビル1階 SHINYU SHOP",
-    "coords": [
-      34.6976,
-      135.1915
-    ],
-    "nearEventId": "evt_d6_06",
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "10:00–18:00",
-    "price": "¥10,000–300,000",
-    "website": "https://shinyu-kobe.com/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
-  },
-  {
-    "id": "ins_024",
-    "title": "神戶酒心館 東明藏",
-    "tag": "TIME",
-    "note": "【攻略】灘備案館巡。\n【備案】白鹿非當日。",
-    "type": "shop",
-    "cityId": "kobe",
-    "address": "日本兵庫縣神戶市東灘區御影塚町1-8-17",
-    "addressLocal": "兵庫県神戸市東灘区御影塚町1-8-17 神戸酒心館 蔵元ショップ 東明蔵",
-    "coords": [
-      34.71,
-      135.2486
-    ],
-    "nearEventId": "evt_d7_02",
-    "phone": "+81-78-841-1121",
-    "whatsapp": null,
-    "line": null,
-    "messenger": "https://m.me/shushinkan.fukuju",
-    "openHours": "10:00–18:30（Jan 1–3 休）",
-    "price": "免費試飲",
-    "website": "https://www.shushinkan.co.jp/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
-  },
-  {
-    "id": "ins_025",
-    "title": "白鶴酒造資料館",
-    "tag": "TIME",
-    "note": "【攻略】灘備案。\n【備案】白鹿非當日。",
-    "type": "sight",
-    "cityId": "kobe",
-    "address": "日本兵庫縣神戶市東灘區住吉南町4-5-5",
-    "addressLocal": "兵庫県神戸市東灘区住吉南町4丁目5-5 白鶴酒造資料館",
-    "coords": [
-      34.7136,
-      135.2621
-    ],
-    "nearEventId": "evt_d7_02",
-    "phone": "+81-78-822-8907",
-    "whatsapp": null,
-    "line": null,
-    "messenger": "https://m.me/HAKUTSURU.SAKE.BREWING",
-    "openHours": "09:30–16:30（最後入館 16:00）；年末年始休",
-    "price": "免費入館；高級酒付費試飲",
-    "website": "https://www.hakutsuru.co.jp/community/shiryo/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
-  },
-  {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_026",
-    "tag": "TIME",
-    "nearEventId": "evt_d7_02",
-    "type": "sight",
-    "cityId": "kobe",
-    "title": "菊正宗酒造記念館",
-    "address": "日本兵庫縣神戶市東灘區",
-    "addressLocal": "兵庫県神戸市東灘区",
-    "coords": [
-      34.7086,
-      135.2679
-    ],
-    "note": "【攻略】灘備案；火休→六開。\n【備案】白鹿非當日。\n【實用】09:30–16:30。",
-    "openHours": "09:30–16:30；逢星期二休",
-    "price": "入場視館"
-  },
-  {
-    "phone": null,
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "website": null,
-    "status": "wishlist",
-    "source": "ai",
-    "tags": [],
-    "id": "ins_027",
-    "tag": "TIME",
-    "nearEventId": "evt_d7_02",
-    "type": "sight",
-    "cityId": "kobe",
-    "title": "浜福鶴 吟釀工房",
-    "address": "日本兵庫縣神戶市東灘區",
-    "addressLocal": "兵庫県神戸市東灘区",
-    "coords": [
-      34.7094,
-      135.273
-    ],
-    "note": "【攻略】灘備案；月休祝則翌日→六開。\n【備案】白鹿非當日。\n【實用】10:00–17:00。",
-    "openHours": "10:00–17:00；逢星期一休（祝則翌日）",
-    "price": "入場視館"
-  },
-  {
-    "id": "ins_028",
-    "title": "伊丹老松酒造直賣所（伊丹老松酒造直売所）",
-    "tag": "SHOP",
-    "note": "【攻略】伊丹；日休＝Feb 12 五唔關。\n【備案】僅資訊。",
-    "type": "shop",
-    "cityId": "osaka",
-    "address": "日本兵庫縣伊丹市中央3-1-8",
-    "addressLocal": "兵庫県伊丹市中央3-1-8 伊丹老松酒造 直売所",
-    "coords": [
-      34.7807,
-      135.417
-    ],
-    "nearEventId": "evt_d6_04",
-    "phone": "+81-72-782-2470",
-    "whatsapp": null,
-    "line": null,
-    "messenger": null,
-    "openHours": "星期一至五 09:00–18:00；星期六 09:00–17:00；星期日及假期休",
-    "price": "有料試飲約 ¥200 一杯",
-    "website": "https://oimatsu.biz/",
-    "status": "wishlist",
-    "source": "ai",
-    "tags": []
+    id: "ins_d4_photo", title: "午後與 22 樓不同的海", tag: "PHOTO", type: "note",
+    cityId: "busan", nearEventId: "evt_d4_sea", status: "wishlist", source: "ai",
+    note: "上午艙內和對岸廣場是一種。午後在出發站與海邊馬路側拍纜車過海，是另一種。不靠多坐一會兒吃飯來補照片。1F／3F 免費與否仍未核。"
   }
 ];
 
-// 8. 🛒 每日購物
 const DAILY_EXTRAS = {
-  "1": {
-    "shopping": [
-      "生日蛋糕（Henri 條件取貨）／上本町刺身地酒",
-      "大瓶礦泉水"
-    ]
-  },
-  "2": {
-    "shopping": [
-      "蚤市小物（可選）",
-      "Pokémon 限定（可選）"
-    ]
-  },
-  "3": {
-    "shopping": [
-      "Nintendo／amiibo（可選）",
-      "寶塚周邊（可選）"
-    ]
-  },
-  "4": {
-    "shopping": [
-      "伏見酒手信（可選）"
-    ]
-  },
-  "5": {
-    "shopping": [
-      "龍力酒粕手信（利酒會含）"
-    ]
-  },
-  "6": {
-    "shopping": [
-      "My CUP 杯麵",
-      "珍珠（Pearl Pearl）"
-    ]
-  },
-  "7": {
-    "shopping": [
-      "白鹿限定（現金）"
-    ]
-  },
-  "8": {
-    "shopping": [
-      "機場手信／退稅"
-    ]
-  }
+  "1": { shopping: ["日圓現金，給偏遠叫車", "薄雨具", "船方當日船鐘說明，用來填司機卡空白"] },
+  "2": { shopping: ["日圓現金", "船方當日船鐘說明"] },
+  "3": { shopping: ["日圓現金", "船方當日船鐘說明"] },
+  "4": { shopping: ["韓圓現金", "船方當日船鐘說明", "填好當地空白後才出示的包車卡"] }
 };
 
-// 9. 💰 預算
 const BUDGET = {
-  "categories": [
-    "transport",
-    "food",
-    "hotel",
-    "shop",
-    "ticket",
-    "other"
-  ],
-  "estimates": {
-    "total": 201896,
-    "currency": "JPY",
-    "byCategory": {
-      "transport": 16300,
-      "food": 74146,
-      "hotel": 97750,
-      "ticket": 13700,
-      "shop": 0,
-      "other": 0
-    },
-    "note": "7 晚酒店約 ¥97,750（含宿泊稅／入湯稅約 ¥2,750；市價 as-of Nov 4, 2026；已訂 0AN0UPYV 原 8 晚 ¥109,000，改期 TBD）；航班 TBD 未計；匯率參考 0.053。行程內可見 cost 加總約 ¥201,896（含生日蛋糕＋上本町宵夜一次計入）。"
-  },
-  "expenses": []
+  categories: ["transport", "food", "hotel", "shop", "ticket", "other"],
+  estimates: null,
+  expenses: []
 };
 
-// 10. 🗣️ 常用短語
 const PHRASE_DATA = [
-  {
-    "category": "餐廳",
-    "items": [
-      {
-        "term_primary": "一人です",
-        "term_secondary": "一位",
-        "term_pronounce": "Hitori desu"
-      },
-      {
-        "term_primary": "予約した陳です",
-        "term_secondary": "我有訂位，姓陳",
-        "term_pronounce": "Yoyaku shita Chan desu"
-      },
-      {
-        "term_primary": "カウンター席でお願いします",
-        "term_secondary": "麻煩坐吧枱",
-        "term_pronounce": "Kauntā-seki de onegai shimasu"
-      },
-      {
-        "term_primary": "おすすめは？",
-        "term_secondary": "有甚麼推介？",
-        "term_pronounce": "Osusume wa?"
-      }
-    ]
-  },
-  {
-    "category": "清酒",
-    "items": [
-      {
-        "term_primary": "辛口の純米酒はありますか",
-        "term_secondary": "有沒有辛口純米酒？",
-        "term_pronounce": "Karakuchi no junmai-shu wa arimasu ka"
-      },
-      {
-        "term_primary": "ぬる燗でお願いします",
-        "term_secondary": "請溫到「溫燗」（約 40°C）",
-        "term_pronounce": "Nurukan de onegai shimasu"
-      },
-      {
-        "term_primary": "試飲できますか",
-        "term_secondary": "可以試飲嗎？",
-        "term_pronounce": "Shiin dekimasu ka"
-      },
-      {
-        "term_primary": "蔵開き限定のお酒はどれですか",
-        "term_secondary": "哪款是藏開限定酒？",
-        "term_pronounce": "Kurabiraki gentei no osake wa dore desu ka"
-      }
-    ]
-  },
-  {
-    "category": "購物／古物",
-    "items": [
-      {
-        "term_primary": "これを見せてください",
-        "term_secondary": "請讓我看看這個",
-        "term_pronounce": "Kore o misete kudasai"
-      },
-      {
-        "term_primary": "状態はどうですか",
-        "term_secondary": "品相怎樣？",
-        "term_pronounce": "Jōtai wa dō desu ka"
-      },
-      {
-        "term_primary": "少し安くなりますか",
-        "term_secondary": "可以便宜一點嗎？",
-        "term_pronounce": "Sukoshi yasuku narimasu ka"
-      },
-      {
-        "term_primary": "免税の手続きはできますか",
-        "term_secondary": "可以辦退稅嗎？",
-        "term_pronounce": "Menzei no tetsuzuki wa dekimasu ka"
-      }
-    ]
-  },
-  {
-    "category": "精油／SPA",
-    "items": [
-      {
-        "term_primary": "成分分析表（GC-MS）は見られますか",
-        "term_secondary": "可以看成分分析表（GC-MS）嗎？",
-        "term_pronounce": "Seibun bunseki-hyō wa miraremasu ka"
-      },
-      {
-        "term_primary": "日本産の精油はどれですか",
-        "term_secondary": "哪些是日本產精油？",
-        "term_pronounce": "Nihon-san no seiyu wa dore desu ka"
-      },
-      {
-        "term_primary": "もう少し弱めでお願いします",
-        "term_secondary": "力度輕一點",
-        "term_pronounce": "Mō sukoshi yowame de onegai shimasu"
-      }
-    ]
-  },
-  {
-    "category": "交通／緊急",
-    "items": [
-      {
-        "term_primary": "この電車は梅田に行きますか",
-        "term_secondary": "這班車去梅田嗎？",
-        "term_pronounce": "Kono densha wa Umeda ni ikimasu ka"
-      },
-      {
-        "term_primary": "このホテルまでお願いします",
-        "term_secondary": "請載我去這間酒店",
-        "term_pronounce": "Kono hoteru made onegai shimasu"
-      },
-      {
-        "term_primary": "助けてください",
-        "term_secondary": "請幫幫我",
-        "term_pronounce": "Tasukete kudasai"
-      },
-      {
-        "term_primary": "警察を呼んでください",
-        "term_secondary": "請報警",
-        "term_pronounce": "Keisatsu o yonde kudasai"
-      }
-    ]
-  },
-  {
-    "category": "珍珠",
-    "items": [
-      {
-        "term_primary": "これはあこや真珠ですか？淡水ですか？",
-        "term_secondary": "這是 Akoya 還是淡水珍珠？",
-        "term_pronounce": "Kore wa akoya shinju desu ka? Tansui desu ka?"
-      },
-      {
-        "term_primary": "鑑別書はありますか？",
-        "term_secondary": "有鑑別書嗎？",
-        "term_pronounce": "Kanbetsusho wa arimasu ka?"
-      },
-      {
-        "term_primary": "巻きは厚いですか？",
-        "term_secondary": "珠層厚嗎？",
-        "term_pronounce": "Maki wa atsui desu ka?"
-      },
-      {
-        "term_primary": "左右のバランスを見せてください。",
-        "term_secondary": "請讓我看看左右是否配對。",
-        "term_pronounce": "Sayū no baransu o misete kudasai."
-      },
-      {
-        "term_primary": "免税できますか？パスポートあります。",
-        "term_secondary": "可以免稅嗎？我有護照。",
-        "term_pronounce": "Menzei dekimasu ka? Pasupōto arimasu."
-      }
-    ]
-  }
+  { category: "出示前", items: [
+    { term_primary: "船内時刻と現地時刻の差を確認してから、空欄に現地の時刻を書いてください。空欄のままではこのカードは使えません。", term_secondary: "先填當地期限。空白不要用。船時不是當地鐘。", term_pronounce: "先填空白" }
+  ]},
+  { category: "鹿兒島司機", items: [
+    { term_primary: CARD_K1, term_secondary: CARD_K1_ZH, term_pronounce: "K1 仙巌園" },
+    { term_primary: CARD_K2, term_secondary: CARD_K2_ZH, term_pronounce: "K2 ふくや" },
+    { term_primary: CARD_K_AQ, term_secondary: CARD_K_AQ_ZH, term_pronounce: "午後水族館" },
+    { term_primary: CARD_K4, term_secondary: CARD_K4_ZH, term_pronounce: "K4 雨天才用" },
+    { term_primary: CARD_K3, term_secondary: CARD_K3_ZH, term_pronounce: "K3 電梯失敗" },
+    { term_primary: CARD_K_RET, term_secondary: CARD_K_RET_ZH, term_pronounce: "回海洋港" }
+  ]},
+  { category: "長崎司機", items: [
+    { term_primary: CARD_N6, term_secondary: CARD_N6_ZH, term_pronounce: "N6 水之庭園" },
+    { term_primary: CARD_N4, term_secondary: CARD_N4_ZH, term_pronounce: "N4 瑠璃庵可刪" },
+    { term_primary: CARD_N2, term_secondary: CARD_N2_ZH, term_pronounce: "N2 勝鹿" },
+    { term_primary: CARD_N3, term_secondary: CARD_N3_ZH, term_pronounce: "N3 眼鏡橋可刪" },
+    { term_primary: CARD_N_MUSE, term_secondary: CARD_N_MUSE_ZH, term_pronounce: "回廊" },
+    { term_primary: CARD_N1, term_secondary: CARD_N1_ZH, term_pronounce: "N1 咖啡條件" },
+    { term_primary: CARD_N5, term_secondary: CARD_N5_ZH, term_pronounce: "N5 未接受" },
+    { term_primary: CARD_N_RET, term_secondary: CARD_N_RET_ZH, term_pronounce: "回松が枝" }
+  ]},
+  { category: "福岡司機", items: [
+    { term_primary: CARD_F1, term_secondary: CARD_F1_ZH, term_pronounce: "F1 友泉亭" },
+    { term_primary: CARD_F2, term_secondary: CARD_F2_ZH, term_pronounce: "F2 筑紫口" },
+    { term_primary: CARD_F4, term_secondary: CARD_F4_ZH, term_pronounce: "F4 町家" },
+    { term_primary: CARD_F3, term_secondary: CARD_F3_ZH, term_pronounce: "F3 大濠條件" },
+    { term_primary: CARD_F_RET, term_secondary: CARD_F_RET_ZH, term_pronounce: "回中央碼頭" }
+  ]},
+  { category: "釜山包車", items: [
+    { term_primary: CARD_B0, term_secondary: CARD_B0_ZH, term_pronounce: "B0 會合" },
+    { term_primary: CARD_B1, term_secondary: CARD_B1_ZH, term_pronounce: "B1 松島" },
+    { term_primary: CARD_B2, term_secondary: CARD_B2_ZH, term_pronounce: "B2 午餐" },
+    { term_primary: CARD_B_BACK, term_secondary: CARD_B_BACK_ZH, term_pronounce: "回出發站" },
+    { term_primary: CARD_B3, term_secondary: CARD_B3_ZH, term_pronounce: "B3 回北港" },
+    { term_primary: CARD_B4, term_secondary: CARD_B4_ZH, term_pronounce: "B4 緊急" }
+  ]},
+  { category: "餐廳忌口", items: [
+    { term_primary: DIET_DAD, term_secondary: DIET_DAD_ZH, term_pronounce: "爸爸" },
+    { term_primary: DIET_MOM, term_secondary: DIET_MOM_ZH, term_pronounce: "媽媽" },
+    { term_primary: DIET_ROOM, term_secondary: DIET_ROOM_ZH, term_pronounce: "禁煙椅子" }
+  ]}
 ];

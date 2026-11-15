@@ -249,7 +249,7 @@ main { flex: 1; overflow-y: hidden; position: relative; }
 .inspire-card.hidden { display: none; }
 .inspire-badge { background: var(--accent); color: var(--accent-text); padding: 3px 8px; border-radius: 0; font-size: 0.6rem; font-weight: 700; position: absolute; top: -10px; left: 15px; text-transform: uppercase; letter-spacing: 1px; }
 .inspire-title { font-size: 1rem; font-weight: 700; margin: 0 0 4px 0; font-family: var(--font-heading); }
-.inspire-note { font-size: 0.85rem; color: var(--text-sub); line-height: 1.4; }
+.inspire-note { font-size: 0.85rem; color: var(--text-sub); line-height: 1.4; white-space: pre-line; }
 
 /* Info Page */
 .info-card { background: var(--bg-card); padding: 20px; border-radius: 0; margin: 0 15px 15px 15px; border: 1px solid var(--border); }
@@ -513,6 +513,22 @@ nav.bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(
   100% { background: var(--bg-card); color: var(--text-main); }
 }
     
+/* Long driver / dietary cards: list stays scannable; overlay scrolls at reading size */
+.phrase-primary, .phrase-secondary {
+  width: 100%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  white-space: pre-line;
+}
+.phrase-primary { -webkit-line-clamp: 4; }
+.phrase-secondary { -webkit-line-clamp: 2; }
+.phrase-overlay { background: var(--bg-body); overflow: auto; align-items: flex-start; }
+.phrase-big { color: var(--text-main); word-break: break-word; }
+.phrase-content.is-long { text-align: left; width: min(40rem, 92%); margin: 28px auto 110px; }
+.phrase-big.is-long { font-size: 1.05rem; font-weight: 600; line-height: 1.55; white-space: pre-wrap; text-align: left; }
+.phrase-sub { color: var(--text-sub); font-size: 0.92rem; line-height: 1.5; white-space: pre-wrap; }
+.phrase-content.is-long .phrase-sub { text-align: left; margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -663,6 +679,8 @@ function applyTheme() {
     link.rel = 'stylesheet'; link.href = THEME_CONFIG.googleFontsUrl;
     document.head.appendChild(link);
   }
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta && THEME_CONFIG.backgroundColor) themeMeta.setAttribute('content', THEME_CONFIG.backgroundColor);
 }
 
 // 2. 🗓️ 產生每天的日期（從 CONFIG.startDate + duration 展開）
@@ -1025,19 +1043,36 @@ function openPhrasePage() { toggleSidebar(); switchMainPage('phrases'); }
 // 10. 短語（跟原本一樣）
 function renderPhrasePage() {
   const container = document.getElementById('phrases-container');
-  container.innerHTML = '';
+  container.replaceChildren();
   PHRASE_DATA.forEach(category => {
-    container.innerHTML += `<div class="phrase-section-header">${category.category}</div>`;
-    let gridHtml = '<div class="phrase-grid">';
-    category.items.forEach(item => {
-      gridHtml += `<div class="phrase-card" onclick="showPhrase('${item.term_primary}', '${item.term_secondary}')">
-        <div class="phrase-primary">${item.term_primary}</div>
-        <div class="phrase-secondary">${item.term_secondary}</div>
-        <div class="phrase-pronounce">${item.term_pronounce || ''}</div>
-      </div>`;
+    const header = document.createElement('div');
+    header.className = 'phrase-section-header';
+    header.textContent = category.category || '';
+    container.appendChild(header);
+    const grid = document.createElement('div');
+    grid.className = 'phrase-grid';
+    (category.items || []).forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'phrase-card';
+      card.tabIndex = 0;
+      const primary = document.createElement('div');
+      primary.className = 'phrase-primary';
+      primary.textContent = item.term_primary || '';
+      const secondary = document.createElement('div');
+      secondary.className = 'phrase-secondary';
+      secondary.textContent = item.term_secondary || '';
+      const pronounce = document.createElement('div');
+      pronounce.className = 'phrase-pronounce';
+      pronounce.textContent = item.term_pronounce || '';
+      card.append(primary, secondary, pronounce);
+      const open = () => showPhrase(item.term_primary || '', item.term_secondary || '');
+      card.addEventListener('click', open);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+      });
+      grid.appendChild(card);
     });
-    gridHtml += '</div>';
-    container.innerHTML += gridHtml;
+    container.appendChild(grid);
   });
 }
 
@@ -2017,8 +2052,14 @@ function toggleShopItem(checkbox, id) {
 }
 
 function showPhrase(jp, zh) {
-  document.getElementById('overlay-jp').innerText = jp;
-  document.getElementById('overlay-zh').innerText = zh;
+  const jpEl = document.getElementById('overlay-jp');
+  const zhEl = document.getElementById('overlay-zh');
+  const content = jpEl.parentElement;
+  jpEl.textContent = jp || '';
+  zhEl.textContent = zh || '';
+  const long = String(jp || '').length > 48 || /\n/.test(String(jp || ''));
+  jpEl.classList.toggle('is-long', long);
+  if (content) content.classList.toggle('is-long', long);
   document.getElementById('phrase-overlay').classList.add('active');
 }
 function closePhrase() { document.getElementById('phrase-overlay').classList.remove('active'); }
