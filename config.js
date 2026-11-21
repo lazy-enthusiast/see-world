@@ -1,4 +1,4 @@
-// buildTime: 2026-11-15T19:43:28.572Z
+// buildTime: 2026-11-21T12:29:06.271Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -35,7 +35,7 @@ const CONFIG = {
   travelers: {
     type: "family",
     count: 3,
-    note: "候補預覽，未可照表行。3 位成人，含父母。爸爸不吃蝦／蟹；媽媽不吃牛。全席禁煙。媽媽約走 30 分鐘平路或溫和下坡後休 5 分鐘；避上坡與長陡下坡。"
+    note: "3 位成人，含父母。爸爸不吃蝦／蟹；媽媽不吃牛。全席禁煙。媽媽約走 30 分鐘平路或溫和下坡後休 5 分鐘；避上坡與長陡下坡。"
   },
   baseCurrency: "HKD",
   tripCurrency: "JPY"
@@ -370,9 +370,6 @@ function taxi(from, to, operator) {
 const OP_JP = "";
 const OP_KR = "LOYQU 已購 9 小時、1–4 人方案；實際 3 人、行李 0。車型與語言未列。";
 
-function clockNote(port) {
-  return [CLOCK, SHOW, WALK, port, "放行後就出門，不要在船上等咖啡開門。館還沒開，不假裝可以進去，先用已知的戶外點或對調順序。", MAIL].join("\n");
-}
 function dietNote() {
   return [
     "三張分開給餐廳，不要合成「全桌都不能吃」。不是司機卡。",
@@ -392,12 +389,6 @@ function dietNote() {
 
 const ITINERARY = {
   items: [
-    evt({
-      id: "evt_d1_clock", day: 1, time: "08:40", timeHint: "morning", type: "note",
-      title: "本日候補未可照表行｜回港須船時17:00到碼頭、當地時未填", cityId: "kagoshima", moodColor: "#6B5E52",
-      tags: ["行前核對", "未可照表行", "當地時未填"],
-      note: clockNote("Nov 25 鹿兒島。船時靠離港 07:00–19:00。家庭到碼頭線是船時 17:00，返回マリンポートかごしま（鹿児島県鹿児島市中央港新町1-10）。H（當地到碼頭時間）未填。最遲約在 H 前 95 分鐘開始叫回港車；人若還在仙巌園、不繞水族館，則改為 H 前 80 分鐘。這格 08:40 不是出港時刻。")
-    }),
     evt({
       id: "evt_d1_to_garden", day: 1, time: "08:50", timeHint: "morning", type: "note",
       title: "放行後叫的士前往仙巌園｜09:00不是已核出門鐘", cityId: "kagoshima", moodColor: "#6B5E52",
@@ -487,12 +478,6 @@ const ITINERARY = {
       note: [SHOW, "最遲在 H 前 95 分鐘開始叫車。H 未填，所以這裡不印當地鐘點，也不把 15:30 當成硬時間。", "【候車】20–30 分鐘，已含在回程，不要再加一小時。", "【車程暫抓】25–40 分鐘，再留 25–50 分鐘餘量。即時估計更長就提前走。", "若人還在仙巌園、不繞水族館：最遲 H 前 80 分鐘走（配車暫抓 40–60 分鐘加至少 20 分鐘餘量）。", CARD_K_RET, CARD_K_RET_ZH, ride("")].join("\n")
     }),
 
-    evt({
-      id: "evt_d2_clock", day: 2, time: "08:40", timeHint: "morning", type: "note",
-      title: "本日候補未可照表行｜回港須船時17:00到碼頭、當地時未填", cityId: "nagasaki", moodColor: "#6B5E52",
-      tags: ["行前核對", "未可照表行", "當地時未填"],
-      note: clockNote("Nov 26 長崎。船時靠離港 08:00–19:00。家庭到碼頭線是船時 17:00，返回長崎港松が枝国際ターミナル（松が枝町7番16号），不是別的渡輪碼頭。H 未填。人在美術館一帶，最遲約 H 前 65 分鐘叫車；人若還在眼鏡橋，用含配車 20–35 分鐘加至少 25 分鐘餘量倒推。這格 08:40 不是出港時刻。不要用哥拉巴園的長下坡補景。")
-    }),
     evt({
       id: "evt_d2_to_park", day: 2, time: "08:50", timeHint: "morning", type: "note",
       title: "放行後叫的士前往水之庭園｜09:00不是已核出門鐘", cityId: "nagasaki", moodColor: "#6B5E52",
@@ -611,12 +596,6 @@ const ITINERARY = {
     }),
 
     evt({
-      id: "evt_d3_clock", day: 3, time: "08:40", timeHint: "morning", type: "note",
-      title: "本日候補未可照表行｜回港須船時17:00到碼頭、當地時未填", cityId: "fukuoka", moodColor: "#6B5E52",
-      tags: ["行前核對", "未可照表行", "當地時未填"],
-      note: clockNote("Nov 27 福岡。船時靠離港 08:00–19:00。家庭到碼頭線是船時 17:00，返回中央ふ頭クルーズセンター（博多区沖浜町24番25号）。不要去沖浜町 14-1。實際靠泊位置仍待核，司機卡只用碼頭名稱與地址。H 未填。町家區最遲約 H 前 75 分鐘叫車。若改大濠，不要套這段短車程，改約 H 前 95 分鐘並看即時路況。福岡是否另辦日本出境未核。這格 08:40 不是出港時刻。")
-    }),
-    evt({
       id: "evt_d3_to_yusen", day: 3, time: "08:50", timeHint: "morning", type: "note",
       title: "放行後叫的士前往友泉亭｜09:00不是已核出門鐘", cityId: "fukuoka", moodColor: "#6B5E52",
       tags: ["放行後出發", "非已核出門鐘", "逐段叫車"],
@@ -704,12 +683,6 @@ const ITINERARY = {
       note: [SHOW, "町家區最遲 H 前 75 分鐘開始叫車。H 未填，不印當地鐘點。", "【候車】15–25 分鐘。【車程暫抓】15–25 分鐘，留 25–45 分鐘餘量。", "必須講 24-25／クルーズセンター。不要只開到 14-1。若巴士在 14-1 下來，還要再走約 500 米，不預設適合媽媽。", CARD_F_RET, CARD_F_RET_ZH].join("\n")
     }),
 
-    evt({
-      id: "evt_d4_clock", day: 4, time: "08:40", timeHint: "morning", type: "note",
-      title: "本日候補未可照表行｜回港須船時16:00到碼頭、當地時未填", cityId: "busan", moodColor: "#6B5E52",
-      tags: ["行前核對", "未可照表行", "當地時未填", "非接車"],
-      note: clockNote("Nov 28 釜山，只去西側松島。船時靠離港 07:00–18:00。家庭到碼頭線是船時 16:00，返回부산항 국제여객터미널／北港、충장대로 206。這格 08:40 不是接車時刻。08:00 只是未確認的希望，而且要看入境。原訂單寫 09:00，時間採用哪個時區及實際會合位置仍待供應商核對；另須對接船方放行與船鐘，不能用船時 07:00 靠泊保證趕到。H 未填。離松島是 H 前 75 分鐘已坐在車上，另留約 15 分鐘收尾；不把船時直接減成 KST，也不和 12:00 午餐相減。東區、膠囊、青沙浦都不去。匯率頁目前只換 JPY／HKD，不適用於釜山韓圓報價；韓圓費用另按實際報價核對。")
-    }),
     evt({
       id: "evt_d4_b0", day: 4, time: "08:50", timeHint: "morning", type: "note",
       title: "包車會合卡｜原單09:00時區與樓層待核", cityId: "busan", moodColor: "#6B5E52",
@@ -916,7 +889,7 @@ const BUDGET = {
 
 const PHRASE_DATA = [
   { category: "出示前", items: [
-    { term_primary: "船内時刻と現地時刻の差を確認してから、空欄に現地の時刻を書いてください。空欄のままではこのカードは使えません。", term_secondary: "先填當地期限。空白不要用。船時不是當地鐘。", term_pronounce: "先填空白" }
+    { term_primary: "船内時刻は日本・韓国の現地時刻と同じです。", term_secondary: "船時與日本、韓國當地時間相同。", term_pronounce: "船時對照" }
   ]},
   { category: "鹿兒島司機", items: [
     { term_primary: "仙巌園へ。平坦な降車場所を確認してください。", term_secondary: "完整卡請開本日對應行程或備案備註；先核船鐘。", term_pronounce: "K1 仙巌園" },
@@ -938,7 +911,7 @@ const PHRASE_DATA = [
   ]},
   { category: "福岡司機", items: [
     { term_primary: "友泉亭へ。平坦な経路と椅子を先に確認します。", term_secondary: "完整卡請開本日對應行程或備案備註；先核船鐘。", term_pronounce: "F1 友泉亭" },
-    { term_primary: "華味鳥筑紫口店へ。別館ではありません。", term_secondary: "完整卡請開本日對應行程或備案備註；先核船鐘。", term_pronounce: "F2 筑紫口" },
+    { term_primary: "華味鳥筑紫口店へ。", term_secondary: "完整卡請開本日對應行程或備案備註；先核船鐘。", term_pronounce: "F2 筑紫口" },
     { term_primary: "博多町家へ。織物実演を見る予定です。", term_secondary: "完整卡請開本日對應行程或備案備註；先核船鐘。", term_pronounce: "F4 町家" },
     { term_primary: "大濠は条件付きの代替です。経路と禁煙を先に確認します。", term_secondary: "完整卡請開本日對應行程或備案備註；先核船鐘。", term_pronounce: "F3 大濠條件" },
     { term_primary: "現地の帰港期限が空欄のカードは使用不可。", term_secondary: "完整卡請開本日對應行程或備案備註；先核船鐘。", term_pronounce: "回中央碼頭" }
@@ -951,11 +924,8 @@ const PHRASE_DATA = [
     { term_primary: "현지 귀항 마감이 빈 카드는 사용하지 마세요.", term_secondary: "完整卡請開本日對應行程或備案備註；先核船鐘。", term_pronounce: "B3 回北港" },
     { term_primary: "케이블카로 못 돌아갑니다. 직원과 기사님께 도움을 요청합니다.", term_secondary: "完整卡請開本日對應行程或備案備註；先核船鐘。", term_pronounce: "B4 緊急" }
   ]},
-  { category: "餐廳忌口", items: [
-    { term_primary: "父は海老・蟹を食べません。 아버지는 새우·게를 먹지 않습니다.", term_secondary: "完整日韓忌口與湯醬配菜核對卡在本日餐廳忌口備註。", term_pronounce: "爸爸" },
-    { term_primary: "母は牛肉を食べません。 어머니는 소고기를 먹지 않습니다.", term_secondary: "完整日韓忌口與湯醬配菜核對卡在本日餐廳忌口備註。", term_pronounce: "媽媽" },
-    { term_primary: "全席禁煙・椅子席を希望します。 금연·의자석을 원합니다.", term_secondary: "完整日韓忌口與湯醬配菜核對卡在本日餐廳忌口備註。", term_pronounce: "禁煙椅子" }
-  ]}
+  {"category": "餐廳日文", "items": [{"term_primary": "父は海老・蟹を食べません。だし・ソース・付け合わせにも入っていますか？", "term_secondary": "爸爸不吃蝦蟹，包括湯底、醬汁與配菜。", "term_pronounce": "爸爸"}, {"term_primary": "母は牛肉を食べません。だし・ソース・付け合わせにも入っていますか？", "term_secondary": "媽媽不吃牛，包括湯底、醬汁與配菜。", "term_pronounce": "媽媽"}, {"term_primary": "禁煙の椅子席をお願いします。辛くしないでください。", "term_secondary": "禁煙、椅子座位、不要辣。", "term_pronounce": "禁煙椅子"}]},
+  {"category": "餐廳韓文", "items": [{"term_primary": "아버지는 새우와 게를 먹지 않습니다. 국물, 소스, 반찬에도 들어 있나요?", "term_secondary": "爸爸不吃蝦蟹，包括湯底、醬汁與配菜。", "term_pronounce": "爸爸"}, {"term_primary": "어머니는 소고기를 먹지 않습니다. 국물, 소스, 반찬에도 들어 있나요?", "term_secondary": "媽媽不吃牛，包括湯底、醬汁與配菜。", "term_pronounce": "媽媽"}, {"term_primary": "금연인 곳의 의자 좌석으로 부탁드립니다. 맵지 않게 해 주세요.", "term_secondary": "禁煙、椅子座位、不要辣。", "term_pronounce": "禁煙椅子"}]}
 ];
 
 // Compact existing timeline; cards open on demand inside the existing modals.
@@ -986,8 +956,6 @@ const SHORE_CARDS = {
   ins_d4_b4: [CARD_B4, CARD_B4_ZH]
 };
 const SHORE_FULL_TEXTS = Object.values(SHORE_CARDS).flat();
-const SHORE_CLOCK_NOTES = {};
-for (const e of ITINERARY.items) if (/_clock$/.test(e.id)) SHORE_CLOCK_NOTES[e.day] = e.note;
 ITINERARY.items = ITINERARY.items.filter(e => !/_diet$/.test(e.id) && e.id !== 'evt_d4_b0');
 for (const e of ITINERARY.items) {
   let note = e.note || '';
@@ -1035,8 +1003,8 @@ if (typeof window !== 'undefined') window.addEventListener('load', function () {
 });
 
 // Concise modal copy: hours, prices and actionable notes only.
-const SHORE_MODAL_COPY = {"evt_d1_garden": ["09:00–17:00；最終入園16:30（JST）", "成人¥1,600（含御殿、尚古集成館）", "免預約，可現場買票。\n沿無障礙藍線分段看庭園，避開階梯及介助坡。約走30分鐘休5分鐘。\n拍照：以庭園作前景拍櫻島、錦江灣。"], "evt_d1_kiriko": ["09:00–16:30；休息10:00–10:15、12:00–13:00、15:00–15:15（JST）", "見學免費", "免預約，參觀玻璃製作。維修停工時略過。\n拍照前先問職員。雨天備案若上午改水族館，可於13:00後前來。"], "evt_d1_fukuya": ["午市11:30起（JST）", "炸豬排約¥2,600–2,900；生姜燒定食¥1,300", "建議豬排或生姜燒；避開蝦拼盤及肉種不明的菜式。\n由酒店側電梯上2F，請職員協助往返；無法使用便改備選。\n全席禁煙。訂位詢問已寄，待確認。"], "evt_d1_aq": ["09:30–18:00；最終入館17:00（JST）", "成人¥2,000", "免預約，現場購票。\n看平層展示，再乘電梯到5F看錦江灣、櫻島。\n拍照：鏡頭靠近玻璃，減少反光。"], "evt_d2_park": ["24小時", "免費", "免預約。沿水之庭園海港硬鋪步道散步，約30分鐘在長椅休5分鐘。\n拍照：水景、海港與船隻；不走上坡。"], "evt_d2_rurian": ["09:30–17:00；週二休（JST）", null, "短逛玻璃店。先問當日能否觀看製作；不能便略過。\n本次不訂付費手作。"], "evt_d2_katsu": ["11:30–15:00；不定休（JST）", "豬排／雞排約¥1,000–1,600", "建議豬排或雞排，湯、醬與配菜用忌口卡確認。\n新店址：新地町12-10，1F。全席禁煙。\n訂位詢問已寄，待確認。"], "evt_d2_megane": ["全日開放", "免費", "免預約。平地遠拍眼鏡橋及河面倒影，不下河床或走階梯。"], "evt_d2_museum": ["咖啡11:00–17:00（JST）", "公共空間免費；咖啡另付", "免預約，不看展，拍運河、回廊及建築。\n咖啡只在確認禁煙後短坐。"], "evt_d3_yusen": ["09:00–17:00；週一休（JST）", "成人¥200；抹茶另加¥700", "免預約，現場買票。看平緩庭園與池景，不登高台。\n需要椅子先問職員；若只有地席或路線不合適，改大濠備案。"], "evt_d3_hm": ["11:30–15:00；最後點餐14:00（JST）", "水炊御膳¥1,980", "選水炊御膳，柚胡椒不加；配菜及湯醬用忌口卡確認。\n全席禁煙。訂位詢問已寄，待確認。"], "evt_d3_machiya": ["10:00–18:00；最終入館17:30；織實演13:30–15:00（JST）", "入館¥200；觀看織實演免費", "入館及觀看實演均免預約。實演若取消便改逛町家。\n拍照：先問織機操作能否拍攝，再拍町家街景。"], "evt_d3_street": ["全日開放", "免費", "免預約。沿冷泉町拍町家街景、山笠外觀，不進神社參拜。"], "evt_d4_cable": ["09:00–21:00；售票至20:30（KST）", "現場購票", "免預約。網票最早翌日使用，當天請現場買票。\n搭往返纜車，對岸只看1F廣場；不走吊橋或上坡公園。\n天候停駛便用雨天備案；排隊太久先刪對岸停留。"], "evt_d4_lunch": ["12:00–14:30；最後點餐14:00（KST）", null, "22F海景午餐，可選培根奶油麵、起司披薩或烤鰻飯。\n湯醬配菜用忌口卡確認。酒店全面禁煙，正門下車乘電梯。\n訂位詢問已寄，待確認。"], "evt_d4_sea": ["全日開放", "海邊公共路段免費", "走出發站附近海邊平路，不上沙灘。\n拍照：岸邊拍纜車過海。站內1F照片區／3F露台按現場票務標示進入。\n回港截止前90分鐘收尾，前75分鐘已上車離區。"]};
-const SHORE_RIDE_COPY = {"evt_d1_to_garden": "通關放行後叫車；候車約30分鐘，車程約30–45分鐘。仙巌園09:00開門。", "evt_d1_to_fukuya": "離開前請受付代叫的士。候車約20–30分鐘，車程約25–40分鐘。", "evt_d1_to_aq": "另叫的士，候車約15–25分鐘，車程約10–20分鐘。", "evt_d1_return": "船時17:00前到海洋港碼頭；當地截止時間待船方核實。\n最遲於截止前95分鐘叫車；候車約20–30分鐘，車程約25–40分鐘。", "evt_d2_to_park": "通關放行後叫車，候車約15–25分鐘，車程約5–15分鐘。", "evt_d2_to_rurian": "另叫的士前往瑠璃庵；若不看製作可略過，直接到午餐。", "evt_d2_to_katsu": "另叫的士到勝鹿新地店：新地町12-10，1F。", "evt_d2_to_megane": "午餐後另叫的士到眼鏡橋，選平地落客。", "evt_d2_to_museum": "另叫的士到長崎縣美術館；於近入口處落客。", "evt_d2_return": "船時17:00前到松が枝碼頭；當地截止時間待船方核實。\n在美術館一帶，最遲於截止前65分鐘叫回港車。", "evt_d3_to_yusen": "通關放行後叫車；友泉亭09:00開門。", "evt_d3_to_hm": "另叫的士到華味鳥博多駅筑紫口店，非別館或祇園店。", "evt_d3_to_machiya": "午餐後另叫的士到博多町家，銜接13:30–15:00織實演。", "evt_d3_return": "船時17:00前到中央ふ頭郵輪中心（沖浜町24-25）；當地截止時間待船方核實。\n最遲於截止前75分鐘叫車。", "evt_d4_to_songdo": "LOYQU包車接送。原單09:00，08:00提早接車、時區及會合樓層待確認。\n原單會合地點：北港國際客運站1F Arrival Hall；先與司機確認，不自行改樓層。", "evt_d4_to_hotel": "同一輛包車短送Fairfield松島酒店，正門下車，乘電梯上22F。", "evt_d4_to_base": "午餐後由同一輛包車送回松島出發站附近拍照。", "evt_d4_return": "船時16:00前到北港國際客運站（충장대로206）；當地截止時間待船方核實。\n截止前90分鐘收尾，前75分鐘已上車離區；車程約30–50分鐘。"};
+const SHORE_MODAL_COPY = {"evt_d1_garden": ["09:00–17:00；最終入園16:30（JST）", "成人¥1,600（含御殿、尚古集成館）", "免預約，可現場買票。\n沿無障礙藍線分段看庭園，避開階梯及介助坡。約走30分鐘休5分鐘。\n拍照：以庭園作前景拍櫻島、錦江灣。"], "evt_d1_kiriko": ["09:00–16:30；休息10:00–10:15、12:00–13:00、15:00–15:15（JST）", "見學免費", "免預約，參觀玻璃製作。維修停工時略過。\n拍照前先問職員。雨天備案若上午改水族館，可於13:00後前來。"], "evt_d1_fukuya": ["午市11:30起（JST）", "炸豬排約¥2,600–2,900；生姜燒定食¥1,300", "建議豬排或生姜燒；避開蝦拼盤及肉種不明的菜式。\n由酒店側電梯上2F，請職員協助往返；無法使用便改備選。\n全席禁煙。訂位詢問已寄，待確認。"], "evt_d1_aq": ["09:30–18:00；最終入館17:00（JST）", "成人¥2,000", "免預約，現場購票。\n看平層展示，再乘電梯到5F看錦江灣、櫻島。\n拍照：鏡頭靠近玻璃，減少反光。"], "evt_d2_park": ["24小時", "免費", "免預約。沿水之庭園海港硬鋪步道散步，約30分鐘在長椅休5分鐘。\n拍照：水景、海港與船隻；不走上坡。"], "evt_d2_rurian": ["09:30–17:00；週二休（JST）", null, "短逛玻璃店。先問當日能否觀看製作；不能便略過。\n本次不訂付費手作。"], "evt_d2_katsu": ["11:30–15:00；不定休（JST）", "豬排／雞排約¥1,000–1,600", "推薦豬排或雞排。新地町12-10，1F；全席禁煙。訂位待確認。"], "evt_d2_megane": ["全日開放", "免費", "免預約。平地遠拍眼鏡橋及河面倒影，不下河床或走階梯。"], "evt_d2_museum": ["咖啡11:00–17:00（JST）", "公共空間免費；咖啡另付", "免預約，不看展，拍運河、回廊及建築。\n咖啡只在確認禁煙後短坐。"], "evt_d3_yusen": ["09:00–17:00；週一休（JST）", "成人¥200；抹茶另加¥700", "免預約，現場買票。看平緩庭園與池景，不登高台。\n需要椅子先問職員；若只有地席或路線不合適，改大濠備案。"], "evt_d3_hm": ["11:30–15:00；最後點餐14:00（JST）", "水炊御膳¥1,980", "水炊御膳，不加柚胡椒。全席禁煙；訂位待確認。"], "evt_d3_machiya": ["10:00–18:00；最終入館17:30；織實演13:30–15:00（JST）", "入館¥200；觀看織實演免費", "入館及觀看實演均免預約。實演若取消便改逛町家。\n拍照：先問織機操作能否拍攝，再拍町家街景。"], "evt_d3_street": ["全日開放", "免費", "免預約。沿冷泉町拍町家街景、山笠外觀，不進神社參拜。"], "evt_d4_cable": ["09:00–21:00；售票至20:30（KST）", "現場購票", "免預約。網票最早翌日使用，當天請現場買票。\n搭往返纜車，對岸只看1F廣場；不走吊橋或上坡公園。\n天候停駛便用雨天備案；排隊太久先刪對岸停留。"], "evt_d4_lunch": ["12:00–14:30；最後點餐14:00（KST）", null, "22F海景午餐，可選培根奶油麵、起司披薩或烤鰻飯。\n湯醬配菜用忌口卡確認。酒店全面禁煙，正門下車乘電梯。\n訂位詢問已寄，待確認。"], "evt_d4_sea": ["全日開放", "海邊公共路段免費", "走出發站附近海邊平路，不上沙灘。\n拍照：岸邊拍纜車過海。站內1F照片區／3F露台按現場票務標示進入。\n回港截止前90分鐘收尾，前75分鐘已上車離區。"]};
+const SHORE_RIDE_COPY = {"evt_d1_to_garden": "通關放行後叫車；候車約30分鐘，車程約30–45分鐘。仙巌園09:00開門。", "evt_d1_to_fukuya": "離開前請受付代叫的士。候車約20–30分鐘，車程約25–40分鐘。", "evt_d1_to_aq": "另叫的士，候車約15–25分鐘，車程約10–20分鐘。", "evt_d1_return": "船時17:00前到海洋港碼頭；當地截止時間待船方核實。\n最遲於截止前95分鐘叫車；候車約20–30分鐘，車程約25–40分鐘。", "evt_d2_to_park": "通關放行後叫車，候車約15–25分鐘，車程約5–15分鐘。", "evt_d2_to_rurian": "另叫的士前往瑠璃庵；若不看製作可略過，直接到午餐。", "evt_d2_to_katsu": "另叫的士到勝鹿新地店：新地町12-10，1F。", "evt_d2_to_megane": "午餐後另叫的士到眼鏡橋，選平地落客。", "evt_d2_to_museum": "另叫的士到長崎縣美術館；於近入口處落客。", "evt_d2_return": "船時17:00前到松が枝碼頭；當地截止時間待船方核實。\n在美術館一帶，最遲於截止前65分鐘叫回港車。", "evt_d3_to_yusen": "通關放行後叫車；友泉亭09:00開門。", "evt_d3_to_hm": "另叫的士到華味鳥博多駅筑紫口店。", "evt_d3_to_machiya": "午餐後另叫的士到博多町家，銜接13:30–15:00織實演。", "evt_d3_return": "船時17:00前到中央ふ頭郵輪中心（沖浜町24-25）；當地截止時間待船方核實。\n最遲於截止前75分鐘叫車。", "evt_d4_to_songdo": "LOYQU包車接送。原單09:00，08:00提早接車、時區及會合樓層待確認。\n原單會合地點：北港國際客運站1F Arrival Hall；先與司機確認，不自行改樓層。", "evt_d4_to_hotel": "同一輛包車短送Fairfield松島酒店，正門下車，乘電梯上22F。", "evt_d4_to_base": "午餐後由同一輛包車送回松島出發站附近拍照。", "evt_d4_return": "船時16:00前到北港國際客運站（충장대로206）；當地截止時間待船方核實。\n截止前90分鐘收尾，前75分鐘已上車離區；車程約30–50分鐘。"};
 for (const e of ITINERARY.items) {
  if (SHORE_MODAL_COPY[e.id]) [e.openHours,e.price,e.note] = SHORE_MODAL_COPY[e.id];
  if (SHORE_RIDE_COPY[e.id]) e.note = SHORE_RIDE_COPY[e.id];
@@ -1047,7 +1015,7 @@ const SHORE_FIRST_LEGS = ['evt_d1_to_garden','evt_d2_to_park','evt_d3_to_yusen',
 if (typeof window !== 'undefined') window.addEventListener('load', function () {
   const getOriginal = window.getItemsByDay;
   window.getItemsByDay = function(day) {
-    const rank = e => /_clock$/.test(e.id) ? 2 : Number(SHORE_FIRST_LEGS.includes(e.id));
+    const rank = e => Number(SHORE_FIRST_LEGS.includes(e.id));
     return getOriginal(day).sort((a,b) => rank(b) - rank(a));
   };
   const renderOriginal = window.renderTimeline;
@@ -1060,7 +1028,6 @@ if (typeof window !== 'undefined') window.addEventListener('load', function () {
       const item=items[i];if(!item)return;
       const time=row.querySelector('.card-time');
       if (time && SHORE_FIRST_LEGS.includes(item.id)) time.textContent='放行後';
-      if (time && /_clock$/.test(item.id)) time.textContent='';
     });
   };
   window.renderTimeline(typeof currentDay === 'string' ? currentDay : 'day1');
@@ -1111,8 +1078,8 @@ const SHORE_BACKUP_TITLES={
 for(const e of INSPIRATIONS){
  if(SHORE_BACKUP_TITLES[e.id])e.title=SHORE_BACKUP_TITLES[e.id];
  if(e.id==='ins_d1_k3') e.note='豬扒午餐備選，選普通椅座。';
- if(e.id==='ins_d2_pave')e.note='自助午餐備選；酒店正門下車，乘電梯上2F。逐道核對牛肉、蝦蟹及湯醬。';
- if(e.id==='ins_d3_ohori')e.note='湖景咖啡與桌椅休息，正門附近下車，不繞湖。';
+ if(e.id==='ins_d2_pave')e.note="自助午餐，電梯上2F。須逐道確認牛肉、蝦蟹及湯醬，未核清不選。";
+ if(e.id==='ins_d3_ohori')e.note="湖景咖啡與桌椅休息，正門附近下車，不繞湖。";
 }
 
 
@@ -1139,7 +1106,7 @@ const SHORE_APPROVED_DELTA = (() => {
  // Retain the hotel restaurant as a normal food backup, including its driver card.
  const song = {...byId('evt_d4_lunch'),id:'ins_d4_songdo_kitchen',tag:'RAINY',status:'wishlist',nearEventId:'evt_d4_lunch'};
  delete song.day; delete song.time; delete song.timeHint;
- song.note='22F海景午餐備案：培根奶油麵、起司披薩或烤鰻飯。酒店全物業禁煙；正門下車乘電梯。詢問已寄，未訂位，不取消原詢問。';
+ song.note="22F海景午餐：培根奶油麵、起司披薩或烤鰻飯。酒店全禁煙，正門乘電梯。已詢問，未訂位。";
  INSPIRATIONS.push(song);
  SHORE_CARDS.ins_d4_songdo_kitchen=[...SHORE_CARDS.evt_d4_to_hotel];
  shortCard('ins_d4_songdo_kitchen','목적지: 페어필드 바이 메리어트 부산 송도 비치 22층 송도키친\n주소: 부산광역시 서구 송도해변로 113\n호텔 정문에 내려 주세요.');
@@ -1164,7 +1131,7 @@ const SHORE_APPROVED_DELTA = (() => {
  patch('evt_d4_sea',{
    title:'BIFF廣場與劇場街',time:'14:15',tags:['船時','平地短段'],address:'BIFF Square, Gudeok-ro 58-1 area',addressLocal:'부산광역시 중구 구덕로 58-1 일대',
    openHours:'戶外廣場常開；攤店通常10:00–22:00（KST）',price:'戶外廣場免費',website:null,
-   note:'看電影手印、星光路面與相連劇場街，再原路返回。走約30分鐘休5分鐘，另留10分鐘集合；船時15:00已上車。拍照：近距拍手印與劇場街招牌。不爬龍頭山、不串整個市場；人潮或交通延誤便縮短。'
+   note:"拍電影手印與劇場街，原路返回；步行30分鐘、休5分鐘，另留10分鐘集合。15:00上車，不爬龍頭山。"
  });
  patch('evt_d4_return',{
    time:'15:00',tags:['船時','已訂包車'],address:'Busan Port International Passenger Terminal',addressLocal:'부산광역시 동구 충장대로 206',
@@ -1173,7 +1140,7 @@ const SHORE_APPROVED_DELTA = (() => {
  });
  shortCard('evt_d4_return','목적지: 부산항 국제여객터미널（북항）\n주소: 부산광역시 동구 충장대로 206\n터미널 입구 가까운 합법적인 곳에 내려 주세요.');
  for(const e of INSPIRATIONS){
-   if(e.id==='ins_d4_rain') e.note='纜車停駛或大雨時，保留松島午餐；室內用餐可改Songdo Kitchen備案，雨勢大刪BIFF。船時16:00前回北港。';
+   if(e.id==='ins_d4_rain') e.note="纜車停駛時改室內觀景，保留松島午餐；大雨刪BIFF。";
    if(e.id==='ins_d4_tired') e.note='刪對岸遠端與BIFF步行，保留近站海景及午餐；船時16:00前回北港。';
    if(e.id==='ins_d4_photo') {e.nearEventId='evt_d4_cable';e.note='纜車前後在近站海邊拍纜車過海；不另外折返松島，午後接BIFF。';}
  }
@@ -1200,7 +1167,7 @@ const SHORE_APPROVED_DELTA = (() => {
  ride.note='11:45在松島Bay Station 1F與司機會合，包車送往鱈魚湯店。車程約3分鐘，12:00午餐。';
  const lunch=ITINERARY.items.find(e=>e.id==='evt_d4_lunch');
  lunch.time='12:00';lunch.timeHint='morning';lunch.tags=['午餐','當地KST','未訂位'];
- lunch.note='12:00午餐，預留60–75分鐘用餐。松島本店1F，包車近門合法落客。禁煙標示待核；點餐確認不辣、湯底無牛及蝦蟹。';
+ lunch.note="12:00午餐，預留60–75分鐘。松島本店1F，近門落客；禁煙待核。點清湯、不辣。";
 }
 
 
@@ -1273,7 +1240,7 @@ const SHORE_APPROVED_DELTA = (() => {
  const set=(id,o)=>Object.assign(find(id),o);
  const card=(id,text)=>{SHORE_CARDS[id]=[text,''];};
  set('evt_d1_to_garden',{
-   note:'通關放行後到terminal前的士待機場配車；行車規劃35–50分鐘，候車另留。目標09:45入園，不把GO即叫或預約當保證。',
+   note:'通關放行後到terminal前的士待機場配車；行車規劃35–50分鐘，候車另留。目標09:45入園。',
    transport:{...find('evt_d1_to_garden').transport,durationMin:null}
  });
  set('evt_d1_garden',{
@@ -1282,7 +1249,7 @@ const SHORE_APPROVED_DELTA = (() => {
  });
  set('evt_d1_kiriko',{
    time:'11:30',tags:['當地JST候補','上午子項','免費免約'],
-   note:'上午園區時段內約11:30–11:50看玻璃製作，預留離園轉車，12:00前結束。工場12:00–13:00休息；維修停工時略過，拍照先問職員。'
+   note:"11:30–11:50看玻璃製作，已含園區時段。12:00工場休息；停工便略過，拍照先問。"
  });
  set('evt_d1_to_fukuya',{
    time:'12:30',timeHint:'afternoon',tags:['當地JST候補','逐段叫車'],
@@ -1291,36 +1258,36 @@ const SHORE_APPROVED_DELTA = (() => {
  });
  set('evt_d1_fukuya',{
    time:'13:00',tags:['當地JST候補','待訂位確認'],
-   note:'目標13:00–14:15午餐；原詢問12:45，新希望13:00尚未對外更改。WhatsApp身份驗證已完成，仍待訂位確認。建議豬排或生姜燒；湯醬配菜用忌口卡核對。酒店側電梯上2F，請職員協助往返。全席禁煙。延誤先刪天文館，再縮城山，不壓縮午餐。'
+   note:"13:00–14:15午餐；原詢問12:45，13:00尚未改寄，訂位待確認。推薦豬排或生姜燒。酒店側電梯上2F，需職員協助；全席禁煙。"
  });
  const tenmonkan=evt({id:'evt_d1_tenmonkan',day:1,time:'14:15',timeHint:'afternoon',type:'sight',title:'天文館有蓋拱廊',cityId:'kagoshima',tags:['當地JST候補','延誤先刪'],address:'Tenmonkan covered arcade',addressLocal:'鹿児島市 天文館',note:'午餐後14:15–14:45在平地有蓋拱廊散步購物，約走30分鐘休5分鐘。延誤先刪本段，不推遲回港。'});
  const index=ITINERARY.items.findIndex(e=>e.id==='evt_d1_to_waterfront');ITINERARY.items.splice(index,0,tenmonkan);
  set('evt_d1_to_waterfront',{
    id:'evt_d1_to_shiroyama',title:'前往城山展望台停車場',time:'14:45',tags:['當地JST候補','逐段叫車'],address:'Shiroyama Observatory parking area',addressLocal:'鹿児島市城山町 城山展望台駐車場',
-   note:'天文館乘的士往城山停車場，15:00到為目標，車程及候車待配車核對。上車時向司機商量付費等候，16:00再直送海洋港；須司機接受，不是已訂等候車。',
+   note:'天文館乘的士往城山停車場，15:00到為目標，車程及候車待配車核對。上車時向司機商量付費等候，16:00再直送海洋港。',
    transport:{...find('evt_d1_to_waterfront').transport,from:'天文館',to:'城山展望台停車場',fromEventId:'evt_d1_tenmonkan',toEventId:'evt_d1_shiroyama',durationMin:null}
  });
  set('evt_d1_waterfront',{
    id:'evt_d1_shiroyama',title:'城山展望台',time:'15:00',tags:['當地JST候補','15:45會合回程'],address:'Shiroyama Observatory',addressLocal:'鹿児島市城山町',
-   note:'15:00–15:45含停車場往返與看景拍照。停車場至展望位沿途有坡，官方局部8–10%，不是全平；不走2公里登山步道。拍櫻島、錦江灣與市景。延誤先刪天文館，再縮本段，不延後回港。'
+   note:"15:00–15:45含停車場往返，拍櫻島、錦江灣與市景。必經局部8–10%坡道；不走登山步道。延誤可縮短停留。"
  });
  card('evt_d1_to_shiroyama','行き先：城山展望台駐車場\n住所：鹿児島市城山町\n登山道の入口ではなく、展望台側の駐車場で降ろしてください。');
  delete SHORE_CARDS.evt_d1_to_waterfront;
  set('evt_d1_return',{
    time:'16:00',timeHint:'afternoon',tags:['當地JST候補','船時17:00到碼頭'],
-   note:'15:45開始會合，16:00 JST候補已上車從城山起程；建議去程司機同意付費等候後直送マリンポート，未同意便預先安排另叫車，不假設現場有車。回程行車留35–50分鐘，約16:35–16:50 JST到港，等車安排在15:45–16:00；17:00船時到碼頭不放寬，對鐘後必要時提早離開。',
+   note:'15:45開始會合，16:00 JST候補已上車從城山起程；建議去程司機同意付費等候後直送マリンポート，未同意便預先安排另叫車。回程行車留35–50分鐘，約16:35–16:50 JST到港，等車安排在15:45–16:00；17:00船時到碼頭不放寬，對鐘後必要時提早離開。',
    transport:{...find('evt_d1_return').transport,from:'城山展望台停車場',fromEventId:'evt_d1_shiroyama',durationMin:null}
  });
  for(const e of INSPIRATIONS){
    if(e.id==='ins_d1_k3'){
-     Object.assign(e,{title:'御膳所 桜華亭',address:'Ohkatei, Sengan-en 2F',addressLocal:'鹿児島市吉野町9700-1 仙巌園内2F',phone:null,website:null,openHours:'11:00–16:00；最後點餐15:30（JST）',price:'黑豚鍋御膳¥3,000／重疊豬排御膳¥2,400',note:'園內午餐備案；電梯上2F，有普通桌椅。3人一般席現場候位、不接受普通預約；菊花套餐含蝦不選，湯醬與小菜用忌口卡確認。'});
+     Object.assign(e,{title:'御膳所 桜華亭',address:'Ohkatei, Sengan-en 2F',addressLocal:'鹿児島市吉野町9700-1 仙巌園内2F',phone:null,website:null,openHours:'11:00–16:00；最後點餐15:30（JST）',price:'黑豚鍋御膳¥3,000／重疊豬排御膳¥2,400',note:"園內午餐備案，電梯上2F，有桌椅。3人現場候位、不接受一般席訂位。菊花套餐含蝦，不選。"});
    }
    if(e.id==='ins_d1_tired')e.note='保留仙巌園與午餐；午後先刪天文館散步，再縮城山，不壓縮上午及用餐。';
    if(e.id==='ins_d1_traffic')e.note='離園前請受付代叫的士；城山去程先商量付費等候再直返港。延誤先刪天文館，再縮城山；船時17:00前到海洋港。';
  }
  card('evt_d1_to_fukuya','行き先：黒豚ふくや本店\n住所：鹿児島市東千石町1-32 レム鹿児島2F\nホテル入口側で降ろしてください。');
  card('ins_d1_k3','行き先：仙巌園内 御膳所 桜華亭\n住所：鹿児島市吉野町9700-1 仙巌園内2階\nエレベーターに近い合法的な場所で降ろしてください。');
- INSPIRATIONS.push({id:'ins_d1_waterfront',title:'本港海濱公園',tag:INSPIRATIONS.find(e=>e.id==='ins_d1_tired').tag,type:'sight',cityId:'kagoshima',nearEventId:'evt_d1_shiroyama',status:'wishlist',source:'ai',address:'Waterfront Park, Honkoshinmachi',addressLocal:'鹿児島市本港新町 ウォーターフロントパーク',note:'午後海濱備案，不與城山疊加；看櫻島、錦江灣及港口船隻，約走30分鐘休5分鐘。鄰接縣營停車場側合法上下客，仍須按船時17:00到港線倒推回程。'});
+ INSPIRATIONS.push({id:'ins_d1_waterfront',title:'本港海濱公園',tag:INSPIRATIONS.find(e=>e.id==='ins_d1_tired').tag,type:'sight',cityId:'kagoshima',nearEventId:'evt_d1_shiroyama',status:'wishlist',source:'ai',address:'Waterfront Park, Honkoshinmachi',addressLocal:'鹿児島市本港新町 ウォーターフロントパーク',note:"城山替代點，拍櫻島、錦江灣與港口。步行約30分鐘休5分鐘；鄰接縣營停車場側上下客。"});
  card('ins_d1_waterfront','行き先：ウォーターフロントパーク\n住所：鹿児島市本港新町\n隣接する県営駐車場側の合法的な場所で降ろしてください。');
  const g=PHRASE_DATA.find(x=>x.category==='鹿兒島司機');
  if(g){g.items=g.items.filter(x=>!/黒かつ亭|黒べぇ|ウォーターフロントパーク/.test(x.term_primary||''));g.items.push({term_primary:'城山展望台駐車場へ。鹿児島市城山町です。',term_secondary:'展望台側停車場下車，不走山腳登山步道。',term_pronounce:'城山展望台'},{term_primary:'仙巌園内の御膳所 桜華亭へ。吉野町9700-1です。',term_secondary:'園內2F午餐備案，用電梯。',term_pronounce:'桜華亭備案'});}
@@ -1335,30 +1302,30 @@ const SHORE_APPROVED_DELTA = (() => {
  const backup=(id,o)=>{const e=INSPIRATIONS.find(x=>x.id===id);if(!e)throw new Error('Missing backup '+id);Object.assign(e,o);};
  const card=(id,text,zh='')=>{SHORE_CARDS[id]=[text,zh];};
  DESTINATION.name='鹿兒島';
- set('evt_d1_garden',{note:'09:45–12:30為庭園、尚古集成館、切子及茶寮的共同時段，不加御殿。庭園近入口短區與精選展示分組看，連續接近、站看及步行合計約30分鐘便休5分鐘；不要求全園走完。切子約11:30–11:50屬本時段內子項，不另加上午。拍庭園框櫻島與錦江灣。'});
- set('evt_d1_tenmonkan',{type:'shop',note:'午餐後只在真有購物需要時逛有蓋拱廊15–20分鐘；算入接近及站看，不為填空散步。延誤先刪，14:45轉車候補不延後；再縮城山，不壓縮園區與午餐。'});
- set('evt_d2_park',{note:'放行便可前往；09:00是當地JST排序候補，不是要求等到才離船。水之庭園硬鋪通道看港口與水景20–25分鐘，長椅休5分鐘；接近及站看合計約30分鐘便休，不走上坡。'});
- set('evt_d2_rurian',{tags:['當地JST候補','第一可刪'],note:'可刪短逛，不訂付費手作；先問當日能否看製作，不能便略過，不等開工。接近、站看算入同一組步行負荷，不因多一站再加30分鐘；延誤先刪本點，再縮眼鏡橋，保留午餐與出島。'});
- set('evt_d2_megane',{note:'只從平地拍雙拱與倒影約10–15分鐘；不下河床、不走橋階。算入接近與站看，與瑠璃庵合計走約30分鐘便休5分鐘。延誤先刪瑠璃庵，再縮本點；不擠壓出島核心。'});
- set('evt_d2_to_museum',{title:'前往出島',address:'Dejima front bridge approach, Dejima-machi',addressLocal:'長崎市出島町6-1 出島表門橋側',note:'眼鏡橋後另叫的士；14:10為當地JST候補出發，候車另留，車程由配車核對，不保證固定分鐘。請司機選表門橋附近大路合法下客，不把停車場或橋上當的士站；下車後走已核無階通道，橋有坡。',transport:{...get('evt_d2_to_museum').transport,from:'眼鏡橋',to:'出島表門橋側',durationMin:null}});
- set('evt_d2_museum',{title:'出島',time:'14:30',tags:['當地JST候補','核心30分鐘'],address:'Dejima, 6-1 Dejima-machi',addressLocal:'長崎県長崎市出島町6-1',coords:null,openHours:'08:00–21:00；最後入場20:40（JST）；水門08:00–18:00',price:'成人¥1,100',website:'https://nagasakidejima.jp/about/',note:'約14:30–15:00候補看表門橋、復原主街外觀與一間1F貿易／倉庫展示，庭園長椅休5分鐘；不走16棟、不上2F、不再加海旁一輪。橋往返77m只是橋段，並非全程；有坡但斜度未測，連接無階通道，場內疲倦便折返。拍橋框街景及商館立面，不入鏡擋路。15:35候補叫車回港前留集合及候車餘量，須先按船鐘換算核對。'});
+ set('evt_d1_garden',{note:"09:45–12:30含庭園、尚古集成館、切子與茶休；不加御殿。近入口精選兩段各25–30分鐘，中間休5分鐘。拍庭園框櫻島與錦江灣。"});
+ set('evt_d1_tenmonkan',{type:'shop',note:"購物15–20分鐘。延誤先刪，再縮城山；14:45轉車，不壓縮午餐。"});
+ set('evt_d2_park',{note:"放行即去，09:00僅參考。硬鋪通道看港口與水景20–25分鐘，長椅休5分鐘；不走上坡。"});
+ set('evt_d2_rurian',{tags:['當地JST候補','第一可刪'],note:"短看玻璃製作，不做手作；沒製作便略過。延誤第一個刪。"});
+ set('evt_d2_megane',{note:"平地拍雙拱與倒影10–15分鐘，不下河床、不走橋階。連同瑠璃庵累計步行30分鐘休5分鐘。延誤先刪瑠璃庵，再縮此點。"});
+ set('evt_d2_to_museum',{title:'前往出島',address:'Dejima front bridge approach, Dejima-machi',addressLocal:'長崎市出島町6-1 出島表門橋側',note:'眼鏡橋後另叫的士；14:10為當地JST候補出發，候車另留，車程由配車核對。請司機選表門橋附近大路合法下客，不把停車場或橋上當的士站；下車後走已核無階通道，橋有坡。',transport:{...get('evt_d2_to_museum').transport,from:'眼鏡橋',to:'出島表門橋側',durationMin:null}});
+ set('evt_d2_museum',{title:'出島',time:'14:30',tags:['當地JST候補','核心30分鐘'],address:'Dejima, 6-1 Dejima-machi',addressLocal:'長崎県長崎市出島町6-1',coords:null,openHours:'08:00–21:00；最後入場20:40（JST）；水門08:00–18:00',price:'成人¥1,100',website:'https://nagasakidejima.jp/about/',note:"14:30–15:00看表門橋、復原主街及一間1F展示，長椅休5分鐘。不上2F、不加海旁。走無階通道；橋有坡，斜度未核；疲累便折返。15:35回港前預留集合、候車。"});
  set('evt_d2_return',{note:'從出島附近大路合法上車，15:35 JST是候補起程；叫車與集合另留，車程由配車確認。船時17:00到松が枝碼頭，當地截止待核；對鐘後若餘量不足，先刪瑠璃庵、再縮眼鏡橋，不把17:00當JST。',transport:{...get('evt_d2_return').transport,from:'出島表門橋附近合法上車處',durationMin:null}});
  card('evt_d2_to_museum','行き先：出島・表門橋側\n住所：長崎市出島町6-1\n橋には入らず、近くの大通りの合法的な場所で降ろしてください。','出島表門橋側下車；橋有坡，勿當全平。');
- backup('ins_d2_rain',{title:'出島ワーフ海港景',tag:'TIRED',nearEventId:'evt_d2_museum',address:'Dejima Wharf, 1-1-109 Dejima-machi',addressLocal:'長崎市出島町1-1-109',note:'取代出島核心的海港景備案，不與主線疊加；不重走早上水之庭園。鄰近縣營停車場側合法下客，不駛入海濱；2F公共平台有椅，電梯在面海中央樓梯右側。大雨不勉強戶外，也不為休息買咖啡；仍按船時17:00到港倒推。'});
+ backup('ins_d2_rain',{title:'出島ワーフ海港景',tag:'TIRED',nearEventId:'evt_d2_museum',address:'Dejima Wharf, 1-1-109 Dejima-machi',addressLocal:'長崎市出島町1-1-109',note:"出島替代海港景，不與主線疊加。縣營停車場側下客；2F平台有椅，面海中央樓梯右側有電梯。大雨不選。"});
  card('ins_d2_rain','行き先：出島ワーフ\n住所：長崎市出島町1-1-109\n近隣の県営駐車場側の合法的な場所で降ろしてください。','替代出島，不與主線疊加。');
  backup('ins_d2_drop_ruri',{title:'長崎減腳程順序',note:'先刪瑠璃庵；眼鏡橋縮為平地短拍或刪除。保留午餐與出島30分鐘核心＋休5，不加第二輪海旁；若出島橋段不適便用Wharf替代，不把有坡寫全平。'});
- set('evt_d3_yusen',{note:'09:00當地JST開門，放行即出發。只選池景近入口短區20–25分鐘，不繞全園、不登高台；接近及站看一併算，約30分鐘休5分鐘。先問職員椅位，普通高椅未核，不把地席當椅保證；需要時用大濠替代。'});
- set('evt_d3_machiya',{note:'13:40當地JST候補，選織實演與一個精選展區約20–30分鐘；不全館巡遊。站看、接近與之後山笠同時計步行負荷，中間休5分鐘，不把下一站再當一組30分鐘。實演若取消便看町家本身；拍織機先問職員。'});
- const approach=evt({id:"trp_7093e0fa496247048731250601df0068",day:3,time:'14:35',timeHint:'afternoon',type:'transport',title:'前往櫛田山笠',cityId:'fukuoka',address:'Kushida Shrine, parking-side entrance',addressLocal:'福岡市博多区上川端町1-41 櫛田神社 駐車場側入口',tags:['當地JST候補','短接近'],note:'町家後先休5分鐘，再由停車場側入口接近山笠；平地有部分砂礫，實際接近距離及椅位未核，不保證幾分鐘可到。媽媽當下不適便刪山笠，不加冷泉長散步。若需改乘的士，請職員協助合法上下客，不能假設可開到山笠旁。',transport:{mode:'walk',from:'博多町家',to:'櫛田神社停車場側入口・山笠',fromEventId:null,toEventId:null,operator:null,line:null,durationMin:null,stopCount:null,liveApi:null}});
+ set('evt_d3_yusen',{note:"09:00開門。入口附近池景20–25分鐘，休5分鐘；不繞全園、不登高台。椅位先問職員，普通高椅未核；可改大濠。"});
+ set('evt_d3_machiya',{note:"13:40起看織實演及一個展區20–30分鐘，休5分鐘再往山笠；兩點合計步行負荷。無實演便看町家，拍織機先問。"});
+ const approach=evt({id:"trp_7093e0fa496247048731250601df0068",day:3,time:'14:35',timeHint:'afternoon',type:'transport',title:'前往櫛田山笠',cityId:'fukuoka',address:'Kushida Shrine, parking-side entrance',addressLocal:'福岡市博多区上川端町1-41 櫛田神社 駐車場側入口',tags:['當地JST候補','短接近'],note:'町家後先休5分鐘，再由停車場側入口接近山笠；平地有部分砂礫，椅位未核。媽媽當下不適便刪山笠，不加冷泉長散步。若需改乘的士，請職員協助合法上下客。',transport:{mode:'walk',from:'博多町家',to:'櫛田神社停車場側入口・山笠',fromEventId:null,toEventId:null,operator:null,line:null,durationMin:null,stopCount:null,liveApi:null}});
  ITINERARY.items.splice(ITINERARY.items.findIndex(x=>x.id==='evt_d3_street'),0,approach);
- set('evt_d3_street',{title:'櫛田山笠',address:'Kushida Shrine, 1-41 Kamikawabatamachi',addressLocal:'福岡県福岡市博多区上川端町1-41 櫛田神社',openHours:'境內04:00–22:00（JST）；山笠通常展示，6月換展',price:'境內短看免費',website:'https://www.crossroadfukuoka.jp/spot/12510',tags:['當地JST候補','只看山笠'],note:'已批准進境內，只看13m山笠正反面10–15分鐘便原路離開；不是街外展品。不參拜、不進本殿、不訪其他小祠。停車場側避正門梯，部分砂礫；不保證可車到展品旁或有椅。取代冷泉長散步，不額外加步行組；疲累或延誤先刪山笠，保留町家實演及午餐。'});
+ set('evt_d3_street',{title:'櫛田山笠',address:'Kushida Shrine, 1-41 Kamikawabatamachi',addressLocal:'福岡県福岡市博多区上川端町1-41 櫛田神社',openHours:'境內04:00–22:00（JST）；山笠通常展示，6月換展',price:'境內短看免費',website:'https://www.crossroadfukuoka.jp/spot/12510',tags:['當地JST候補','只看山笠'],note:"境內看13m山笠正反面10–15分鐘，不參拜、不進本殿。停車場側避階梯，部分砂礫；近展品落客及椅位未核。疲累或延誤先刪。"});
  set('evt_d3_return',{transport:{...get('evt_d3_return').transport,from:'櫛田神社停車場側附近合法上車處'}});
  card("trp_7093e0fa496247048731250601df0068",'行き先：櫛田神社・山笠\n住所：福岡市博多区上川端町1-41\n駐車場側の入口を案内してください。山笠を見るだけで参拝しません。','只是山笠接近卡；如改乘車，合法下客點由司機選。');
  card('evt_d3_street','行き先：櫛田神社・山笠\n住所：福岡市博多区上川端町1-41\n駐車場側から入り、山笠だけを見て戻ります。参拝しません。');
  backup('ins_d3_tired',{note:'先刪山笠及街拍，保留町家實演與午餐；不換成冷泉長散步。町家、接近及山笠合計約走30分鐘便休5分鐘，並非每站另給30分鐘。'});
  backup('ins_d3_tight',{note:'時間不足保留町家實演，不再跨區或加冷泉散步；山笠可刪。回港最遲於船時截止前75分鐘叫車，先換算當地鐘。'});
  set('evt_d4_to_songdo',{tags:['訂單09:00 KST','已訂包車','08:00待確認'],note:'LOYQU已訂09:00 KST服務、3人無行李；08:00僅提早目標，未獲供應商確認，仍視放行與入境。原單北港충장대로206的1F Arrival Hall會合，與常見2F入境不同，先確認樓層，不自行改點。接車與12:00 KST午餐需對照船鐘；船時16:00到港硬線不變。'});
- set('evt_d4_cable',{note:'免預約，當天現場買票；網票最早翌日使用。往返纜車是主體，對岸只看1F廣場10–15分鐘，不走吊橋／上坡公園；排隊過久先刪對岸停留，不壓12:00 KST正餐60–75分鐘。天候停駛用備案，船時回港倒推須先對鐘。'});
+ set('evt_d4_cable',{note:"現場買往返票。對岸1F廣場10–15分鐘，不走吊橋及上坡公園；排隊久先刪對岸停留，保留12:00午餐。"});
  set('evt_d4_lunch',{timeHint:'afternoon'});
  const ng=PHRASE_DATA.find(x=>x.category==='長崎司機');
  const wharf=ng.items.find(x=>x.term_pronounce==='出島ワーフ');if(wharf)wharf.term_pronounce='出島ワーフ備案';
@@ -1375,17 +1342,7 @@ const SHORE_APPROVED_DELTA = (() => {
 // t318/t320: concise transport rows; all four days use confirmed UTC+9 ship time.
 (function () {
   for (const e of ITINERARY.items) {
-    if (/_clock$/.test(e.id)) {
-      e.time = null;
-      e.title = '全日採用船時';
-      e.tags = [(e.day === 4 ? '16:00' : '17:00') + '前到碼頭'];
-      e.note = '本趟船時比香港快一小時，與日本及韓國當地時間相同。行程及營業時間統一採船時。';
-      for (const k of ['address','addressLocal','coords','phone','whatsapp','line','messenger','openHours','price','website','cost']) e[k]=null;
-      e.status='pending'; e.source='ai';
-      SHORE_CLOCK_NOTES[e.day]=e.note;
-    } else {
-      e.tags = (e.tags || []).filter(t => !/JST|KST|船時/.test(t));
-    }
+    e.tags = (e.tags || []).filter(t => !/JST|KST|船時/.test(t));
   }
   const names = {
     '城山展望台停車場':'城山展望台',
@@ -1429,5 +1386,79 @@ const SHORE_APPROVED_DELTA = (() => {
   }
   for (const e of Object.values(DAILY_EXTRAS)) if(e.shopping) e.shopping=e.shopping.filter(t=>!t.includes('船方當日船鐘說明'));
   for (const g of PHRASE_DATA) for (const e of g.items) if(e.term_secondary) e.term_secondary=e.term_secondary.replace('；先核船鐘。','。');
-  for (const e of ITINERARY.items) if (/_clock$/.test(e.id)) SHORE_CLOCK_NOTES[e.day]=e.note;
+})();
+
+// Nov21: confirmed correspondence and user decisions; preserve the complete itinerary.
+(() => {
+ const get=id=>ITINERARY.items.find(e=>e.id===id);
+ const set=(id,p)=>Object.assign(get(id),p);
+ set('evt_d1_fukuya',{note:'13:00–14:15希望午餐；13:00更正已寄，訂位待確認。推薦豬排或生姜燒。酒店側電梯上2F，需職員協助；全席禁煙。'});
+ set('evt_d2_rurian',{phone:'095-827-0737',note:'10:00起有體驗，可稍遠觀看但不可拍攝體驗過程；10:30能否看製作仍由當日決定。純參觀不接受預約；店與作品可看，拍攝先問。不做手作；不能看便略過，延誤第一個刪。'});
+ set('evt_d2_to_rurian',{note:'另叫的士；到店先問能否遠觀，不等開工。不開放便略過，勝鹿11:30開門後午餐；保留午後出島。'});
+ get('evt_d2_to_katsu').note+=' 瑠璃庵略過時可提前出發，勝鹿11:30開門後現場候位。';
+ set('evt_d2_katsu',{tags:['現場候位'],note:'不接受預約，現場候位。推薦豬排或雞排；新地町12-10、1F，全席禁煙。湯底、醬料與配菜仍核忌口。'});
+ set('evt_d2_megane',{address:'Meganebashi, Uo-no-machi 2',addressLocal:'長崎県長崎市魚の町2'});
+ get('evt_d2_to_megane').note='午餐後另叫的士往魚の町2；河邊道路平地合法位置落客，平路遠拍，不下河床。';
+ SHORE_CARDS.evt_d2_to_megane=['行き先：眼鏡橋\n住所：長崎県長崎市魚の町2\n平地の道路側の合法的な場所で降ろしてください。川岸へ下りません。',''];
+ set('evt_d3_hm',{status:'confirmed',tags:['已訂3人','禁煙桌'],note:'11:45、3人，訂位名Ms. Sandy。禁煙桌已安排；只留15分鐘，遲到可能取消。近入口／避階座位待安排。可選水炊御膳，店方另建議Hana／Aji套餐；不加柚胡椒，湯底、醬料與配菜仍核忌口。'});
+ get('evt_d3_to_hm').note+=' 目標11:30到店，11:45已訂。';
+ set('evt_d4_to_songdo',{time:'08:00',status:'confirmed',tags:['08:00已確認','已訂包車'],address:'Busan Port International Passenger Terminal, Arrival Hall 1F',addressLocal:'부산광역시 동구 충장대로 206 부산항 국제여객터미널 1층 입국장',note:'LOYQU已改08:00，北港1F Arrival Hall會合，3成人／0行李。延誤即聯絡供應商協調。自訂線已同意，纜車票不含；司機WhatsApp待提供。15:00離BIFF、16:00到北港不變。'});
+ get('evt_d4_cable').note+=' 包車不含票；09:00開門，早到等開門。';
+ const b4=INSPIRATIONS.find(e=>e.id==='ins_d4_b4');
+ b4.note='對岸停駛：供應商已同意Amnam Park停車場接車，請站方與司機協調實際會合及可達路線。此卡地址為纜車對岸站、不是停車場pin；不走吊橋或公園坡路。';
+ SHORE_CARDS.ins_d4_b4=['암남공원 주차장에서 픽업할 수 있다고 확인받았습니다. 정확한 만날 곳과 안전한 이동 방법을 안내해 주세요. 부모님과 구름다리나 공원 비탈길로 걷지 않겠습니다.',''];
+ SHORE_CARDS.evt_d4_b0=['예약된 픽업은 08:00입니다. 부산항 국제여객터미널 1층 입국장에서 만납니다. 성인 3명, 짐은 없습니다.',''];
+ const backup=INSPIRATIONS.find(e=>e.id==='ins_d4_songdo_kitchen');
+ backup.tags=['已訂3人','後備','改時待確認'];
+ backup.note='保留已訂後備：11/28原訂12:00、3人、SANDY。延至12:30申請已寄，規劃按12:30安排，改時待確認；原訂保留、不取消。22F海景：培根奶油麵、起司披薩或烤鰻飯；酒店全禁煙，正門乘電梯。忌口及特定椅席未確認。';
+ for(const [category,label,text] of [
+  ['鹿兒島司機','回海洋港','マリンポートかごしまへ。17:00までにターミナルへ戻ります。'],
+  ['長崎司機','回松が枝','長崎港松が枝国際ターミナルへ。17:00までに戻ります。'],
+  ['福岡司機','回中央碼頭','中央ふ頭クルーズセンターへ。17:00までに戻ります。']
+ ]) {
+  const phrase=PHRASE_DATA.find(g=>g.category===category).items.find(e=>e.term_pronounce===label);
+  if(!phrase)throw new Error(label); phrase.term_primary=text;
+ }
+ const ko=PHRASE_DATA.find(g=>g.category==='釜山包車');
+ ko.items.find(e=>e.term_pronounce==='B0 會合').term_primary='예약된 픽업은 08:00입니다. 부산항 국제여객터미널 1층 입국장에서 만납니다.';
+ ko.items.find(e=>e.term_pronounce==='B3 回北港').term_primary='부산항 국제여객터미널, 충장대로 206으로 가 주세요. 오후 4시까지 도착해야 합니다.';
+ const n4=PHRASE_DATA.find(g=>g.category==='長崎司機').items.find(e=>(e.term_pronounce||'').includes('N4'));
+ if(n4)n4.term_primary='瑠璃庵へ。松が枝町5-11です。見学は当日判断で、体験中は撮影しません。';
+ DAILY_EXTRAS['4'].shopping=DAILY_EXTRAS['4'].shopping.map(t=>t==='填好當地空白後才出示的包車卡'?'包車會合資料':t);
+})();
+
+// Payment checks: 2026-11-21; onsite acceptance only.
+(() => {
+ const payments = {
+  "evt_d1_garden": "入場可刷 Visa／Mastercard／JCB／Amex／Diners／Discover；園內茶休及購物刷卡未確認，備現金。",
+  "evt_d1_kiriko": "見學免費；購物刷卡未確認，備現金。",
+  "evt_d1_fukuya": "餐費可刷 Visa／Mastercard／JCB／Amex／Diners。",
+  "evt_d1_tenmonkan": "各店刷卡未確認，購物備現金。",
+  "evt_d1_shiroyama": "入場收費及刷卡未確認；如有收費，備現金。",
+  "evt_d2_park": "公園散步；如有消費，刷卡未確認。",
+  "evt_d2_rurian": "純參觀是否收費及刷卡未確認；購物刷卡未確認，備現金。",
+  "evt_d2_katsu": "餐費刷卡未確認，備現金。",
+  "evt_d2_megane": "平地遠觀無需門票。",
+  "evt_d2_museum": "入場可用信用卡及銀聯（未列個別品牌）；園內餐飲、購物刷卡未確認，備現金。",
+  "evt_d3_yusen": "入場及抹茶刷卡均未確認，備現金。",
+  "evt_d3_hm": "餐費可刷 Visa／Mastercard／JCB／Amex／Diners。",
+  "evt_d3_machiya": "入館及賣店刷卡均未確認，備現金。",
+  "evt_d3_street": "短看山笠免費。",
+  "evt_d4_cable": "現場纜車票刷卡未確認，備韓圓現金；網上付款不代表現場收卡。",
+  "evt_d4_lunch": "餐費刷卡未確認，備韓圓現金。",
+  "evt_d4_sea": "廣場免費；各攤店刷卡未確認，備韓圓現金。",
+  "ins_d1_k3": "餐費刷卡未確認，備現金。",
+  "ins_d2_rain": "海港觀景區；各店消費刷卡未確認，備現金。",
+  "ins_d2_pave": "餐費可刷 Visa／Mastercard／JCB／Amex／Diners。",
+  "ins_d3_ohori": "湖邊短段免費；餐費可刷 Visa／Mastercard／JCB／Amex／Diners／銀聯。",
+  "ins_d4_rain": "室內觀景是否收費及刷卡未確認，備韓圓現金。",
+  "ins_d4_b4": "接車無需新票；如入店消費，刷卡未確認，備韓圓現金。",
+  "ins_d4_tired": "海邊平路無需門票。",
+  "ins_d4_photo": "海邊攝影無需門票。",
+  "ins_d4_songdo_kitchen": "餐費刷卡未確認，備韓圓現金。",
+  "ins_d1_waterfront": "入場收費及刷卡未確認；如有收費，備現金。"
+};
+ for (const e of [...ITINERARY.items, ...INSPIRATIONS]) {
+  if (payments[e.id]) e.note += " 付款：" + payments[e.id];
+ }
 })();
