@@ -1764,3 +1764,77 @@ const SHORE_APPROVED_DELTA = (() => {
     phrase('松元備案','鶏匠松元へ。博多デイトスB1Fです。','デイトス入口附近合法下客。')
   );
 })();
+
+// Nov23: Kagoshima day aligned to final shore draft (Amami-no-Sato main line).
+(function () {
+  const get=id=>{const e=ITINERARY.items.find(x=>x.id===id);if(!e)throw new Error('Missing '+id);return e;};
+  const backup=id=>{const e=INSPIRATIONS.find(x=>x.id===id);if(!e)throw new Error('Missing backup '+id);return e;};
+  const card=(id,text)=>{SHORE_CARDS[id]=[text,''];};
+
+  if(DESTINATION.name==='鹿兒島') DESTINATION.name='海洋光譜號岸上行程';
+
+  const show=PHRASE_DATA.find(g=>g.category==='出示前');
+  if(!show||!show.items[0])throw new Error('Missing 出示前 phrase');
+  Object.assign(show.items[0],{
+    term_primary:'船内時刻と現地時刻は同じUTC+9です。',
+    term_secondary:'船時與JST／KST同為UTC+9。',
+    term_pronounce:'船時核對'
+  });
+
+  const toAmami=get('evt_d1_to_amami');
+  Object.assign(toAmami,{
+    title:'前往奄美の里',
+    time:'14:40',timeHint:'afternoon',tags:['逐段叫車'],
+    address:'Amami-no-Sato, 1-8-1 Minamiei',
+    addressLocal:'鹿児島県鹿児島市南栄1-8-1',
+    note:'14:40從天文館叫的士往奄美の里（南栄1-8-1）。車程未核。',
+    transport:{...toAmami.transport,mode:'taxi',from:'天文館',to:'奄美の里',fromEventId:null,toEventId:null,durationMin:null,stopCount:null,liveApi:null}
+  });
+  card('evt_d1_to_amami','行き先：奄美の里\n住所：鹿児島市南栄1-8-1\n入口近くの合法的な場所で降ろしてください。');
+
+  const amami=get('evt_d1_amami');
+  Object.assign(amami,{
+    title:'奄美の里',time:'15:00',timeHint:'afternoon',type:'sight',tags:['工藝見學'],
+    address:'Amami-no-Sato, 1-8-1 Minamiei',addressLocal:'鹿児島県鹿児島市南栄1-8-1',
+    phone:'099-268-0331',website:'https://www.amaminosato.jp/',
+    openHours:'09:00–17:00；最終受付16:30；年中無休',price:'入園成人¥500',
+    note:'約15:00–15:45只看本館與工場及手信，不繞兩庭園。工場入口約8度斜坡，染色工場前3cm段差。\n看點與拍照：看本館大島紬織程與工場，再到手信區。 付款：入園成人¥500；刷卡未確認，備現金。'
+  });
+
+  const ten=get('evt_d1_tenmonkan');
+  ten.note='購物15–20分鐘。14:40轉車往奄美の里。延誤先刪此段，再將奄美の里縮至20分。\n看點與拍照：就近進有蓋拱廊，短逛店舖再原路回；沿街道中線取拱廊縱深與兩側店招。 付款：各店刷卡未確認，購物備現金。';
+
+  const ret=get('evt_d1_return');
+  Object.assign(ret,{
+    time:'15:45',timeHint:'afternoon',tags:[],
+    address:'Marine Port Kagoshima, Chuo-ko Shinmachi 1-10',
+    addressLocal:'鹿児島県鹿児島市中央港新町1-10',
+    note:'15:45從奄美の里叫的士回海洋港，官方目安約10分、約¥1,800。船時17:00前到碼頭。',
+    transport:{...ret.transport,mode:'taxi',from:'奄美の里',to:'海洋港',fromEventId:null,toEventId:null,durationMin:10,stopCount:null,liveApi:null}
+  });
+  card('evt_d1_return','行き先：マリンポートかごしま\n住所：鹿児島県鹿児島市中央港新町1-10\nターミナル入口近くの合法的な場所で降ろしてください。');
+
+  backup('ins_d1_tired').note='保留仙巌園與午餐；午後先刪天文館，再將奄美の里縮至20分。';
+  backup('ins_d1_traffic').note='離園前請受付代叫的士。延誤先刪天文館，再將奄美の里縮至20分。船時17:00前到海洋港。';
+  Object.assign(backup('ins_d1_waterfront'),{
+    nearEventId:'evt_d1_amami',
+    note:'午後備案，拍櫻島、錦江灣與港口。步行約30分鐘休5分鐘；鄰接縣營停車場側上下客。\n看點與拍照：海邊鋪面欄杆平視櫻島與錦江灣，把渡輪帶入前景；近處可看南風の泉噴水與草坪。 付款：入場收費及刷卡未確認；如有收費，備現金。'
+  });
+
+  const kg=PHRASE_DATA.find(g=>g.category==='鹿兒島司機');
+  if(!kg)throw new Error('Missing 鹿兒島司機');
+  const cardHint='完整司機卡見當日日表／備案。';
+  for(const e of kg.items){
+    if(['K1 仙巌園','K2 ふくや','回海洋港','桜華亭備案'].includes(e.term_pronounce)) e.term_secondary=cardHint;
+  }
+  const amamiPhrase=kg.items.find(e=>e.term_pronounce==='奄美の里');
+  if(!amamiPhrase)throw new Error('Missing 奄美の里 phrase');
+  Object.assign(amamiPhrase,{
+    term_primary:'奄美の里へ。鹿児島市南栄1-8-1です。',
+    term_secondary:'入口附近合法下客。',
+    term_pronounce:'奄美の里'
+  });
+
+  // Keep timeline transport titles as destination names (App modal already prefixes 前往).
+  get('evt_d1_to_amami').title='奄美の里';
+})();
