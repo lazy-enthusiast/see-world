@@ -1,4 +1,4 @@
-// buildTime: 2026-11-23T07:32:36.159Z
+// buildTime: 2026-11-23T09:40:45.808Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1560,4 +1560,207 @@ const SHORE_APPROVED_DELTA = (() => {
   if (tips[e.id]) e.note += "\n看點與拍照：" + tips[e.id];
   if (payments[e.id]) e.note += " 付款：" + payments[e.id];
  }
+})();
+
+// t406: Sandy — keep Fukuya 13:00, Katsu-Shika walk-in, Hanamidori 11:45; add Nagasaki/Fukuoka lunch backups; add Attic and Kawabata Zenzai short stops. No Shirokuma, Fukusaya, Hamakatsu, or food taken onboard. Busan unchanged.
+(function () {
+  const get=id=>{const e=ITINERARY.items.find(x=>x.id===id);if(!e)throw new Error('Missing '+id);return e;};
+  const backup=id=>{const e=INSPIRATIONS.find(x=>x.id===id);if(!e)throw new Error('Missing backup '+id);return e;};
+  const card=(id,text)=>{SHORE_CARDS[id]=[text,''];};
+  const insertAfter=(afterId,item)=>{
+    const i=ITINERARY.items.findIndex(e=>e.id===afterId);
+    if(i<0)throw new Error('Missing '+afterId);
+    if(ITINERARY.items.some(e=>e.id===item.id))throw new Error(item.id+' already present');
+    ITINERARY.items.splice(i+1,0,item);
+  };
+  const foodItem=(fields)=>({
+    cityId:null,address:null,addressLocal:null,coords:null,tags:[],moodColor:null,
+    note:null,phone:null,whatsapp:null,line:null,messenger:null,openHours:null,price:null,
+    website:null,cost:null,transport:null,status:'pending',source:'ai',
+    ...fields
+  });
+  const foodBackup=(fields)=>({
+    tag:'FOOD',type:'food',cityId:null,address:null,addressLocal:null,coords:null,
+    nearEventId:null,note:null,phone:null,whatsapp:null,line:null,messenger:null,
+    openHours:null,price:null,website:null,status:'wishlist',source:'ai',
+    ...fields
+  });
+
+  const museum=get('evt_d2_museum');
+  museum.tags=['核心參觀'];
+  museum.note='14:30–14:45看表門橋、復原主街及一間1F展示。不上2F、不加海旁。走無階通道；橋有坡，斜度未核；疲累便折返。其後前往出島ワーフ1F Attic。\n看點與拍照：按表門橋、復原主街、一間1F貿易或倉庫展示的順序看，拍橋與主街的歷史街巷線條，再原路回入口。 付款：入場可用信用卡及銀聯（未列個別品牌）；園內餐飲、購物刷卡未確認，備現金。';
+
+  insertAfter('evt_d2_museum', foodItem({
+    id:'evt_d2_attic',day:2,time:'14:45',timeHint:'afternoon',type:'food',
+    title:'出島ワーフ1F Attic',cityId:'nagasaki',
+    address:'Attic coffee and dining, Dejima Wharf 1F',
+    addressLocal:'長崎市出島町1-1 長崎出島ワーフ 1F',
+    tags:['茶點短停'],
+    note:'14:45–15:00茶點短停。點咖啡即可。店內全席禁煙，坐店內，不要坐可吸煙露台。不要點海鮮或牛肉餐。',
+    phone:'095-820-2366',
+    openHours:'11:30–22:00；午餐菜單11:30–15:00；定休週三',
+    price:'咖啡／輕食，食べログ～¥999至¥1,999',
+    website:'https://dejimawharf.com/attic'
+  }));
+
+  const machiya=get('evt_d3_machiya');
+  machiya.note='13:40–14:00看織實演。無實演便看町家，拍織機先問。其後前往川端ぜんざい広場。延誤仍先縮住吉（最少約15分）。\n看點與拍照：先看博多織實演的織機運作；拍織機或町家室內前先問。 付款：入館及賣店刷卡均未確認，備現金。';
+
+  insertAfter('evt_d3_machiya', foodItem({
+    id:'evt_d3_zenzai',day:3,time:'14:00',timeHint:'afternoon',type:'food',
+    title:'川端ぜんざい広場',cityId:'fukuoka',
+    address:'Kawabata Zenzai Plaza, Kami-kawabatamachi 6-135',
+    addressLocal:'福岡市博多区上川端町6-135',
+    tags:['茶點短停'],
+    note:'14:00–14:15紅豆年糕甜湯短停。僅金、土、日、祝及商店街活動時營業。予約不可。全席禁煙。付款：現金；卡片／電子支付不可。',
+    phone:'092-281-6223',
+    openHours:'11:00–18:00；僅金、土、日曜、祝日及商店街活動時營業',
+    price:'食べログ～¥999',
+    website:'https://hakata.or.jp/zenzaihiroba/'
+  }));
+
+  const toSumi=get('evt_d3_to_sumiyoshi');
+  toSumi.note='ぜんざい広場後另叫的士直達住吉酒販博多本店，預計約14:40到。';
+  toSumi.transport={...toSumi.transport,from:'川端ぜんざい広場'};
+
+  backup('ins_d2_drop_ruri').note='先刪瑠璃庵，再縮或刪眼鏡橋，再刪Attic，再將芳扇堂縮至20分；最晚16:00從芳扇堂上車。保留午餐與出島14:30–14:45。出島橋段不適便用Wharf替代。';
+  backup('ins_d3_tired').note='延誤先刪川端ぜんざい広場，再縮住吉購物（最少約15分），再刪町家展區只留織實演；不換成冷泉長散步。最晚16:05從住吉上車。';
+  backup('ins_d3_tight').note='時間不足先刪川端ぜんざい広場，再縮住吉、再留織實演，不再跨區或加冷泉散步。最晚16:05從住吉上車。回港最遲於截止前75分鐘叫車。';
+
+  const newBackups=[
+    foodBackup({
+      id:'ins_d2_amalia',title:'アマリアサロン',cityId:'nagasaki',nearEventId:'evt_d2_katsu',
+      address:'Amalia Salon, Hotel Monterey Nagasaki 1F',
+      addressLocal:'長崎市大浦町1-22 ホテルモントレ長崎 1F',
+      note:'可預約ヴェローナコース¥3,000（前菜、意粉、魚或肉、甜品），預約12:10，未訂。選魚主菜，不要肉主菜；前菜與醬是否含蝦蟹或牛，點前問。全席禁煙。1F，酒店正門。',
+      phone:'095-827-7917',
+      openHours:'11:30–14:30，LO 14:00；定休週一',
+      price:'ヴェローナコース¥3,000（含稅及服務費）',
+      website:'https://www.hotelmonterey.co.jp/nagasaki/restaurant/plan/acbd5e396f420a7.html'
+    }),
+    foodBackup({
+      id:'ins_d2_toen',title:'中国料理 桃苑',cityId:'nagasaki',nearEventId:'evt_d2_katsu',
+      address:'Chinese restaurant Toen, Hotel JAL City Nagasaki 2F',
+      addressLocal:'長崎市新地町13-10 ホテルJALシティ長崎 2F',
+      note:'可預約午餐套餐¥1,870（一品＋4小菜＋湯飯＋甜品或咖啡），預約12:10，未訂。點酢豚，不要選A蝦辣醬、海鮮麵、ちゃんぽん。4款小菜與湯是否含蝦蟹或牛，點前問。餐廳全席禁煙。2F，經電梯。',
+      phone:'095-825-2580',
+      openHours:'月–六 11:30–14:00；定休星期日',
+      price:'午餐套餐¥1,870',
+      website:'https://www.nagasaki.jalcity.co.jp/restaurant/'
+    }),
+    foodBackup({
+      id:'ins_d2_kairakuen',title:'会楽園',cityId:'nagasaki',nearEventId:'evt_d2_katsu',
+      address:'Kairakuen, Shinchi-machi 10-16',
+      addressLocal:'長崎市新地町10-16',
+      note:'招牌角煮饅頭¥650、午餐定食¥1,000（スブタ／からあげ等）。大廳 walk-in，不訂座敷。點スブタ或からあげ定食，可加角煮饅頭。不要ハトシ、ちゃんぽん、皿うどん及蝦蟹、牛肉、麻婆豆腐。全席禁煙。',
+      phone:'095-822-4261',
+      openHours:'11:00–15:15，LO 14:30；官方不定休',
+      price:'午餐定食¥1,000；角煮饅頭¥650',
+      website:'https://www.kairakuen.tv/'
+    }),
+    foodBackup({
+      id:'ins_d2_kyokaen',title:'中国名菜 京華園',cityId:'nagasaki',nearEventId:'evt_d2_katsu',
+      address:'Kyokaen, Shinchi-machi 9-7',
+      addressLocal:'長崎市新地町9-7',
+      note:'招牌角煮丼¥1,200、角煮饅頭¥1,700、酢豚¥1,600。餐廳不接受預約，walk-in。點角煮丼或角煮饅頭，可配酢豚或普通炒飯。不要ちゃんぽん、皿うどん及蝦蟹、牛肉菜。全席禁煙。1F大廳。',
+      phone:'095-821-1507',
+      openHours:'11:00–15:00，最終入店14:30',
+      price:'角煮丼¥1,200；角煮饅頭¥1,700；酢豚¥1,600',
+      website:'https://www.kyokaen.co.jp/'
+    }),
+    foodBackup({
+      id:'ins_d2_museumcafe',title:'長崎県美術館カフェ',cityId:'nagasaki',nearEventId:'evt_d2_katsu',
+      address:'Nagasaki Prefectural Art Museum Cafe, Dejima-machi 2-1',
+      addressLocal:'長崎市出島町2-1',
+      note:'招牌いろどり野菜長崎角煮ごはん¥1,300、火腿三明治¥1,050。不要えびのホットサンド。角煮醬與湯是否含蝦蟹或牛，點前問。堂食可否訂未知。禁煙官方未寫。2F回廊，三人要桌子。',
+      phone:'095-821-5183',
+      openHours:'11:00–17:00；フード至16:00；第2、第4星期一休（遇祝改翌星期二）',
+      price:'長崎角煮ごはん¥1,300；火腿三明治¥1,050',
+      website:'https://www.nagasaki-museum.jp/visitor/cafe'
+    }),
+    foodBackup({
+      id:'ins_d3_hamadaya',title:'博多水たき 濱田屋 くうてん',cityId:'fukuoka',nearEventId:'evt_d3_hm',
+      address:'Mizutaki Hamadaya Kuuten, Amu Plaza 10F',
+      addressLocal:'福岡市博多区博多駅中央街1-1 アミュプラザ 10階',
+      note:'水炊き。商戶價くうてん御膳¥2,800、水炊きセット¥3,800。可 walk-in 亦可訂。點御膳或水炊きセット；小鉢與一品是否含蝦蟹或牛，點前問。不要含馬刺的課程。全席禁煙。10F。',
+      phone:'092-292-3412',
+      openHours:'11:00–22:00；官方不定休',
+      price:'商戶價くうてん御膳¥2,800；水炊きセット¥3,800',
+      website:'https://mizutaki-hamadaya.jp/'
+    }),
+    foodBackup({
+      id:'ins_d3_amano',title:'はかた天乃 KITTE博多店',cityId:'fukuoka',nearEventId:'evt_d3_hm',
+      address:'Hakata Ama-no, KITTE Hakata B1F',
+      addressLocal:'福岡市博多区博多駅中央街9-1 KITTE博多 B1F',
+      note:'招牌明太丼¥2,190、銀ダラ味噌定食¥1,850。午餐不接受預約，walk-in。可點明太丼或燒魚定食。不要海鮮明太丼、海鮮丼、牛すき明太丼、海老料理、もつ鍋。全席終日禁煙。B1，三人要桌子。',
+      phone:'092-260-6366',
+      openHours:'7:00–23:00；定食10:00起',
+      price:'明太丼¥2,190；銀ダラ味噌定食¥1,850',
+      website:'https://hakata.jp-kitte.jp/shop/index.jsp?bf=1&fmt=6&shopid=400'
+    }),
+    foodBackup({
+      id:'ins_d3_makino',title:'牧のうどん 博多バスターミナル店',cityId:'fukuoka',nearEventId:'evt_d3_hm',
+      address:'Makino Udon, Hakata Bus Terminal B1F',
+      addressLocal:'福岡市博多区博多駅中央街2-1 博多バスターミナル B1F',
+      note:'當地釜揚烏龍。walk-in，不接受預約。不要姿えび。肉麵肉種與天婦羅配料是否含牛或蝦蟹，點前問或改點ごぼう天、かけ。全席禁煙。付款：現金；卡片／電子支付不可。本店實價未核（分店價不同）。B1。',
+      phone:'092-483-1130',
+      openHours:'10:00–23:00',
+      price:'食べログ～¥999；本店實價未核',
+      website:'https://www.makinoudon.jp/cont10/main.html'
+    }),
+    foodBackup({
+      id:'ins_d3_fukufuku',title:'うどん酒場 福福',cityId:'fukuoka',nearEventId:'evt_d3_hm',
+      address:'Udon Sakaba Fukufuku, Fukuoka Z Building 1F',
+      addressLocal:'福岡市博多区博多駅前3-18-28 福岡Zビル 1F',
+      note:'可預約。午餐實價未核，食べログ午市預算～¥999。11:30開門。出汁為昆布、鰹節、するめ、鯖。不要もつ鍋；「肉」麵肉種須問或改點かしわ／ごぼ天。全席禁煙。1F，三人要桌子。付款：PayPay；カード不可。',
+      phone:'092-411-7222',
+      openHours:'月–六及祝 11:30–14:30，LO 14:00；定休星期日',
+      price:'食べログ午市預算～¥999；午餐實價未核',
+      website:'https://tabelog.com/fukuoka/A4001/A400101/40053221/'
+    }),
+    foodBackup({
+      id:'ins_d3_matsumoto',title:'鶏匠 松元',cityId:'fukuoka',nearEventId:'evt_d3_hm',
+      address:'Torisho Matsumoto, Hakata Deitos B1F',
+      addressLocal:'福岡市博多区博多駅中央街1-1 博多デイトス B1F',
+      note:'水炊きセット梅¥1,980、親子丼定食¥1,100。可預約或 walk-in。水炊き與親子丼為雞。不要牛筋／おでん；問套餐湯底是否含牛或蝦蟹。全席禁煙。デイトス B1，三人要桌子。',
+      phone:'092-409-2992',
+      openHours:'9:00–22:30',
+      price:'水炊きセット梅¥1,980；親子丼定食¥1,100',
+      website:'https://xn--z4q38b609a154c.com/'
+    })
+  ];
+  for (const e of newBackups) {
+    if (INSPIRATIONS.some(x=>x.id===e.id)) throw new Error(e.id+' already present');
+    INSPIRATIONS.push(e);
+  }
+
+  card('ins_d2_amalia','行き先：アマリアサロン／ホテルモントレ長崎 1F\n住所：長崎市大浦町1-22\nホテル正門の合法的な場所で降ろしてください。');
+  card('ins_d2_toen','行き先：中国料理 桃苑／ホテルJALシティ長崎 2F\n住所：長崎市新地町13-10\nホテル正門で降ろしてください。');
+  card('ins_d2_kairakuen','行き先：会楽園\n住所：長崎市新地町10-16\n入口近くの合法的な場所で降ろしてください。');
+  card('ins_d2_kyokaen','行き先：中国名菜 京華園\n住所：長崎市新地町9-7\n入口近くの合法的な場所で降ろしてください。');
+  card('ins_d2_museumcafe','行き先：長崎県美術館カフェ\n住所：長崎市出島町2-1\n館の入口近くの合法的な場所で降ろしてください。');
+  card('ins_d3_hamadaya','行き先：博多水たき 濱田屋 くうてん\n住所：福岡市博多区博多駅中央街1-1 アミュプラザ 10階\nアミュプラザ入口近くの合法的な場所で降ろしてください。');
+  card('ins_d3_amano','行き先：はかた天乃 KITTE博多店\n住所：福岡市博多区博多駅中央街9-1 KITTE博多 B1F\nKITTE入口近くの合法的な場所で降ろしてください。');
+  card('ins_d3_makino','行き先：牧のうどん 博多バスターミナル店\n住所：福岡市博多区博多駅中央街2-1 博多バスターミナル B1F\nバスターミナル入口近くの合法的な場所で降ろしてください。');
+  card('ins_d3_fukufuku','行き先：うどん酒場 福福\n住所：福岡市博多区博多駅前3-18-28 福岡Zビル 1F\n入口近くの合法的な場所で降ろしてください。');
+  card('ins_d3_matsumoto','行き先：鶏匠 松元\n住所：福岡市博多区博多駅中央街1-1 博多デイトス B1F\nデイトス入口近くの合法的な場所で降ろしてください。');
+
+  const phrase=(pronounce,primary,secondary)=>({term_primary:primary,term_secondary:secondary,term_pronounce:pronounce});
+  const ng=PHRASE_DATA.find(x=>x.category==='長崎司機');
+  const fk=PHRASE_DATA.find(x=>x.category==='福岡司機');
+  if(!ng||!fk) throw new Error('Missing phrase category');
+  ng.items.push(
+    phrase('Amalia備案','アマリアサロンへ。大浦町1-22 ホテルモントレ長崎1Fです。','酒店正門落客。'),
+    phrase('桃苑備案','中国料理 桃苑へ。新地町13-10 ホテルJALシティ長崎2Fです。','酒店正門落客。'),
+    phrase('会楽園備案','会楽園へ。新地町10-16です。','入口附近合法下客。'),
+    phrase('京華園備案','京華園へ。新地町9-7です。','入口附近合法下客。'),
+    phrase('県美術館カフェ備案','長崎県美術館カフェへ。出島町2-1です。','入口附近合法下客。')
+  );
+  fk.items.push(
+    phrase('濱田屋備案','博多水たき濱田屋くうてんへ。アミュプラザ10階です。','アミュ入口附近合法下客。'),
+    phrase('天乃備案','はかた天乃へ。KITTE博多B1Fです。','KITTE入口附近合法下客。'),
+    phrase('牧のうどん備案','牧のうどん博多バスターミナル店へ。バスターミナルB1Fです。','入口附近合法下客。'),
+    phrase('福福備案','うどん酒場福福へ。博多駅前3-18-28 福岡Zビル1Fです。','入口附近合法下客。'),
+    phrase('松元備案','鶏匠松元へ。博多デイトスB1Fです。','デイトス入口附近合法下客。')
+  );
 })();
