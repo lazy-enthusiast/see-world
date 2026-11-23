@@ -1,4 +1,4 @@
-// buildTime: 2026-11-23T07:26:52.447Z
+// buildTime: 2026-11-23T07:32:36.159Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -1483,7 +1483,7 @@ const SHORE_APPROVED_DELTA = (() => {
     title:'でじま芳扇堂',cityId:'nagasaki',status:'pending',source:'ai',
     address:'Dejima Hosendo, 5-24 Dejima-machi',addressLocal:'長崎県長崎市出島町5-24',
     coords:null,tags:[],moodColor:null,
-    note:'15:05–15:50。出島旁，通常場15:00起。可選ちょっと飲み¥2,500、どぶろく品飲¥3,500；父母可點甘酒¥1,500。父不食蝦蟹、母不食牛，點前問。不開便直接回港。',
+    note:'15:05–15:50。出島旁，通常場15:00起。可選ちょっと飲み¥2,500、どぶろく品飲¥3,500；父母可點甘酒¥1,500。父不食蝦蟹、母不食牛，點前問。不開便直接回港。11/23已電郵詢問三人座位及肴食材，待回覆。',
     phone:'080-7124-4508',whatsapp:null,line:null,messenger:null,
     openHours:'15:00–19:00；定休火、水。11/26週四非定休',
     price:'ちょっと飲み¥2,500；どぶろく品飲¥3,500；甘酒¥1,500',
