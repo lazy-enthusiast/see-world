@@ -1,11 +1,11 @@
-// buildTime: 2026-11-25T08:10:45.767Z
+// buildTime: 2026-11-25T13:28:57.451Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
 // 自訂文案或頁首常駐橫額（Worker 不能改 UI）。部署時由 Worker 在檔首加 // buildTime:。
 // 舊大阪 config 仍在 versions/config/；本檔不要當可照表執行。
 // 行程以核准 v2 為準；預約句以 Nov 15, 2026 官方複核為準。
-// 船時 UTC+9（香港＋1小時），四港當地鐘相同。ふくや13:00、華味鳥11:45、Songdo Kitchen 12:30已確認；勝鹿現場候位。
+// 船時 UTC+9（香港＋1小時），四港當地鐘相同。ふくや13:00、Songdo Kitchen 12:30已確認；勝鹿現場候位。福岡午餐改節ちゃんラーメン，未訂。
 // 座標不填景點 pin。天氣依當日城市（鹿兒島／長崎／福岡／釜山）取 CITIES 座標與時區；不改行程標題，不把 DESTINATION.name 當天氣城市。
 // ============================================================
 
@@ -2529,4 +2529,168 @@ const SHORE_APPROVED_DELTA = (() => {
     "term_pronounce": "らーめん柊 銅座本店"
   }
 ]);
+})();
+
+// Nov25 t455: approved Fukuoka Nov27 itinerary (Sandy t454).
+(function () {
+  const day3 = [
+    evt({
+      id: "evt_d3_to_tenjin", day: 3, time: "09:00", timeHint: "morning", type: "transport",
+      title: "ソラリアステージ", cityId: "fukuoka",
+      address: "Solaria Stage, Tenjin",
+      addressLocal: "ソラリアステージ",
+      tags: [],
+      transport: taxi("中央ふ頭クルーズセンター", "ソラリアステージ", OP_JP),
+      note: "09:00下船後叫的士去天神ソラリアステージ，約09:30到。"
+    }),
+    evt({
+      id: "evt_d3_uoichi", day: 3, time: "09:30", timeHint: "morning", type: "food",
+      title: "魚吉", cityId: "fukuoka", moodColor: "#6A5348",
+      address: "Uoichi, Solaria Stage B2F",
+      addressLocal: "ソラリアステージ B2F",
+      tags: [],
+      note: "09:30早餐（ソラリアステージB2F）。"
+    }),
+    evt({
+      id: "evt_d3_shopping", day: 3, time: "10:15", timeHint: "morning", type: "shop",
+      title: "天神購物（大丸、ASICS）", cityId: "fukuoka", moodColor: "#5C5348",
+      address: "ASICS Walking Fukuoka, Tenjin 2-7-22",
+      addressLocal: "天神2-7-22 ASICS Walking 福岡店",
+      tags: ["購物"],
+      openHours: "ASICS Walking 福岡店10:30開門",
+      note: "10:15–12:30。大丸福岡天神店；ASICS Walking 福岡店（天神2-7-22）10:30開門，可做腳型測量。"
+    }),
+    evt({
+      id: "evt_d3_lunch", day: 3, time: "12:30", timeHint: "afternoon", type: "food",
+      title: "元祖赤のれん 節ちゃんラーメン 天神本店", cityId: "fukuoka", moodColor: "#6A5348",
+      address: "Setchan Ramen Tenjin Honten, Daimyo 2-6-4",
+      addressLocal: "大名2-6-4",
+      tags: ["未訂・現場候位"],
+      note: "12:30–13:30午餐，未訂位。後備：博多一風堂 大名本店（約2分）、喜多方ラーメン坂内（約6分）、博多らーめん ShinShin 天神本店（約8分）。"
+    }),
+    evt({
+      id: "evt_d3_kanetora", day: 3, time: "13:30", timeHint: "afternoon", type: "shop",
+      title: "麺屋兼虎 天神西通り店", cityId: "fukuoka", moodColor: "#5C5348",
+      address: "Menya Kanetora Tenjin Nishidori, Daimyo 1-14-45 Qiz Tenjin 1F",
+      addressLocal: "大名1-14-45 Qiz Tenjin 1F",
+      tags: ["購物"],
+      price: "お土産つけ麺 濃厚¥1,200、辛辛¥1,300",
+      note: "13:30–13:45買お土産つけ麺（濃厚¥1,200、辛辛¥1,300）。要常溫版；冷凍版需雪櫃，帶返香港會溶。"
+    }),
+    evt({
+      id: "evt_d3_nishikawa", day: 3, time: "13:45", timeHint: "afternoon", type: "shop",
+      title: "西川睡眠諮詢", cityId: "fukuoka", moodColor: "#5C5348",
+      address: null,
+      addressLocal: null,
+      tags: [],
+      price: "免費",
+      note: "13:45–15:00西川睡眠諮詢（showroom，30–60分，免費）。"
+    }),
+    evt({
+      id: "evt_d3_to_sumiyoshi", day: 3, time: "15:00", timeHint: "afternoon", type: "transport",
+      title: "住吉酒販博多本店", cityId: "fukuoka",
+      address: "Sumiyoshi Sake Shop Hakata Honten, 3-8-27 Sumiyoshi",
+      addressLocal: "福岡県福岡市博多区住吉3-8-27 住吉酒販 博多本店",
+      tags: ["逐段叫車"],
+      transport: taxi("西川", "住吉酒販博多本店", OP_JP),
+      note: "15:00從西川叫的士去住吉酒販博多本店，約15:15到。酒放最後買，不用拿著逛街。"
+    }),
+    evt({
+      id: "evt_d3_sumiyoshi", day: 3, time: "15:15", timeHint: "afternoon", type: "sight",
+      title: "住吉酒販博多本店", cityId: "fukuoka", moodColor: "#5C5348",
+      address: "Sumiyoshi Sake Shop Hakata Honten, 3-8-27 Sumiyoshi",
+      addressLocal: "福岡県福岡市博多区住吉3-8-27",
+      tags: ["購物"],
+      phone: "092-281-3815",
+      website: "https://sumiyoshi-sake.jp/",
+      openHours: "9:30–18:30；日祝休。11/27週五應開。",
+      price: "店內購物",
+      note: "15:15–16:00買酒。店內短步。付款：現金、Visa／Mastercard／JCB／Diners／Amex、PayPay（店家官方 LINE）。"
+    }),
+    evt({
+      id: "evt_d3_return", day: 3, time: "16:05", timeHint: "afternoon", type: "transport",
+      title: "返回郵輪碼頭", cityId: "fukuoka", moodColor: "#6B5E52",
+      address: "Chuo Wharf Cruise Center, Okihamacho 24-25",
+      addressLocal: "福岡県福岡市博多区沖浜町24-25 中央ふ頭クルーズセンター",
+      tags: [],
+      transport: taxi("住吉酒販博多本店", "中央ふ頭クルーズセンター", OP_JP),
+      note: "16:05從住吉酒販叫的士回中央ふ頭クルーズセンター（沖浜町24-25），約16:30到碼頭。船時17:00前到碼頭。"
+    })
+  ];
+  const first = ITINERARY.items.findIndex(e => e.day === 3);
+  if (first < 0) throw new Error("Missing day 3 items");
+  const retained = ITINERARY.items.filter(e => e.day !== 3);
+  retained.splice(first, 0, ...day3);
+  ITINERARY.items = retained;
+
+  const backups = [
+    {
+      id: "ins_d3_ippudo", title: "博多一風堂 大名本店", tag: "FOOD", type: "food",
+      cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
+      note: "節ちゃん後備，約步行2分鐘。",
+      address: null, addressLocal: null, website: null, coords: null,
+      phone: null, whatsapp: null, line: null, messenger: null,
+      openHours: null, price: null, cost: null
+    },
+    {
+      id: "ins_d3_bannai", title: "喜多方ラーメン坂内", tag: "FOOD", type: "food",
+      cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
+      note: "節ちゃん後備，約步行6分鐘。",
+      address: null, addressLocal: null, website: null, coords: null,
+      phone: null, whatsapp: null, line: null, messenger: null,
+      openHours: null, price: null, cost: null
+    },
+    {
+      id: "ins_d3_shinshin", title: "博多らーめん ShinShin 天神本店", tag: "FOOD", type: "food",
+      cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
+      note: "節ちゃん後備，約步行8分鐘。",
+      address: null, addressLocal: null, website: null, coords: null,
+      phone: null, whatsapp: null, line: null, messenger: null,
+      openHours: null, price: null, cost: null
+    }
+  ];
+  for (let i = INSPIRATIONS.length - 1; i >= 0; i--) if (INSPIRATIONS[i].cityId === "fukuoka") INSPIRATIONS.splice(i, 1);
+  INSPIRATIONS.push(...backups);
+
+  const card = (id, text) => { SHORE_CARDS[id] = [text, ""]; };
+  for (const id of Object.keys(SHORE_CARDS)) if (/^evt_d3_|^ins_d3_/.test(id)) delete SHORE_CARDS[id];
+  card("evt_d3_to_tenjin", "行き先：ソラリアステージ（天神）\n入口の近くで降ろしてください。");
+  card("evt_d3_to_sumiyoshi", "行き先：住吉酒販 博多本店\n住所：福岡市博多区住吉3-8-27\n店の前の道路側で、合法的に降ろしてください。");
+  card("evt_d3_return", "行き先：中央ふ頭クルーズセンター\n住所：福岡県福岡市博多区沖浜町24番25号\n入口の近くで降ろしてください。");
+
+  const ix = SHORE_FIRST_LEGS.indexOf("evt_d3_to_yusen");
+  if (ix >= 0) SHORE_FIRST_LEGS.splice(ix, 1);
+
+  const fk = PHRASE_DATA.find(x => x.category === "福岡司機");
+  if (!fk) throw new Error("Missing 福岡司機 phrases");
+  fk.items = [
+    { term_primary: "ソラリアステージ（天神）へ。", term_secondary: "完整司機卡見對應行程／備案。", term_pronounce: "ソラリアステージ" },
+    { term_primary: "住吉酒販 博多本店へ。住吉3-8-27です。", term_secondary: "完整司機卡見對應行程／備案。", term_pronounce: "住吉酒販" },
+    { term_primary: "中央ふ頭クルーズセンターへ。沖浜町24番25号です。17:00までに戻ります。", term_secondary: "完整司機卡見對應行程／備案。", term_pronounce: "回中央碼頭" }
+  ];
+
+  for (const e of [...ITINERARY.items.filter(x => x.day === 3), ...INSPIRATIONS.filter(x => x.cityId === "fukuoka")]) {
+    e.source = e.source || "ai";
+    for (const key of ["coords", "phone", "whatsapp", "line", "messenger", "openHours", "price", "website", "cost"]) {
+      if (e[key] === undefined) e[key] = null;
+    }
+    if (e.transport) {
+      e.transport.fromEventId = null;
+      e.transport.toEventId = null;
+      e.transport.liveApi = null;
+      if (!Object.prototype.hasOwnProperty.call(e.transport, "stopCount")) e.transport.stopCount = null;
+    }
+  }
+
+  const forbidden = /ココきよ|ぶたまぶし|しゃぶ禅|華味鳥|大濠公園|博多町家|ぜんざい|濱田屋|はかた天乃|牧のうどん|福福|鶏匠 松元/;
+  for (const e of ITINERARY.items) {
+    if (e.day === 3 && forbidden.test([e.title, e.note, e.address, e.addressLocal].join(" "))) {
+      throw new Error("Stale Fukuoka venue remains: " + e.id);
+    }
+  }
+  for (const e of INSPIRATIONS) {
+    if (e.cityId === "fukuoka" && forbidden.test([e.title, e.note, e.address, e.addressLocal].join(" "))) {
+      throw new Error("Stale Fukuoka backup remains: " + e.id);
+    }
+  }
 })();
