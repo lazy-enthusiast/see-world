@@ -1,4 +1,4 @@
-// buildTime: 2026-11-25T13:39:09.373Z
+// buildTime: 2026-11-25T13:59:11.417Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -2536,8 +2536,8 @@ const SHORE_APPROVED_DELTA = (() => {
     evt({
       id: "evt_d3_to_tenjin", day: 3, time: "09:00", timeHint: "morning", type: "transport",
       title: "ソラリアステージ", cityId: "fukuoka",
-      address: "Solaria Stage, Tenjin",
-      addressLocal: "ソラリアステージ",
+      address: "Solaria Stage, 2-11-3 Tenjin",
+      addressLocal: "〒810-0001 福岡市中央区天神2丁目11番3号 ソラリアステージ",
       tags: [],
       transport: taxi("中央ふ頭クルーズセンター", "ソラリアステージ", OP_JP),
       note: "09:00下船後叫的士去天神ソラリアステージ，約09:30到。魚吉在B2F，07:30已開門。"
@@ -2545,79 +2545,94 @@ const SHORE_APPROVED_DELTA = (() => {
     evt({
       id: "evt_d3_uoichi", day: 3, time: "09:30", timeHint: "morning", type: "food",
       title: "魚吉", cityId: "fukuoka", moodColor: "#6A5348",
-      address: "Uoichi, Solaria Stage B2F",
-      addressLocal: "ソラリアステージ B2F",
+      address: "Uoichi, Solaria Stage B2F, 2-11-3 Tenjin",
+      addressLocal: "〒810-0001 福岡市中央区天神2丁目11番3号 ソラリアステージ B2F 博多海鮮食堂 魚吉",
       tags: [],
-      openHours: "07:30開門",
-      note: "09:30早餐（ソラリアステージB2F）。07:30開門。點魚生飯或明太子定食。"
+      openHours: "朝食 7:30–10:30；店 7:30–22:00",
+      note: "09:30早餐（ソラリアステージB2F）。朝食7:30–10:30，店7:30–22:00。點魚生飯或明太子定食。後備見靈感欄：喜水丸、ドトール（同B2F）。"
     }),
     evt({
       id: "evt_d3_shopping", day: 3, time: "10:15", timeHint: "morning", type: "shop",
       title: "天神購物（大丸、ASICS）", cityId: "fukuoka", moodColor: "#5C5348",
-      address: "ASICS Walking Fukuoka, Tenjin 2-7-22",
-      addressLocal: "天神2-7-22 ASICS Walking 福岡店",
+      address: "Daimaru Fukuoka Tenjin, 1-4-1 Tenjin / ASICS Walking Fukuoka, 2-7-22 Tenjin",
+      addressLocal: "〒810-8717 福岡市中央区天神1-4-1 大丸福岡天神店（本館＋東館エルガーラ）／〒810-0001 福岡市中央区天神2丁目7番22号 アシックスウォーキング 福岡",
       tags: ["購物"],
-      openHours: "ASICS Walking 福岡店10:30開門",
-      note: "10:15–12:30。大丸福岡天神店看エアウィーヴ。ASICS Walking 福岡店（天神2-7-22）10:30開門，可做腳型測量。"
+      openHours: "大丸本館B2–1F・東館B2–2F 10:00–20:00；本館2–8F・東館3–5F 10:00–19:00。ASICS 10:30–19:00",
+      note: "10:15–12:30。大丸福岡天神店看エアウィーヴ（本館B2–1F・東館B2–2F 10:00–20:00；本館2–8F・東館3–5F 10:00–19:00）。アシックスウォーキング 福岡 10:30–19:00，可做腳型測量。"
     }),
     evt({
       id: "evt_d3_lunch", day: 3, time: "12:30", timeHint: "afternoon", type: "food",
       title: "元祖赤のれん 節ちゃんラーメン 天神本店", cityId: "fukuoka", moodColor: "#6A5348",
-      address: "Setchan Ramen Tenjin Honten, Daimyo 2-6-4",
-      addressLocal: "大名2-6-4",
+      address: "Setchan Ramen Tenjin Honten, 2-6-4 Daimyo, Plus Gate Tenjin 1F",
+      addressLocal: "〒810-0041 福岡市中央区大名2-6-4 プラスゲート天神1F",
       tags: ["未訂・現場候位"],
+      openHours: "11:00–21:00",
       price: "拉麵¥680",
-      note: "12:30–13:30午餐，未訂位。點拉麵¥680。後備見靈感欄：一風堂大名本店約2分、喜多方ラーメン坂内約6分、博多らーめん ShinShin 天神本店約8分。"
+      note: "12:30–13:30午餐，未訂位。11:00–21:00。點拉麵¥680。後備見靈感欄：一風堂 大名本店約5分、喜多方ラーメン坂内 天神大名店約9分、博多らーめん ShinShin 天神本店約7分。"
     }),
     evt({
       id: "evt_d3_kanetora", day: 3, time: "13:30", timeHint: "afternoon", type: "shop",
-      title: "麺屋兼虎 天神西通り店", cityId: "fukuoka", moodColor: "#5C5348",
-      address: "Menya Kanetora Tenjin Nishidori, Daimyo 1-14-45 Qiz Tenjin 1F",
-      addressLocal: "大名1-14-45 Qiz Tenjin 1F",
+      title: "麺や兼虎 天神西通り店", cityId: "fukuoka", moodColor: "#5C5348",
+      address: "Menya Kanetora Tenjin Nishidori, 1-14-45 Daimyo, Qiz Tenjin 1F",
+      addressLocal: "〒810-0041 福岡市中央区大名1-14-45 Qiz Tenjin1F",
       tags: ["購物"],
+      openHours: "平日 11:00–21:00",
       price: "お土産つけ麺 濃厚¥1,200、辛辛¥1,300",
-      note: "13:30–13:45買お土産つけ麺（濃厚¥1,200、辛辛¥1,300）。要常溫版；冷凍版需雪櫃，帶返香港會溶。從節ちゃん約3分鐘。"
+      note: "13:30–13:45買お土産つけ麺（濃厚¥1,200、辛辛¥1,300）。要常溫版；冷凍版需雪櫃，帶返香港會溶。平日11:00–21:00。從節ちゃん約5分鐘。"
     }),
     evt({
       id: "evt_d3_nishikawa", day: 3, time: "13:45", timeHint: "afternoon", type: "shop",
-      title: "西川睡眠諮詢", cityId: "fukuoka", moodColor: "#5C5348",
-      address: null,
-      addressLocal: null,
+      title: "ねむりの相談所 西川 福岡ショウルーム", cityId: "fukuoka", moodColor: "#5C5348",
+      address: "Nishikawa Fukuoka Showroom, Tenjin Heiwa Bldg 1F, 1-14-4 Tenjin",
+      addressLocal: "〒810-0001 福岡市中央区天神1-14-4 天神平和ビル1階 ねむりの相談所 西川 福岡ショウルーム",
       tags: [],
+      openHours: "平日 11:00–19:00",
       price: "免費",
-      note: "13:45–15:00西川睡眠諮詢（showroom，30–60分，免費）。可看枕頭並做諮詢。"
+      note: "13:45–15:00ねむりの相談所 西川 福岡ショウルーム（30–60分，免費）。平日11:00–19:00。可看枕頭並做諮詢。"
     }),
     evt({
       id: "evt_d3_to_sumiyoshi", day: 3, time: "15:00", timeHint: "afternoon", type: "transport",
       title: "住吉酒販博多本店", cityId: "fukuoka",
       address: "Sumiyoshi Sake Shop Hakata Honten, 3-8-27 Sumiyoshi",
-      addressLocal: "福岡県福岡市博多区住吉3-8-27 住吉酒販 博多本店",
+      addressLocal: "〒812-0018 福岡市博多区住吉3-8-27 住吉酒販 博多本店",
       tags: ["逐段叫車"],
-      transport: taxi("西川", "住吉酒販博多本店", OP_JP),
-      note: "15:00從西川叫的士去住吉酒販博多本店（住吉3-8-27），約15:15到。酒放最後買，不用拿著逛街。"
+      transport: taxi("ねむりの相談所 西川 福岡ショウルーム", "住吉酒販博多本店", OP_JP),
+      note: "15:00從西川福岡ショウルーム叫的士去住吉酒販博多本店（住吉3-8-27），約15:15到。酒放最後買，不用拿著逛街。"
     }),
     evt({
       id: "evt_d3_sumiyoshi", day: 3, time: "15:15", timeHint: "afternoon", type: "sight",
       title: "住吉酒販博多本店", cityId: "fukuoka", moodColor: "#5C5348",
       address: "Sumiyoshi Sake Shop Hakata Honten, 3-8-27 Sumiyoshi",
-      addressLocal: "福岡県福岡市博多区住吉3-8-27",
+      addressLocal: "〒812-0018 福岡市博多区住吉3-8-27",
       tags: ["購物"],
       phone: "092-281-3815",
       website: "https://sumiyoshi-sake.jp/",
-      openHours: "9:30–18:30；日祝休。11/27週五應開。",
+      openHours: "9:30–18:30，日祝休",
       price: "店內購物",
       note: "15:15–16:00。看貨架與冷藏櫃，選九州地酒、全國銘酒、燒酎、葡萄酒或食品；走「個性的で澄んだ味わい」，店員可幫忙選。本店沒有角打ち／立飲或店內試飲（官網角打ち只列博多駅店、六本松421店）。9:30–18:30，日祝休。付款：現金、Visa／Mastercard／JCB／Diners／Amex、PayPay。"
     }),
     evt({
       id: "evt_d3_return", day: 3, time: "16:05", timeHint: "afternoon", type: "transport",
       title: "返回郵輪碼頭", cityId: "fukuoka", moodColor: "#6B5E52",
-      address: "Chuo Wharf Cruise Center, Okihamacho 24-25",
-      addressLocal: "福岡県福岡市博多区沖浜町24-25 中央ふ頭クルーズセンター",
+      address: "Chuo Wharf Cruise Center, 24-25 Okihamacho",
+      addressLocal: "〒812-0031 福岡市博多区沖浜町24番25号 中央ふ頭クルーズセンター（待合棟／CIQ棟、平屋）",
       tags: [],
       transport: taxi("住吉酒販博多本店", "中央ふ頭クルーズセンター", OP_JP),
-      note: "16:05從住吉酒販叫的士回中央ふ頭クルーズセンター（沖浜町24-25），約16:30到碼頭。船時17:00前到碼頭。"
+      note: "16:05從住吉酒販叫的士回中央ふ頭クルーズセンター（沖浜町24番25号），約16:30到碼頭。船時17:00前到碼頭。"
     })
   ];
+  const D3_COORDS = {
+    evt_d3_to_tenjin: [33.59042, 130.39890],
+    evt_d3_uoichi: [33.59042, 130.39890],
+    evt_d3_shopping: [33.58846, 130.40193],
+    evt_d3_lunch: [33.58907, 130.39577],
+    evt_d3_kanetora: [33.58763, 130.39693],
+    evt_d3_nishikawa: [33.59196, 130.40109],
+    evt_d3_to_sumiyoshi: [33.58531, 130.41177],
+    evt_d3_sumiyoshi: [33.58531, 130.41177],
+    evt_d3_return: [33.61105, 130.39769]
+  };
+  for (const e of day3) e.coords = D3_COORDS[e.id];
   const first = ITINERARY.items.findIndex(e => e.day === 3);
   if (first < 0) throw new Error("Missing day 3 items");
   const retained = ITINERARY.items.filter(e => e.day !== 3);
@@ -2626,28 +2641,54 @@ const SHORE_APPROVED_DELTA = (() => {
 
   const backups = [
     {
-      id: "ins_d3_ippudo", title: "博多一風堂 大名本店", tag: "FOOD", type: "food",
-      cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
-      note: "節ちゃん午餐備案，約步行2分鐘。",
-      address: null, addressLocal: null, website: null, coords: null,
+      id: "ins_d3_kisuimaru", title: "博多の名物料理 喜水丸", tag: "FOOD", type: "food",
+      cityId: "fukuoka", nearEventId: "evt_d3_uoichi", status: "wishlist", source: "ai",
+      note: "魚吉早餐備案，同ソラリアステージB2F。朝の刺身定食¥1,290。朝食7:30–10:30，店7:30–22:30。",
+      address: "Kisuimaru, Solaria Stage B2F, 2-11-3 Tenjin",
+      addressLocal: "〒810-0001 福岡市中央区天神2丁目11番3号 ソラリアステージ B2F 博多の名物料理 喜水丸",
+      website: null, coords: [33.59042, 130.39890],
       phone: null, whatsapp: null, line: null, messenger: null,
-      openHours: null, price: null, cost: null
+      openHours: "朝食 7:30–10:30；店 7:30–22:30", price: "朝の刺身定食¥1,290", cost: null
     },
     {
-      id: "ins_d3_bannai", title: "喜多方ラーメン坂内", tag: "FOOD", type: "food",
-      cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
-      note: "節ちゃん午餐備案，約步行6分鐘。",
-      address: null, addressLocal: null, website: null, coords: null,
+      id: "ins_d3_doutor", title: "ドトールコーヒーショップ 天神ソラリアステージ店", tag: "FOOD", type: "food",
+      cityId: "fukuoka", nearEventId: "evt_d3_uoichi", status: "wishlist", source: "ai",
+      note: "魚吉早餐備案，同ソラリアステージB2F。モーニング¥500起。平日モーニング7:30–10:30，店7:30–22:00。",
+      address: "Doutor Coffee, Solaria Stage B2F, 2-11-3 Tenjin",
+      addressLocal: "〒810-0001 福岡市中央区天神2丁目11番3号 ソラリアステージ B2F ドトールコーヒーショップ 天神ソラリアステージ店",
+      website: null, coords: [33.59042, 130.39890],
       phone: null, whatsapp: null, line: null, messenger: null,
-      openHours: null, price: null, cost: null
+      openHours: "平日モーニング 7:30–10:30；店 7:30–22:00", price: "モーニング¥500起", cost: null
+    },
+    {
+      id: "ins_d3_ippudo", title: "一風堂 大名本店", tag: "FOOD", type: "food",
+      cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
+      note: "節ちゃん午餐備案，約步行5分鐘。11:00–22:00（L.O. 21:30）。",
+      address: "Ippudo Daimyo Honten, 1-13-14 Daimyo",
+      addressLocal: "〒810-0041 福岡市中央区大名1-13-14 一風堂 大名本店",
+      website: null, coords: [33.58787, 130.39584],
+      phone: null, whatsapp: null, line: null, messenger: null,
+      openHours: "11:00–22:00（L.O. 21:30）", price: null, cost: null
+    },
+    {
+      id: "ins_d3_bannai", title: "喜多方ラーメン坂内 天神大名店", tag: "FOOD", type: "food",
+      cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
+      note: "節ちゃん午餐備案，約步行9分鐘。11:00–21:00（L.O. 21:00）。",
+      address: "Kitakata Ramen Bannai Tenjin Daimyo, 2-10-1 Daimyo, Chambord Daimyo A103",
+      addressLocal: "〒810-0041 福岡市中央区大名二丁目10番1号 シャンボール大名A103号 喜多方ラーメン坂内 天神大名店",
+      website: null, coords: [33.58976, 130.39311],
+      phone: null, whatsapp: null, line: null, messenger: null,
+      openHours: "11:00–21:00（L.O. 21:00）", price: null, cost: null
     },
     {
       id: "ins_d3_shinshin", title: "博多らーめん ShinShin 天神本店", tag: "FOOD", type: "food",
       cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
-      note: "節ちゃん午餐備案，約步行8分鐘。",
-      address: null, addressLocal: null, website: null, coords: null,
+      note: "節ちゃん午餐備案，約步行7分鐘。11:00–翌3:00（L.O. 2:30）。",
+      address: "Hakata Ramen ShinShin Tenjin Honten, 3-2-19 Tenjin 1F",
+      addressLocal: "〒810-0001 福岡市中央区天神3-2-19 1F 博多らーめん ShinShin 天神本店",
+      website: null, coords: [33.59277, 130.39685],
       phone: null, whatsapp: null, line: null, messenger: null,
-      openHours: null, price: null, cost: null
+      openHours: "11:00–翌3:00（L.O. 2:30）", price: null, cost: null
     }
   ];
   for (let i = INSPIRATIONS.length - 1; i >= 0; i--) if (INSPIRATIONS[i].cityId === "fukuoka") INSPIRATIONS.splice(i, 1);
@@ -2655,9 +2696,9 @@ const SHORE_APPROVED_DELTA = (() => {
 
   const card = (id, text) => { SHORE_CARDS[id] = [text, ""]; };
   for (const id of Object.keys(SHORE_CARDS)) if (/^evt_d3_|^ins_d3_/.test(id)) delete SHORE_CARDS[id];
-  card("evt_d3_to_tenjin", "行き先：ソラリアステージ（天神）\n入口の近くで降ろしてください。");
-  card("evt_d3_to_sumiyoshi", "行き先：住吉酒販 博多本店\n住所：福岡市博多区住吉3-8-27\n店の前の道路側で、合法的に降ろしてください。");
-  card("evt_d3_return", "行き先：中央ふ頭クルーズセンター\n住所：福岡県福岡市博多区沖浜町24番25号\n入口の近くで降ろしてください。");
+  card("evt_d3_to_tenjin", "行き先：ソラリアステージ（天神）\n住所：〒810-0001 福岡市中央区天神2丁目11番3号\n入口の近くで降ろしてください。");
+  card("evt_d3_to_sumiyoshi", "行き先：住吉酒販 博多本店\n住所：〒812-0018 福岡市博多区住吉3-8-27\n店の前の道路側で、合法的に降ろしてください。");
+  card("evt_d3_return", "行き先：中央ふ頭クルーズセンター\n住所：〒812-0031 福岡市博多区沖浜町24番25号\n入口の近くで降ろしてください。");
 
   const ix = SHORE_FIRST_LEGS.indexOf("evt_d3_to_yusen");
   if (ix >= 0) SHORE_FIRST_LEGS.splice(ix, 1);
@@ -2665,7 +2706,7 @@ const SHORE_APPROVED_DELTA = (() => {
   const fk = PHRASE_DATA.find(x => x.category === "福岡司機");
   if (!fk) throw new Error("Missing 福岡司機 phrases");
   fk.items = [
-    { term_primary: "ソラリアステージ（天神）へ。", term_secondary: "完整司機卡見對應行程／備案。", term_pronounce: "ソラリアステージ" },
+    { term_primary: "ソラリアステージ（天神）へ。天神2丁目11番3号です。", term_secondary: "完整司機卡見對應行程／備案。", term_pronounce: "ソラリアステージ" },
     { term_primary: "住吉酒販 博多本店へ。住吉3-8-27です。", term_secondary: "完整司機卡見對應行程／備案。", term_pronounce: "住吉酒販" },
     { term_primary: "中央ふ頭クルーズセンターへ。沖浜町24番25号です。17:00までに戻ります。", term_secondary: "完整司機卡見對應行程／備案。", term_pronounce: "回中央碼頭" }
   ];
@@ -2695,3 +2736,4 @@ const SHORE_APPROVED_DELTA = (() => {
     }
   }
 })();
+
