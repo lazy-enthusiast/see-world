@@ -1,4 +1,4 @@
-// buildTime: 2026-11-25T13:28:57.451Z
+// buildTime: 2026-11-25T13:39:09.373Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -2530,8 +2530,7 @@ const SHORE_APPROVED_DELTA = (() => {
   }
 ]);
 })();
-
-// Nov25 t455: approved Fukuoka Nov27 itinerary (Sandy t454).
+// Nov25 t456: Fukuoka tips, inspirations, and official 住吉 facts.
 (function () {
   const day3 = [
     evt({
@@ -2541,7 +2540,7 @@ const SHORE_APPROVED_DELTA = (() => {
       addressLocal: "ソラリアステージ",
       tags: [],
       transport: taxi("中央ふ頭クルーズセンター", "ソラリアステージ", OP_JP),
-      note: "09:00下船後叫的士去天神ソラリアステージ，約09:30到。"
+      note: "09:00下船後叫的士去天神ソラリアステージ，約09:30到。魚吉在B2F，07:30已開門。"
     }),
     evt({
       id: "evt_d3_uoichi", day: 3, time: "09:30", timeHint: "morning", type: "food",
@@ -2549,7 +2548,8 @@ const SHORE_APPROVED_DELTA = (() => {
       address: "Uoichi, Solaria Stage B2F",
       addressLocal: "ソラリアステージ B2F",
       tags: [],
-      note: "09:30早餐（ソラリアステージB2F）。"
+      openHours: "07:30開門",
+      note: "09:30早餐（ソラリアステージB2F）。07:30開門。點魚生飯或明太子定食。"
     }),
     evt({
       id: "evt_d3_shopping", day: 3, time: "10:15", timeHint: "morning", type: "shop",
@@ -2558,7 +2558,7 @@ const SHORE_APPROVED_DELTA = (() => {
       addressLocal: "天神2-7-22 ASICS Walking 福岡店",
       tags: ["購物"],
       openHours: "ASICS Walking 福岡店10:30開門",
-      note: "10:15–12:30。大丸福岡天神店；ASICS Walking 福岡店（天神2-7-22）10:30開門，可做腳型測量。"
+      note: "10:15–12:30。大丸福岡天神店看エアウィーヴ。ASICS Walking 福岡店（天神2-7-22）10:30開門，可做腳型測量。"
     }),
     evt({
       id: "evt_d3_lunch", day: 3, time: "12:30", timeHint: "afternoon", type: "food",
@@ -2566,7 +2566,8 @@ const SHORE_APPROVED_DELTA = (() => {
       address: "Setchan Ramen Tenjin Honten, Daimyo 2-6-4",
       addressLocal: "大名2-6-4",
       tags: ["未訂・現場候位"],
-      note: "12:30–13:30午餐，未訂位。後備：博多一風堂 大名本店（約2分）、喜多方ラーメン坂内（約6分）、博多らーめん ShinShin 天神本店（約8分）。"
+      price: "拉麵¥680",
+      note: "12:30–13:30午餐，未訂位。點拉麵¥680。後備見靈感欄：一風堂大名本店約2分、喜多方ラーメン坂内約6分、博多らーめん ShinShin 天神本店約8分。"
     }),
     evt({
       id: "evt_d3_kanetora", day: 3, time: "13:30", timeHint: "afternoon", type: "shop",
@@ -2575,7 +2576,7 @@ const SHORE_APPROVED_DELTA = (() => {
       addressLocal: "大名1-14-45 Qiz Tenjin 1F",
       tags: ["購物"],
       price: "お土産つけ麺 濃厚¥1,200、辛辛¥1,300",
-      note: "13:30–13:45買お土産つけ麺（濃厚¥1,200、辛辛¥1,300）。要常溫版；冷凍版需雪櫃，帶返香港會溶。"
+      note: "13:30–13:45買お土産つけ麺（濃厚¥1,200、辛辛¥1,300）。要常溫版；冷凍版需雪櫃，帶返香港會溶。從節ちゃん約3分鐘。"
     }),
     evt({
       id: "evt_d3_nishikawa", day: 3, time: "13:45", timeHint: "afternoon", type: "shop",
@@ -2584,7 +2585,7 @@ const SHORE_APPROVED_DELTA = (() => {
       addressLocal: null,
       tags: [],
       price: "免費",
-      note: "13:45–15:00西川睡眠諮詢（showroom，30–60分，免費）。"
+      note: "13:45–15:00西川睡眠諮詢（showroom，30–60分，免費）。可看枕頭並做諮詢。"
     }),
     evt({
       id: "evt_d3_to_sumiyoshi", day: 3, time: "15:00", timeHint: "afternoon", type: "transport",
@@ -2593,7 +2594,7 @@ const SHORE_APPROVED_DELTA = (() => {
       addressLocal: "福岡県福岡市博多区住吉3-8-27 住吉酒販 博多本店",
       tags: ["逐段叫車"],
       transport: taxi("西川", "住吉酒販博多本店", OP_JP),
-      note: "15:00從西川叫的士去住吉酒販博多本店，約15:15到。酒放最後買，不用拿著逛街。"
+      note: "15:00從西川叫的士去住吉酒販博多本店（住吉3-8-27），約15:15到。酒放最後買，不用拿著逛街。"
     }),
     evt({
       id: "evt_d3_sumiyoshi", day: 3, time: "15:15", timeHint: "afternoon", type: "sight",
@@ -2605,7 +2606,7 @@ const SHORE_APPROVED_DELTA = (() => {
       website: "https://sumiyoshi-sake.jp/",
       openHours: "9:30–18:30；日祝休。11/27週五應開。",
       price: "店內購物",
-      note: "15:15–16:00買酒。店內短步。付款：現金、Visa／Mastercard／JCB／Diners／Amex、PayPay（店家官方 LINE）。"
+      note: "15:15–16:00。看貨架與冷藏櫃，選九州地酒、全國銘酒、燒酎、葡萄酒或食品；走「個性的で澄んだ味わい」，店員可幫忙選。本店沒有角打ち／立飲或店內試飲（官網角打ち只列博多駅店、六本松421店）。9:30–18:30，日祝休。付款：現金、Visa／Mastercard／JCB／Diners／Amex、PayPay。"
     }),
     evt({
       id: "evt_d3_return", day: 3, time: "16:05", timeHint: "afternoon", type: "transport",
@@ -2627,7 +2628,7 @@ const SHORE_APPROVED_DELTA = (() => {
     {
       id: "ins_d3_ippudo", title: "博多一風堂 大名本店", tag: "FOOD", type: "food",
       cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
-      note: "節ちゃん後備，約步行2分鐘。",
+      note: "節ちゃん午餐備案，約步行2分鐘。",
       address: null, addressLocal: null, website: null, coords: null,
       phone: null, whatsapp: null, line: null, messenger: null,
       openHours: null, price: null, cost: null
@@ -2635,7 +2636,7 @@ const SHORE_APPROVED_DELTA = (() => {
     {
       id: "ins_d3_bannai", title: "喜多方ラーメン坂内", tag: "FOOD", type: "food",
       cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
-      note: "節ちゃん後備，約步行6分鐘。",
+      note: "節ちゃん午餐備案，約步行6分鐘。",
       address: null, addressLocal: null, website: null, coords: null,
       phone: null, whatsapp: null, line: null, messenger: null,
       openHours: null, price: null, cost: null
@@ -2643,7 +2644,7 @@ const SHORE_APPROVED_DELTA = (() => {
     {
       id: "ins_d3_shinshin", title: "博多らーめん ShinShin 天神本店", tag: "FOOD", type: "food",
       cityId: "fukuoka", nearEventId: "evt_d3_lunch", status: "wishlist", source: "ai",
-      note: "節ちゃん後備，約步行8分鐘。",
+      note: "節ちゃん午餐備案，約步行8分鐘。",
       address: null, addressLocal: null, website: null, coords: null,
       phone: null, whatsapp: null, line: null, messenger: null,
       openHours: null, price: null, cost: null
