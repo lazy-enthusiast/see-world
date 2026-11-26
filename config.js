@@ -1,4 +1,4 @@
-// buildTime: 2026-11-25T13:59:11.417Z
+// buildTime: 2026-11-26T11:20:29.990Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -2582,13 +2582,14 @@ const SHORE_APPROVED_DELTA = (() => {
     }),
     evt({
       id: "evt_d3_nishikawa", day: 3, time: "13:45", timeHint: "afternoon", type: "shop",
-      title: "ねむりの相談所 西川 福岡ショウルーム", cityId: "fukuoka", moodColor: "#5C5348",
-      address: "Nishikawa Fukuoka Showroom, Tenjin Heiwa Bldg 1F, 1-14-4 Tenjin",
-      addressLocal: "〒810-0001 福岡市中央区天神1-14-4 天神平和ビル1階 ねむりの相談所 西川 福岡ショウルーム",
-      tags: [],
-      openHours: "平日 11:00–19:00",
-      price: "免費",
-      note: "13:45–15:00ねむりの相談所 西川 福岡ショウルーム（30–60分，免費）。平日11:00–19:00。可看枕頭並做諮詢。"
+      title: "マイまくら 福岡三越店", cityId: "fukuoka", moodColor: "#5C5348",
+      address: "Maimakura, Fukuoka Mitsukoshi B1F shop 17, 2-1-1 Tenjin",
+      addressLocal: "〒810-8544 福岡市中央区天神2-1-1 福岡三越 B1F（ラシック福岡天神）17號（生活雑貨区）マイまくら 福岡三越店",
+      tags: ["購物"],
+      phone: "092-406-8285",
+      openHours: "10:00–20:00，年中無休",
+      price: "度枕 ¥33,000起",
+      note: "13:45–15:00。度枕約30分鐘，¥33,000起，計測免費，即日取走，可免稅。10:00–20:00，年中無休。後備見靈感欄：西川ネムリウム 福岡三越店（同層19/20號）。\n【位置】福岡三越在西鐵福岡（天神）站 Solaria Terminal 大樓，與車站直結。\n【由兼虎】向東平路約10分鐘，由1樓北面ライオン口（獅子像入口）入，扶手梯落 B1F，看舖位編號牌找17號；若滿或人多，沿路去19/20號ネムリウム。\n【由大丸】經渡辺通向西約5分鐘，或經天神地下街直入三越 B1F。"
     }),
     evt({
       id: "evt_d3_to_sumiyoshi", day: 3, time: "15:00", timeHint: "afternoon", type: "transport",
@@ -2596,8 +2597,8 @@ const SHORE_APPROVED_DELTA = (() => {
       address: "Sumiyoshi Sake Shop Hakata Honten, 3-8-27 Sumiyoshi",
       addressLocal: "〒812-0018 福岡市博多区住吉3-8-27 住吉酒販 博多本店",
       tags: ["逐段叫車"],
-      transport: taxi("ねむりの相談所 西川 福岡ショウルーム", "住吉酒販博多本店", OP_JP),
-      note: "15:00從西川福岡ショウルーム叫的士去住吉酒販博多本店（住吉3-8-27），約15:15到。酒放最後買，不用拿著逛街。"
+      transport: taxi("福岡三越", "住吉酒販博多本店", OP_JP),
+      note: "15:00從福岡三越叫的士去住吉酒販博多本店（住吉3-8-27），約15:15到。酒放最後買，不用拿著逛街。"
     }),
     evt({
       id: "evt_d3_sumiyoshi", day: 3, time: "15:15", timeHint: "afternoon", type: "sight",
@@ -2627,7 +2628,7 @@ const SHORE_APPROVED_DELTA = (() => {
     evt_d3_shopping: [33.58846, 130.40193],
     evt_d3_lunch: [33.58907, 130.39577],
     evt_d3_kanetora: [33.58763, 130.39693],
-    evt_d3_nishikawa: [33.59196, 130.40109],
+    evt_d3_nishikawa: [33.58793, 130.40089],
     evt_d3_to_sumiyoshi: [33.58531, 130.41177],
     evt_d3_sumiyoshi: [33.58531, 130.41177],
     evt_d3_return: [33.61105, 130.39769]
@@ -2689,6 +2690,16 @@ const SHORE_APPROVED_DELTA = (() => {
       website: null, coords: [33.59277, 130.39685],
       phone: null, whatsapp: null, line: null, messenger: null,
       openHours: "11:00–翌3:00（L.O. 2:30）", price: null, cost: null
+    },
+    {
+      id: "ins_d3_nemurium", title: "西川ネムリウム 福岡三越店", tag: "SHOP", type: "shop",
+      cityId: "fukuoka", nearEventId: "evt_d3_nishikawa", status: "wishlist", source: "ai",
+      note: "マイまくら備案，同福岡三越B1F，舖位19/20號，中間只隔18號 quatre saisons，行幾步就到。西川度身枕¥33,000／¥44,000，有計測機。10:00–20:00。",
+      address: "Nishikawa Nemurium, Fukuoka Mitsukoshi B1F shop 19/20, 2-1-1 Tenjin",
+      addressLocal: "〒810-8544 福岡市中央区天神2-1-1 福岡三越 B1F（ラシック福岡天神）19/20號 西川ネムリウム 福岡三越店",
+      website: null, coords: [33.58793, 130.40089],
+      phone: "092-725-7615", whatsapp: null, line: null, messenger: null,
+      openHours: "10:00–20:00", price: "西川度身枕 ¥33,000／¥44,000", cost: null
     }
   ];
   for (let i = INSPIRATIONS.length - 1; i >= 0; i--) if (INSPIRATIONS[i].cityId === "fukuoka") INSPIRATIONS.splice(i, 1);
