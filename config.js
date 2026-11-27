@@ -1,4 +1,4 @@
-// buildTime: 2026-11-26T11:20:29.990Z
+// buildTime: 2026-11-27T10:31:12.588Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -2748,3 +2748,204 @@ const SHORE_APPROVED_DELTA = (() => {
   }
 })();
 
+
+// Nov27 t473: Sandy's final Busan Nov 28 plan, additive — existing Busan details, backups and driver cards retained.
+(function () {
+  const byId = id => {
+    const e = ITINERARY.items.find(x => x.id === id);
+    if (!e) throw new Error("Missing Busan item " + id);
+    return e;
+  };
+  const insById = id => {
+    const e = INSPIRATIONS.find(x => x.id === id);
+    if (!e) throw new Error("Missing Busan backup " + id);
+    return e;
+  };
+  const PIER = "부산광역시 동구 충장대로 206 부산항 국제여객터미널";
+
+  // 08:30 pier → Songdo Bay Station (first leg, chartered car).
+  const toSongdo = byId("evt_d4_to_songdo");
+  toSongdo.time = "08:30";
+  toSongdo.tags = ["08:30上車", "已訂包車", "已付"];
+  toSongdo.phone = "+82 10-8763-7130";
+  toSongdo.coords = [35.117439, 129.0489621];
+  toSongdo.note = [
+    "08:30上車：釜山港國際客運碼頭 1/F Arrival Hall（北港），3成人／0行李。",
+    "司機 Choi Dong-hwan 최동환（+82 010-8763-7130），車牌 부산 37바8772；LOYQU 包車（Klook SYT499423）。",
+    "包車已付，過路費同停車費現場俾司機。延誤即聯絡供應商協調。自訂線已同意，纜車票不含。",
+    "09:00到松島 Bay Station；司機之後喺 Amnam Park 停車場等。15:00開車返碼頭、16:00到。"
+  ].join("\n");
+  toSongdo.transport.from = "北港 1/F Arrival Hall";
+  toSongdo.transport.operator = "LOYQU 包車（Klook SYT499423）；司機 최동환，車牌 부산 37바8772。已購 9 小時、1–4 人方案；實際 3 人、行李 0。";
+
+  // 09:00 cable car, one way Bay Station → Amnam Park.
+  const cable = byId("evt_d4_cable");
+  cable.time = "09:00";
+  cable.tags = ["現場買票", "單程"];
+  cable.coords = [35.0763321, 129.0235399];
+  cable.price = "Air ₩15,000／Crystal ₩19,000 一位（三人 ₩45,000／₩57,000）";
+  cable.note = [
+    "09:00 Bay Station → Amnam Park 單程，去到先買飛；Air ₩15,000／Crystal ₩19,000 一位（三人 ₩45,000／₩57,000）。司機喺 Amnam Park 停車場等。",
+    "天氣多雲，最高13°C、體感6°C，西風26 km/h：著最暖嗰件褸，帶帽同手套。大風有機會停駛，朝早睇即時狀態。",
+    "對岸1F廣場10–15分鐘，不走吊橋及上坡公園；排隊久先刪對岸停留，保留12:00午餐。包車不含票；09:00開門。",
+    "看點與拍照：過海車廂內看釜山港與松島海面；到對岸1F廣場回望出發站海岸。 付款：現場纜車票刷卡未確認，備韓圓現金；網上付款不代表現場收卡。"
+  ].join("\n");
+
+  // Songdo seaside walk around the cable car, until about 11:45.
+  const walk = evt({
+    id: "evt_d4_songdo_walk", day: 4, time: "09:00", timeHint: "morning", type: "sight",
+    title: "松島海邊散步", cityId: "busan", moodColor: "#3D5348",
+    address: "Songdo Beach, Songdo-haebyeon-ro, Seo-gu, Busan",
+    addressLocal: "부산광역시 서구 송도해변로 송도해수욕장 일대",
+    tags: ["海邊平路"],
+    openHours: null, price: "免費",
+    note: "纜車前後喺松島海邊散步，約到11:45，之後上車去午餐。\n看點與拍照：近站海邊以海面作背景、移動纜車作主體取景，只走公共平路，不上沙灘。媽媽走30分鐘休5分鐘。"
+  });
+  walk.coords = [35.0763321, 129.0235399];
+
+  // 11:45 car to lunch.
+  const toLunch = byId("evt_d4_to_hotel");
+  toLunch.note = "11:45上車（司機喺 Amnam Park 停車場等），包車送往속시원해대구탕 松島本店，12:00午餐。由 Bay Station 一帶車程約3分鐘。";
+  toLunch.transport.from = "Amnam Park 停車場";
+  toLunch.transport.durationMin = null;
+
+  // 12:00 lunch, walk-in; Songdo Kitchen stays as booked backup.
+  const lunch = byId("evt_d4_lunch");
+  lunch.tags = ["午餐", "walk-in"];
+  lunch.note = "12:00午餐，walk-in，預留60–75分鐘。松島本店1F，近門落客；禁煙待核。點清湯、不辣。後備見靈感欄：Songdo Kitchen（12:30已訂）。 付款：餐費刷卡未確認，備韓圓現金。";
+
+  const sk = insById("ins_d4_songdo_kitchen");
+  sk.note = "後備：Songdo Kitchen（Fairfield 酒店 22F）已訂 11/28 12:30 KST、3人，訂位名SANDY；12:20 到。有需要先用，唔用就打去 Visa 取消。22F海景：培根奶油麵、起司披薩或烤鰻飯；酒店全禁煙，正門乘電梯。 付款：餐費刷卡未確認，備韓圓現金。";
+
+  // After lunch, on the way: Samjin Eomuk flagship (Yeongdo).
+  const toSamjin = evt({
+    id: "evt_d4_to_samjin", day: 4, time: "13:00", timeHint: "afternoon", type: "transport",
+    title: "三津魚糕旗艦店", cityId: "busan",
+    address: "Samjin Eomuk flagship store, Yeongdo-gu, Busan",
+    addressLocal: "부산광역시 영도구 삼진어묵 영도 본점",
+    tags: ["已訂包車"],
+    transport: taxi("속시원해대구탕", "三津魚糕旗艦店（影島）", OP_KR),
+    note: "午餐後順路，包車去影島三津魚糕旗艦店。"
+  });
+  const samjin = evt({
+    id: "evt_d4_samjin", day: 4, time: "13:00", timeHint: "afternoon", type: "shop",
+    title: "三津魚糕旗艦店（삼진어묵 영도 본점）", cityId: "busan", moodColor: "#3D5348",
+    address: "Samjin Eomuk flagship store, Yeongdo-gu, Busan",
+    addressLocal: "부산광역시 영도구 삼진어묵 영도 본점",
+    tags: ["手信"],
+    note: "午餐後順路買魚糕；店內有魚糕歷史館，可順道看。魚糕要雪藏，返船放入雪櫃。"
+  });
+
+  // 13:45 Busan Museum of Modern and Contemporary History.
+  const toMuseum = evt({
+    id: "evt_d4_to_museum", day: 4, time: "13:45", timeHint: "afternoon", type: "transport",
+    title: "釜山近現代歷史館", cityId: "busan",
+    address: "Busan Museum of Modern and Contemporary History, 112 Daecheong-ro",
+    addressLocal: "부산광역시 중구 대청로 112 부산근현대역사관",
+    tags: ["已訂包車"],
+    transport: taxi("三津魚糕", "釜山近現代歷史館", OP_KR),
+    note: "包車由三津魚糕去近現代歷史館，13:45到。"
+  });
+  const museum = evt({
+    id: "evt_d4_museum", day: 4, time: "13:45", timeHint: "afternoon", type: "sight",
+    title: "釜山近現代歷史館（부산근현대역사관）", cityId: "busan", moodColor: "#3D5348",
+    address: "Busan Museum of Modern and Contemporary History, 112 Daecheong-ro",
+    addressLocal: "부산광역시 중구 대청로 112 부산근현대역사관",
+    tags: ["免費", "有電梯"],
+    price: "免費",
+    note: "13:45–14:30，約45分鐘。免費，有電梯。"
+  });
+
+  // 14:30 souvenirs 30 min; BIFF on the way (retains the BIFF leg and its card).
+  const toMarket = byId("evt_d4_to_base");
+  toMarket.time = "14:30";
+  toMarket.title = "前往國際市場／BIFF廣場";
+  toMarket.address = "Gukje Market, 32 Jung-gu-ro / BIFF Square, Gudeok-ro 58-1 area";
+  toMarket.addressLocal = "부산광역시 중구 중구로 32 국제시장／구덕로 58-1 일대 BIFF광장";
+  toMarket.coords = [35.1011643, 129.0281925];
+  toMarket.note = "14:30去國際市場乾貨街／BIFF廣場買手信。由司機在구덕로大路側選合法上下客點，不駛入步行街。";
+  toMarket.transport.from = "釜山近現代歷史館";
+  toMarket.transport.to = "國際市場／BIFF廣場";
+  toMarket.transport.durationMin = null;
+
+  const market = byId("evt_d4_sea");
+  market.time = "14:30";
+  market.type = "shop";
+  market.title = "買手信：國際市場乾貨街／BIFF廣場與劇場街";
+  market.tags = ["手信", "平地短段"];
+  market.address = "Gukje Market dried-goods street, 32 Jung-gu-ro / BIFF Square, Gudeok-ro 58-1 area";
+  market.addressLocal = "부산광역시 중구 중구로 32 국제시장 건어물 거리／구덕로 58-1 일대 BIFF광장";
+  market.coords = [35.1011643, 129.0281925];
+  market.openHours = "國際市場週六09:00–20:00；BIFF戶外廣場常開，攤店通常10:00–22:00";
+  market.price = "戶外廣場免費";
+  market.note = [
+    "14:30–15:00買手信30分鐘：國際市場乾貨街（紫菜、魷魚乾；唔好買蝦乾）或樂天光復店食品層（見靈感欄），BIFF廣場順路行過。",
+    "看點與拍照：廣場地面電影手印近拍，再取劇場街外觀與街道縱深；沿原路回大路側接車，不爬龍頭山；媽媽走30分鐘休5分鐘。15:00上車。",
+    "付款：全日以碌卡為主；BIFF街邊檔先要現金。廣場免費。"
+  ].join("\n");
+
+  // 15:00 back to pier, 16:00 arrive.
+  const ret = byId("evt_d4_return");
+  ret.coords = [35.117439, 129.0489621];
+  ret.note = "15:00喺國際市場／BIFF大路側合法點上車開車返碼頭，16:00到北港。路況變差即更早集合離開。";
+  ret.transport.from = "國際市場／BIFF廣場";
+
+  // Insert new items in Busan order.
+  const day4Order = ["evt_d4_to_songdo", "evt_d4_cable", "evt_d4_songdo_walk", "evt_d4_to_hotel", "evt_d4_lunch",
+    "evt_d4_to_samjin", "evt_d4_samjin", "evt_d4_to_museum", "evt_d4_museum", "evt_d4_to_base", "evt_d4_sea", "evt_d4_return"];
+  const added = { evt_d4_songdo_walk: walk, evt_d4_to_samjin: toSamjin, evt_d4_samjin: samjin, evt_d4_to_museum: toMuseum, evt_d4_museum: museum };
+  const others = ITINERARY.items.filter(x => x.day !== 4);
+  const d4 = day4Order.map(id => added[id] || byId(id));
+  ITINERARY.items = [...others, ...d4];
+
+  // New backup: Lotte Gwangbok food hall (Sandy's alternative for souvenirs).
+  INSPIRATIONS.push({
+    id: "ins_d4_lotte", title: "樂天百貨光復店 食品層", tag: "SHOP", type: "shop",
+    cityId: "busan", nearEventId: "evt_d4_sea", status: "wishlist", source: "ai",
+    note: "國際市場乾貨街以外嘅手信選擇：樂天光復店食品層買紫菜、魷魚乾（唔好買蝦乾）。",
+    address: "Lotte Department Store Gwangbok, food floor",
+    addressLocal: "롯데백화점 광복점 식품관",
+    coords: null, phone: null, whatsapp: null, line: null, messenger: null,
+    openHours: null, price: null, website: null
+  });
+
+  // Driver cards: destination, address, one drop-off request (Korean only).
+  const card = (id, text) => { SHORE_CARDS[id] = [text, ""]; };
+  card("evt_d4_b0", "예약된 픽업은 08:30입니다. 부산항 국제여객터미널 1층 입국장에서 만납니다. 성인 3명, 짐은 없습니다.");
+  card("evt_d4_to_samjin", "목적지: 삼진어묵 영도 본점\n주소: 부산광역시 영도구\n입구 가까이에 내려 주세요.");
+  card("evt_d4_to_museum", "목적지: 부산근현대역사관\n주소: 부산광역시 중구 대청로 112\n입구 가까이에 내려 주세요.");
+  card("evt_d4_to_base", "목적지: 국제시장 건어물 거리·BIFF광장\n주소: 부산광역시 중구 중구로 32（국제시장）／구덕로 58-1 일대（BIFF광장）\n구덕로 큰길 쪽에서 합법적인 승하차 장소를 골라 주세요.");
+
+  // 08:30 is an explicit pickup time: show it instead of the "放行" label.
+  const ix = SHORE_FIRST_LEGS.indexOf("evt_d4_to_songdo");
+  if (ix >= 0) SHORE_FIRST_LEGS.splice(ix, 1);
+
+  const bk = PHRASE_DATA.find(x => x.category === "釜山包車");
+  if (!bk) throw new Error("Missing 釜山包車 phrases");
+  const b0 = bk.items.find(x => x.term_pronounce === "B0 會合");
+  if (b0) b0.term_primary = "예약된 픽업은 08:30입니다. 부산항 국제여객터미널 1층 입국장에서 만납니다.";
+  const retIx = bk.items.findIndex(x => x.term_pronounce === "B3 回北港");
+  bk.items.splice(retIx < 0 ? bk.items.length : retIx, 0,
+    { term_primary: "삼진어묵 영도 본점으로 가 주세요.", term_secondary: "完整卡請開本日對應行程或備案備註。", term_pronounce: "三津魚糕" },
+    { term_primary: "부산근현대역사관으로 가 주세요. 대청로 112입니다.", term_secondary: "完整卡請開本日對應行程或備案備註。", term_pronounce: "近現代歷史館" },
+    { term_primary: "국제시장 건어물 거리로 가 주세요. 중구로 32, 구덕로 큰길 쪽에서 내려 주세요.", term_secondary: "完整卡請開本日對應行程或備案備註。", term_pronounce: "國際市場" }
+  );
+
+  if (DAILY_EXTRAS && DAILY_EXTRAS["4"]) {
+    const s = DAILY_EXTRAS["4"].shopping;
+    for (const x of ["最暖外套、帽、手套", "過路費／停車費（現場俾司機）", "魚糕返船放雪櫃"]) if (!s.includes(x)) s.push(x);
+  }
+
+  for (const e of [...ITINERARY.items.filter(x => x.day === 4), ...INSPIRATIONS.filter(x => x.cityId === "busan")]) {
+    e.source = e.source || "ai";
+    for (const key of ["coords", "phone", "whatsapp", "line", "messenger", "openHours", "price", "website", "cost"]) {
+      if (e[key] === undefined) e[key] = null;
+    }
+    if (e.transport) {
+      e.transport.fromEventId = null;
+      e.transport.toEventId = null;
+      e.transport.liveApi = null;
+      if (!Object.prototype.hasOwnProperty.call(e.transport, "stopCount")) e.transport.stopCount = null;
+    }
+  }
+})();
