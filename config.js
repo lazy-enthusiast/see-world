@@ -1,4 +1,4 @@
-// buildTime: 2026-11-27T10:39:31.508Z
+// buildTime: 2026-11-27T10:53:29.386Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -3044,5 +3044,85 @@ const SHORE_APPROVED_DELTA = (() => {
       e.transport.fromEventId = null; e.transport.toEventId = null; e.transport.liveApi = null;
       if (!Object.prototype.hasOwnProperty.call(e.transport, "stopCount")) e.transport.stopCount = null;
     }
+  }
+})();
+
+// Nov27 t476: researcher-verified Busan Nov 28 addresses/coords (busan_addresses_1128.md), additive only; times unchanged.
+(function () {
+  const item = id => {
+    const e = ITINERARY.items.find(x => x.id === id) || INSPIRATIONS.find(x => x.id === id);
+    if (!e) throw new Error("Missing Busan entry " + id);
+    return e;
+  };
+  const add = (e, s) => { if (!(e.note || "").includes(s)) e.note = (e.note ? e.note + "\n" : "") + s; };
+
+  const SAMJIN = "(우)49035 부산광역시 영도구 태종로99번길 36 삼진어묵 영도본점";
+  for (const id of ["evt_d4_to_samjin", "evt_d4_samjin"]) {
+    const e = item(id);
+    e.address = "Samjin Eomuk Yeongdo main store, 36 Taejong-ro 99beon-gil, Yeongdo-gu, Busan";
+    e.addressLocal = SAMJIN;
+    e.coords = [35.0929, 129.04276];
+  }
+  const samjin = item("evt_d4_samjin");
+  samjin.openHours = "09:00–19:00，연중무휴";
+  add(samjin, "本店＝旗艦（영도본점），09:00–19:00；2F 체험관、3F 역사과학관。");
+
+  const MUSEUM = "(우)48949 부산광역시 중구 대청로 112 부산근현대역사관 본관";
+  for (const id of ["evt_d4_to_museum", "evt_d4_museum"]) {
+    const e = item(id);
+    e.addressLocal = MUSEUM;
+    e.coords = [35.10272, 129.03216];
+  }
+  const museum = item("evt_d4_museum");
+  museum.openHours = "09:00–18:00，入場截止17:00；週一休";
+  add(museum, "去本館（대청로 112）；別館喺對面대청로 104。");
+
+  const lotte = item("ins_d4_lotte");
+  lotte.address = "Lotte Department Store Gwangbok, Main building B1 food hall, 2 Jungang-daero, Jung-gu, Busan";
+  lotte.addressLocal = "(우)48944 부산광역시 중구 중앙대로 2 롯데백화점 광복점 본관 B1 식품관";
+  lotte.coords = [35.09798, 129.03611];
+  lotte.openHours = "週六 10:30–20:30";
+  add(lotte, "食品館在本館B1（南浦站8號出口直通），別和아쿠아몰／롯데마트混淆。");
+
+  const SKY = "(우)49276 부산광역시 서구 암남공원로 181 송도스카이파크";
+  const sky = item("evt_d4_skypark");
+  sky.addressLocal = "(우)49276 부산광역시 서구 암남공원로 181 송도스카이파크 3층 스카이하버 전망대";
+  sky.coords = [35.06135, 129.0204];
+  const b4 = item("ins_d4_b4");
+  b4.addressLocal = SKY;
+  b4.coords = [35.06135, 129.0204];
+
+  const bridge = item("evt_d4_bridge");
+  bridge.address = "Songdo Yonggung Cloud Bridge, 179-20 Amnamgongwon-ro, Seo-gu, Busan";
+  bridge.addressLocal = "(우)49276 부산광역시 서구 암남공원로 179-20 송도용궁구름다리";
+  bridge.coords = [35.06192, 129.02197];
+  add(bridge, "喺스카이파크隔籬，約150米、行2–3分鐘。");
+
+  const WALK = "부산광역시 서구 암남동 129-4 송도구름산책로（입구: 송도해수욕장 동쪽 끝, 송도베이스테이션 송도해변로 171 근처）";
+  const walk = item("evt_d4_songdo_walk");
+  walk.address = "Songdo Cloud Trail, 129-4 Amnam-dong, Seo-gu, Busan (entrance at east end of Songdo Beach)";
+  walk.addressLocal = WALK;
+  walk.coords = [35.07532, 129.02247];
+  walk.openHours = "06:00–23:00，免費";
+  add(walk, "入口喺海灘東端、近纜車 Bay Station，連거북섬（龜島）。");
+  const toBeach = item("evt_d4_to_beach");
+  toBeach.addressLocal = WALK;
+  toBeach.coords = [35.07532, 129.02247];
+
+  SHORE_CARDS.evt_d4_to_samjin = ["목적지: 삼진어묵 영도본점\n주소: 부산광역시 영도구 태종로99번길 36\n입구 가까이에 내려 주세요.", ""];
+  SHORE_CARDS.evt_d4_to_museum = ["목적지: 부산근현대역사관 본관\n주소: 부산광역시 중구 대청로 112\n입구 가까이에 내려 주세요.", ""];
+  SHORE_CARDS.evt_d4_to_beach = ["목적지: 송도구름산책로 입구（송도해수욕장 동쪽 끝）\n주소: 부산광역시 서구 암남동 129-4（송도해변로 171 송도베이스테이션 근처）\n해변 쪽 합법적인 곳에 내려 주세요.", ""];
+  SHORE_CARDS.ins_d4_lotte = ["목적지: 롯데백화점 광복점 본관\n주소: 부산광역시 중구 중앙대로 2\n본관 입구 가까이에 내려 주세요.", ""];
+
+  const bk = PHRASE_DATA.find(x => x.category === "釜山包車");
+  if (!bk) throw new Error("Missing 釜山包車 phrases");
+  const set = (k, v) => { const p = bk.items.find(x => x.term_pronounce === k); if (!p) throw new Error("Missing phrase " + k); p.term_primary = v; };
+  set("三津魚糕", "삼진어묵 영도본점으로 가 주세요. 태종로99번길 36입니다.");
+  set("近現代歷史館", "부산근현대역사관 본관으로 가 주세요. 대청로 112입니다.");
+  set("松島海灘", "암남공원 주차장에서 송도구름산책로 입구（송도해수욕장 동쪽 끝）로 가 주세요.");
+  if (!bk.items.some(x => x.term_pronounce === "樂天光復")) {
+    const at = bk.items.findIndex(x => x.term_pronounce === "B3 回北港");
+    bk.items.splice(at < 0 ? bk.items.length : at, 0,
+      { term_primary: "롯데백화점 광복점 본관으로 가 주세요. 중앙대로 2입니다.", term_secondary: "完整卡請開本日對應行程或備案備註。", term_pronounce: "樂天光復" });
   }
 })();
