@@ -1,4 +1,4 @@
-// buildTime: 2026-11-27T10:31:12.588Z
+// buildTime: 2026-11-27T10:39:31.508Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -2945,6 +2945,103 @@ const SHORE_APPROVED_DELTA = (() => {
       e.transport.fromEventId = null;
       e.transport.toEventId = null;
       e.transport.liveApi = null;
+      if (!Object.prototype.hasOwnProperty.call(e.transport, "stopCount")) e.transport.stopCount = null;
+    }
+  }
+})();
+
+// Nov27 t475: Sandy's revised Busan Nov 28 morning (whole morning in Songdo), additive — prior details, backups and driver cards retained.
+(function () {
+  const byId = id => {
+    const e = ITINERARY.items.find(x => x.id === id);
+    if (!e) throw new Error("Missing Busan item " + id);
+    return e;
+  };
+
+  const toSongdo = byId("evt_d4_to_songdo");
+  toSongdo.note += "\n明天風大，纜車、雲橋、雲端步道都可能因風暫封：邊樣開就先行邊樣，包車司機全程等埋，次序即場調。";
+
+  const cable = byId("evt_d4_cable");
+  cable.note = [
+    "09:00纜車開門即上（避開週六人龍）：Bay Station → Amnam Park 單程約10分鐘，去到先買飛；Air ₩15,000／Crystal ₩19,000 一位（三人 ₩45,000／₩57,000）。司機喺 Amnam Park 停車場等。",
+    "天氣多雲，最高13°C、體感6°C，西風26 km/h：著最暖嗰件褸，帶帽同手套。大風有機會停駛，朝早睇即時狀態。",
+    "排隊久先刪對岸停留，保留12:00午餐。包車不含票；09:00開門。",
+    "看點與拍照：過海車廂內看釜山港與松島海面；到對岸1F廣場回望出發站海岸。 付款：現場纜車票刷卡未確認，備韓圓現金；網上付款不代表現場收卡。"
+  ].join("\n");
+
+  const skypark = evt({
+    id: "evt_d4_skypark", day: 4, time: "09:15", timeHint: "morning", type: "sight",
+    title: "天空公園展望台（송도스카이파크 3층 스카이하버 전망대）", cityId: "busan", moodColor: "#3D5348",
+    address: "Songdo Sky Park 3F observatory, 181 Amnamgongwon-ro, Seo-gu, Busan",
+    addressLocal: "부산광역시 서구 암남공원로 181 송도스카이파크 3층 스카이하버 전망대",
+    tags: ["影相位", "唔使點行"],
+    note: "09:15–09:45。纜車站3樓，唔使點行就睇到成個松島海景，影相位。2F Ocean Terrace 可坐低看海。"
+  });
+
+  const bridge = evt({
+    id: "evt_d4_bridge", day: 4, time: "09:45", timeHint: "morning", type: "sight",
+    title: "龍宮雲橋（可選）（송도용궁구름다리）", cityId: "busan", moodColor: "#3D5348",
+    address: "Songdo Yonggung Cloud Bridge, Amnam Park, Seo-gu, Busan",
+    addressLocal: "부산광역시 서구 암남공원 송도용궁구름다리",
+    tags: ["可選", "₩1,000"],
+    openHours: "11月 09:00–17:00",
+    price: "₩1,000 一位",
+    note: "09:45–10:15，可選。127米海上吊橋。落橋之前有段落斜小路，橋身會晃，大風會封閉：到時睇媽媽狀態同風勢，唔行就喺公園海邊坐下，一樣好景。"
+  });
+
+  const toBeach = evt({
+    id: "evt_d4_to_beach", day: 4, time: "10:15", timeHint: "morning", type: "transport",
+    title: "松島海灘", cityId: "busan",
+    address: "Songdo Beach, Songdo-haebyeon-ro, Seo-gu, Busan",
+    addressLocal: "부산광역시 서구 송도해변로 송도해수욕장",
+    tags: ["已訂包車"],
+    transport: taxi("Amnam Park 停車場", "松島海灘", OP_KR),
+    note: "10:15司機喺 Amnam Park 停車場（암남동 620-18 公營停車場）接，車返海灘嗰邊，約10分鐘。"
+  });
+  toBeach.transport.durationMin = 10;
+  toBeach.coords = [35.0763321, 129.0235399];
+
+  const walk = byId("evt_d4_songdo_walk");
+  walk.time = "10:30";
+  walk.title = "松島雲端步道＋海灘散步";
+  walk.tags = ["全平路", "玻璃地板"];
+  walk.note = "10:30–11:15。雲端步道365米全平路，有玻璃地板段，行到攰折返就得；沙灘旁都係平路。\n看點與拍照：近站海邊以海面作背景、移動纜車作主體取景，只走公共平路，不上沙灘。媽媽走30分鐘休5分鐘。";
+
+  const cafe = evt({
+    id: "evt_d4_cafe", day: 4, time: "11:15", timeHint: "morning", type: "rest",
+    title: "海邊咖啡店休息／提早等位", cityId: "busan", moodColor: "#3D5348",
+    address: "Songdo Beach area, Songdo-haebyeon-ro, Seo-gu, Busan",
+    addressLocal: "부산광역시 서구 송도해변로 송도해수욕장 일대",
+    tags: ["休息"],
+    note: "11:15–12:00海邊搵間咖啡店坐下唞下，或者提早去속시원해대구탕（송도해변로 79 1F）等位。"
+  });
+  cafe.coords = [35.0763321, 129.0235399];
+
+  const toLunch = byId("evt_d4_to_hotel");
+  toLunch.note = "司機全程等埋；如需要，11:45由海灘一帶上車去속시원해대구탕 松島本店，12:00午餐。由 Bay Station 一帶車程約3分鐘。";
+  toLunch.transport.from = "松島海灘";
+
+  // Order Busan morning items; afternoon unchanged.
+  const added = { evt_d4_skypark: skypark, evt_d4_bridge: bridge, evt_d4_to_beach: toBeach, evt_d4_cafe: cafe };
+  const order = ["evt_d4_to_songdo", "evt_d4_cable", "evt_d4_skypark", "evt_d4_bridge", "evt_d4_to_beach", "evt_d4_songdo_walk", "evt_d4_cafe",
+    "evt_d4_to_hotel", "evt_d4_lunch", "evt_d4_to_samjin", "evt_d4_samjin", "evt_d4_to_museum", "evt_d4_museum", "evt_d4_to_base", "evt_d4_sea", "evt_d4_return"];
+  const others = ITINERARY.items.filter(x => x.day !== 4);
+  ITINERARY.items = [...others, ...order.map(id => added[id] || byId(id))];
+
+  SHORE_CARDS.evt_d4_to_beach = ["목적지: 송도해수욕장\n주소: 부산광역시 서구 송도해변로\n해변 쪽 합법적인 곳에 내려 주세요.", ""];
+
+  const bk = PHRASE_DATA.find(x => x.category === "釜山包車");
+  if (!bk) throw new Error("Missing 釜山包車 phrases");
+  const at = bk.items.findIndex(x => x.term_pronounce === "松島鱈魚湯");
+  bk.items.splice(at < 0 ? bk.items.length : at, 0,
+    { term_primary: "암남공원 주차장에서 송도해수욕장으로 가 주세요.", term_secondary: "完整卡請開本日對應行程或備案備註。", term_pronounce: "松島海灘" });
+
+  for (const e of ITINERARY.items.filter(x => x.day === 4)) {
+    for (const key of ["coords", "phone", "whatsapp", "line", "messenger", "openHours", "price", "website", "cost"]) {
+      if (e[key] === undefined) e[key] = null;
+    }
+    if (e.transport) {
+      e.transport.fromEventId = null; e.transport.toEventId = null; e.transport.liveApi = null;
       if (!Object.prototype.hasOwnProperty.call(e.transport, "stopCount")) e.transport.stopCount = null;
     }
   }
