@@ -1,4 +1,4 @@
-// buildTime: 2026-11-27T10:53:29.386Z
+// buildTime: 2026-11-28T06:12:09.079Z
 // ============================================================
 // Spectrum 岸上 Nov 25–28, 2026（候補預覽，未部署）
 // 本檔給現 main 的 index.html／schema.json 使用，不依賴 PR 才加的時間欄
@@ -3124,5 +3124,199 @@ const SHORE_APPROVED_DELTA = (() => {
     const at = bk.items.findIndex(x => x.term_pronounce === "B3 回北港");
     bk.items.splice(at < 0 ? bk.items.length : at, 0,
       { term_primary: "롯데백화점 광복점 본관으로 가 주세요. 중앙대로 2입니다.", term_secondary: "完整卡請開本日對應行程或備案備註。", term_pronounce: "樂天光復" });
+  }
+})();
+
+
+// Nov28 t478: Sandy's Busan Nov 28 afternoon plan, additive — existing details, backups and driver cards retained.
+(function () {
+  const byId = id => {
+    const e = ITINERARY.items.find(x => x.id === id);
+    if (!e) throw new Error("Missing Busan item " + id);
+    return e;
+  };
+  const addNote = (e, s) => { if (!(e.note || "").includes(s)) e.note = (e.note ? e.note + "\n" : "") + s; };
+
+  // First-leg overview: new return window is later (16:00 / 16:30–16:45), never earlier.
+  const toSongdo = byId("evt_d4_to_songdo");
+  if (!toSongdo.note) throw new Error("Missing to_songdo note");
+  if (!toSongdo.note.includes("15:00開車返碼頭、16:00到。")) throw new Error("Unexpected to_songdo return sentence");
+  toSongdo.note = toSongdo.note.replace("15:00開車返碼頭、16:00到。", "16:00開車返碼頭，目標16:30–16:45到。");
+
+  const toGamcheon = evt({
+    id: "evt_d4_to_gamcheon", day: 4, time: "13:00", timeHint: "afternoon", type: "transport",
+    title: "甘川文化村", cityId: "busan",
+    address: "Gamcheon Culture Village, 203 Gamnae 2-ro, Busan",
+    addressLocal: "감내2로 203 감천문화마을",
+    tags: ["已訂包車"],
+    transport: taxi("속시원해대구탕", "甘川文化村", OP_KR),
+    note: "13:00松島出發：鱈魚湯午餐後，包車司機 Choi Dong-hwan 送去甘川文化村（감천문화마을）。"
+  });
+
+  const gamcheon = evt({
+    id: "evt_d4_gamcheon", day: 4, time: "13:15", timeHint: "afternoon", type: "sight",
+    title: "甘川文化村（감천문화마을）", cityId: "busan", moodColor: "#3D5348",
+    address: "Gamcheon Culture Village, 203 Gamnae 2-ro, Busan",
+    addressLocal: "감내2로 203 감천문화마을",
+    tags: ["村口影相"],
+    note: "13:15–13:40。村口大路影相；小王子像排隊太長就去 Byeolmaru 展望台（별마루）；不入村內小巷。"
+  });
+
+  const toYurari = evt({
+    id: "evt_d4_to_yurari", day: 4, time: "13:55", timeHint: "afternoon", type: "transport",
+    title: "유라리광장／影島大橋", cityId: "busan",
+    address: "Yurari Plaza, in front of Lotte Department Store Gwangbok, 2 Jungang-daero, Jung-gu, Busan",
+    addressLocal: "부산광역시 중구 중앙대로 2 롯데백화점 광복점 앞 유라리광장",
+    tags: ["已訂包車"],
+    transport: taxi("甘川文化村", "유라리광장（樂天光復店門前）", OP_KR),
+    note: "13:40左右由甘川出發，13:55到 Yurari 廣場（유라리광장，樂天光復店門前）。"
+  });
+  toYurari.coords = [35.09798, 129.03611];
+
+  const yeongdo = evt({
+    id: "evt_d4_yeongdo", day: 4, time: "13:55", timeHint: "afternoon", type: "sight",
+    title: "影島大橋（영도대교／유라리광장）", cityId: "busan", moodColor: "#3D5348",
+    address: "Yeongdo Bridge viewed from Yurari Plaza, in front of Lotte Department Store Gwangbok, 2 Jungang-daero, Jung-gu, Busan",
+    addressLocal: "부산광역시 중구 중앙대로 2 롯데백화점 광복점 앞 유라리광장（영도대교）",
+    tags: ["逢星期六", "開橋"],
+    openHours: "逢星期六 14:00–14:15 開橋（強風可能取消）",
+    note: "13:55到 Yurari 廣場（樂天光復店門前）。14:00–14:15 影島大橋（영도대교）開橋，逢星期六才有；強風可能取消，取消就直接去下一站。"
+  });
+  yeongdo.coords = [35.09798, 129.03611];
+
+  const toCinema = evt({
+    id: "evt_d4_to_cinema", day: 4, time: "14:15", timeHint: "afternoon", type: "transport",
+    title: "釜山電影體驗館", cityId: "busan",
+    address: "Busan Cinema Experience Museum, 12 Daecheong-ro 126beon-gil, Busan",
+    addressLocal: "대청로126번길 12 부산영화체험박물관",
+    tags: ["已訂包車"],
+    transport: taxi("유라리광장／影島大橋", "釜山電影體驗館", OP_KR),
+    note: "14:15包車由 Yurari 廣場去釜山電影體驗館（부산영화체험박물관）。"
+  });
+
+  const cinema = evt({
+    id: "evt_d4_cinema", day: 4, time: "14:15", timeHint: "afternoon", type: "sight",
+    title: "釜山電影體驗館（부산영화체험박물관）", cityId: "busan", moodColor: "#3D5348",
+    address: "Busan Cinema Experience Museum, 12 Daecheong-ro 126beon-gil, Busan",
+    addressLocal: "대청로126번길 12 부산영화체험박물관",
+    tags: ["統合券", "影相區"],
+    price: "統合券 ₩14,000 一位",
+    note: "14:15–15:15。統合券 ₩14,000 一位，集中玩影相區。"
+  });
+
+  const toBase = byId("evt_d4_to_base");
+  toBase.time = "15:15";
+  toBase.title = "前往國際市場／樂天光復店／BIFF廣場";
+  toBase.note = "15:15由電影體驗館包車去國際市場乾貨街／樂天光復店／BIFF廣場買手信。由司機在구덕로大路側選合法上下客點，不駛入步行街。";
+  toBase.transport.from = "釜山電影體驗館";
+  toBase.transport.to = "國際市場／樂天光復店／BIFF廣場";
+
+  const sea = byId("evt_d4_sea");
+  sea.time = "15:15";
+  sea.title = "買手信：國際市場乾貨街／樂天光復店／BIFF廣場與劇場街";
+  sea.note = [
+    "15:15–15:50買手信：國際市場乾貨街買紫菜、魷魚乾做手信（唔好買蝦乾）；樂天光復店食品層買包裝禮盒（見靈感欄；本館B1，南浦站8號出口直通，別和아쿠아몰／롯데마트混淆）；BIFF廣場順路行過。",
+    "看點與拍照：廣場地面電影手印近拍，再取劇場街外觀與街道縱深；沿原路回大路側接車，不爬龍頭山；媽媽走30分鐘休5分鐘。16:00上車。",
+    "付款：全日以碌卡為主；BIFF街邊檔先要現金。廣場免費。"
+  ].join("\n");
+
+  const ret = byId("evt_d4_return");
+  ret.time = "16:00";
+  ret.note = "16:00喺國際市場／樂天光復店／BIFF大路側合法點上車開車返碼頭，目標16:30–16:45到北港。";
+  ret.transport.from = "國際市場／樂天光復店／BIFF廣場";
+  ret.transport.durationMin = 45;
+
+  const lotte = INSPIRATIONS.find(x => x.id === "ins_d4_lotte");
+  if (!lotte) throw new Error("Missing ins_d4_lotte");
+  addNote(lotte, "主線 15:15–15:50 亦會喺食品層買包裝禮盒。");
+
+  function moveToInspiration(oldId, newId, tag, nearEventId, preface) {
+    const e = byId(oldId);
+    ITINERARY.items = ITINERARY.items.filter(x => x.id !== oldId);
+    const ins = {
+      id: newId,
+      title: e.title,
+      tag,
+      type: e.type,
+      cityId: e.cityId || null,
+      nearEventId,
+      status: "wishlist",
+      source: e.source || "ai",
+      note: (preface ? preface + "\n" : "") + (e.note || ""),
+      address: e.address == null ? null : e.address,
+      addressLocal: e.addressLocal == null ? null : e.addressLocal,
+      coords: e.coords == null ? null : e.coords,
+      phone: e.phone == null ? null : e.phone,
+      whatsapp: e.whatsapp == null ? null : e.whatsapp,
+      line: e.line == null ? null : e.line,
+      messenger: e.messenger == null ? null : e.messenger,
+      openHours: e.openHours == null ? null : e.openHours,
+      price: e.price == null ? null : e.price,
+      website: e.website == null ? null : e.website,
+      cost: e.cost == null ? null : e.cost
+    };
+    if (e.transport) ins.transport = e.transport;
+    INSPIRATIONS.push(ins);
+    if (SHORE_CARDS[oldId]) SHORE_CARDS[newId] = SHORE_CARDS[oldId];
+    return ins;
+  }
+
+  // Clash with the new 13:00–14:30 afternoon line: keep every detail, move to inspirations.
+  moveToInspiration("evt_d4_to_samjin", "ins_d4_to_samjin", "SHOP", "evt_d4_lunch",
+    "已由下午主線改入靈感欄，作順路或有時間時嘅選擇（原 13:00）。");
+  moveToInspiration("evt_d4_samjin", "ins_d4_samjin", "SHOP", "evt_d4_lunch",
+    "已由下午主線改入靈感欄，作順路或有時間時嘅選擇（原 13:00）。");
+  moveToInspiration("evt_d4_to_museum", "ins_d4_to_museum", "TIME", "evt_d4_cinema",
+    "已由下午主線改入靈感欄，作順路或有時間時嘅選擇（原 13:45）。");
+  moveToInspiration("evt_d4_museum", "ins_d4_museum", "TIME", "evt_d4_cinema",
+    "已由下午主線改入靈感欄，作順路或有時間時嘅選擇（原 13:45）。");
+
+  const added = {
+    evt_d4_to_gamcheon: toGamcheon,
+    evt_d4_gamcheon: gamcheon,
+    evt_d4_to_yurari: toYurari,
+    evt_d4_yeongdo: yeongdo,
+    evt_d4_to_cinema: toCinema,
+    evt_d4_cinema: cinema
+  };
+  const order = [
+    "evt_d4_to_songdo", "evt_d4_cable", "evt_d4_skypark", "evt_d4_bridge",
+    "evt_d4_to_beach", "evt_d4_songdo_walk", "evt_d4_cafe",
+    "evt_d4_to_hotel", "evt_d4_lunch",
+    "evt_d4_to_gamcheon", "evt_d4_gamcheon",
+    "evt_d4_to_yurari", "evt_d4_yeongdo",
+    "evt_d4_to_cinema", "evt_d4_cinema",
+    "evt_d4_to_base", "evt_d4_sea", "evt_d4_return"
+  ];
+  const others = ITINERARY.items.filter(x => x.day !== 4);
+  ITINERARY.items = [...others, ...order.map(id => added[id] || byId(id))];
+
+  SHORE_CARDS.evt_d4_to_gamcheon = ["목적지: 감천문화마을\n주소: 감내2로 203\n입구 큰길 쪽에 내려 주세요.", ""];
+  SHORE_CARDS.evt_d4_to_yurari = ["목적지: 유라리광장（롯데백화점 광복점 앞）\n주소: 부산광역시 중구 중앙대로 2\n광장 가까운 합법적인 곳에 내려 주세요.", ""];
+  SHORE_CARDS.evt_d4_to_cinema = ["목적지: 부산영화체험박물관\n주소: 대청로126번길 12\n입구 가까이에 내려 주세요.", ""];
+
+  const bk = PHRASE_DATA.find(x => x.category === "釜山包車");
+  if (!bk) throw new Error("Missing 釜山包車 phrases");
+  const set = (k, v) => { const p = bk.items.find(x => x.term_pronounce === k); if (!p) throw new Error("Missing phrase " + k); p.term_primary = v; };
+  set("B3 回北港", "부산항 국제여객터미널, 충장대로 206으로 가 주세요. 16:30–16:45 도착이 목표입니다.");
+  const upsert = (k, v) => {
+    const p = bk.items.find(x => x.term_pronounce === k);
+    if (p) { p.term_primary = v; return; }
+    const at = bk.items.findIndex(x => x.term_pronounce === "B3 回北港");
+    bk.items.splice(at < 0 ? bk.items.length : at, 0,
+      { term_primary: v, term_secondary: "完整卡請開本日對應行程或備案備註。", term_pronounce: k });
+  };
+  upsert("甘川文化村", "감천문화마을로 가 주세요. 감내2로 203입니다. 입구 큰길 쪽에 내려 주세요.");
+  upsert("影島大橋", "유라리광장으로 가 주세요. 롯데백화점 광복점 앞, 중앙대로 2입니다.");
+  upsert("釜山電影體驗館", "부산영화체험박물관으로 가 주세요. 대청로126번길 12입니다.");
+
+  for (const e of ITINERARY.items.filter(x => x.day === 4)) {
+    for (const key of ["coords", "phone", "whatsapp", "line", "messenger", "openHours", "price", "website", "cost"]) {
+      if (e[key] === undefined) e[key] = null;
+    }
+    if (e.transport) {
+      e.transport.fromEventId = null; e.transport.toEventId = null; e.transport.liveApi = null;
+      if (!Object.prototype.hasOwnProperty.call(e.transport, "stopCount")) e.transport.stopCount = null;
+    }
   }
 })();
